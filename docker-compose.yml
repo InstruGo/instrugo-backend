@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  # instrugo-backend:
+  #   container_name: instrugo-backend
+  #   build: .
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - instrugo-database
+  #   links:
+  #     - instrugo-database
+
+  instrugo-database:
+    container_name: instrugo-database
+    image: postgres:14.1-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: instrugo-database
