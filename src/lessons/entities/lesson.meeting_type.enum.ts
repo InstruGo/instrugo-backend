@@ -1,4 +1,4 @@
 export enum MeetingType {
-	IRL = 'In Person',
-	ONLINE = 'Online',
+  IRL = 'In Person',
+  ONLINE = 'Online',
 }

@@ -5,10 +5,13 @@ import {
   ValidationPipe,
   HttpCode,
 } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+
 import { AuthService } from './auth.service';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -16,7 +19,9 @@ export class AuthController {
   /**
    * Route for user registration.
    */
+
   @Post('/signup')
+  @ApiResponse({ status: 201 })
   signUp(
     @Body(ValidationPipe) registrationCredentialsDto: RegistrationCredentialsDto
   ): Promise<void> {
@@ -28,6 +33,7 @@ export class AuthController {
    */
   @Post('/signin')
   @HttpCode(200)
+  @ApiResponse({ status: 200 })
   signIn(
     @Body(ValidationPipe) loginCredentialsDto: LoginCredentialsDto
   ): Promise<{ accessToken: string }> {

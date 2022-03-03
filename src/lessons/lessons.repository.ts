@@ -2,97 +2,99 @@ import { Repository, EntityRepository } from 'typeorm';
 
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
-import { FilterLessonDto } from './dto/lesson-filter.dto'
+import { FilterLessonDto } from './dto/lesson-filter.dto';
 import { Lesson } from './entities/lesson.entity';
 
 @EntityRepository(Lesson)
 export class LessonsRepository extends Repository<Lesson> {
-	async getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
-        const query = this.createQueryBuilder('lesson');
-        const {
-            level,
-            grade,
-            type,
-            minPrice,
-            maxPrice,
-            subjectId,
-		} = filterLessonDto;
-        if (level) {
-			query.andWhere('lesson.level = :level', { level });
-		}
-		if (grade) {
-			query.andWhere('lesson.grade = :grade', { grade });
-		}
-        if (type) {
-			query.andWhere('lesson.type = :grade', { type });
-		}
-        if (subjectId) {
-			query.andWhere('lesson.subjectId = :subjectId', { subjectId });
-		}
-        if (minPrice) {
-			query.andWhere('lesson.budget > :minPrice', { minPrice });
-		}
-        if (maxPrice) {
-			query.andWhere('lesson.budget > :maxPrice', { maxPrice });
-		}
-        const lessons = await query.getMany();
-        return lessons;
-	}
+  async getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
+    const { level, grade, type, minPrice, maxPrice, subjectId } =
+      filterLessonDto;
+    const query = this.createQueryBuilder('lesson');
 
-    
-	async createLesson(createLessonDto: CreateLessonDto): Promise<Lesson> {
-		const {
-			subfield,
-            level,
-            grade,
-            description,
-            type,
-            location,
-            budget,
-            subjectId,
-		} = createLessonDto;
+    if (level) {
+      query.andWhere('lesson.level = :level', { level });
+    }
 
-		const lesson = new Lesson();
-		lesson.subfield = subfield;
-		lesson.level = level;
-		lesson.grade = grade;
-        lesson.description = description;
-        lesson.type = type;
-        lesson.location = location;
-        lesson.budget = budget;
-        lesson.subjectId = subjectId;
-        lesson.createdOn = new Date(new Date().toISOString());
-        lesson.lastModifiedOn = lesson.createdOn;
+    if (grade) {
+      query.andWhere('lesson.grade = :grade', { grade });
+    }
 
-		await lesson.save();
-		return lesson;
-	}
+    if (type) {
+      query.andWhere('lesson.type = :grade', { type });
+    }
 
-	async updateLesson(
-		lesson: Lesson,
-		updateLessonDto: UpdateLessonDto,
-	): Promise<Lesson> {
-		const {
-			subfield,
-            level,
-            grade,
-            description,
-            type,
-            location,
-            budget,
-            subjectId,
-		} = updateLessonDto;
-		if(subfield) lesson.subfield = subfield;
-		if(level) lesson.level = level;
-		if(grade) lesson.grade = grade;
-        if(description) lesson.description = description;
-        if(type) lesson.type = type;
-        if(location) lesson.location = location;
-        if(budget) lesson.budget = budget;
-        if(subjectId) lesson.subjectId = subjectId;
-        lesson.lastModifiedOn = new Date(new Date().toISOString());
+    if (subjectId) {
+      query.andWhere('lesson.subjectId = :subjectId', { subjectId });
+    }
 
-		await lesson.save();
-		return lesson;
-	}
+    if (minPrice) {
+      query.andWhere('lesson.budget > :minPrice', { minPrice });
+    }
+
+    if (maxPrice) {
+      query.andWhere('lesson.budget < :maxPrice', { maxPrice });
+    }
+
+    const lessons = await query.getMany();
+    return lessons;
+  }
+
+  async createLesson(createLessonDto: CreateLessonDto): Promise<Lesson> {
+    const {
+      subfield,
+      level,
+      grade,
+      description,
+      type,
+      location,
+      budget,
+      subjectId,
+    } = createLessonDto;
+
+    const lesson = new Lesson();
+    lesson.subfield = subfield;
+    lesson.level = level;
+    lesson.grade = grade;
+    lesson.description = description;
+    lesson.type = type;
+    lesson.location = location;
+    lesson.budget = budget;
+    lesson.subjectId = subjectId;
+    lesson.createdOn = new Date(new Date().toISOString());
+    lesson.lastModifiedOn = lesson.createdOn;
+
+    await lesson.save();
+    return lesson;
+  }
+
+  async updateLesson(
+    lesson: Lesson,
+    updateLessonDto: UpdateLessonDto
+  ): Promise<Lesson> {
+    const {
+      subfield,
+      level,
+      grade,
+      description,
+      type,
+      location,
+      budget,
+      subjectId,
+    } = updateLessonDto;
+
+    if (subfield) lesson.subfield = subfield;
+    if (level) lesson.level = level;
+    if (grade) lesson.grade = grade;
+    if (description) lesson.description = description;
+    if (type) lesson.type = type;
+    if (location) lesson.location = location;
+    if (budget) lesson.budget = budget;
+    if (subjectId) lesson.subjectId = subjectId;
+
+    lesson.lastModifiedOn = new Date(new Date().toISOString());
+
+    await lesson.save();
+    return lesson;
+  }
 }

@@ -6,7 +6,6 @@ import { typeOrmConfig } from './config/typeorm.config';
 import { AuthModule } from './auth/auth.module';
 import { LessonsModule } from './lessons/lessons.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -18,7 +17,7 @@ import { LessonsModule } from './lessons/lessons.module';
         typeOrmConfig(configService),
     }),
     AuthModule,
-    LessonsModule
+    LessonsModule,
   ],
 })
 export class AppModule {}

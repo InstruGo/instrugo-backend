@@ -1,5 +1,4 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IsIn } from 'class-validator';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 
@@ -31,7 +30,6 @@ export class User extends BaseEntity {
   salt: string;
 
   @Column()
-  @IsIn(Object.values(UserRole))
   role: UserRole;
 
   @Column({ nullable: true })
