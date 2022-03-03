@@ -19,7 +19,6 @@ export class AuthController {
   /**
    * Route for user registration.
    */
-
   @Post('/signup')
   @ApiResponse({ status: 201 })
   signUp(
