@@ -8,10 +8,10 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
-    .setTitle('True North VHS API')
-    .setDescription('True North VHS API Overview')
+    .setTitle('InstruGo API')
+    .setDescription('InstruGo API Overview')
     .setVersion('1.0')
-    .addTag('vhs', 'rental')
+    .addTag('instrugo', 'students and tutors network')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
