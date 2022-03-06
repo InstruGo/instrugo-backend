@@ -2,6 +2,7 @@ import { IsNotEmpty, IsInt, IsIn, IsOptional } from 'class-validator';
 
 import { EducationLevel } from '../entities/lesson.level.enum';
 import { MeetingType } from '../entities/lesson.meeting_type.enum';
+import { LessonStatus } from '../entities/lesson.status.enum';
 import { IsPositive } from 'class-validator';
 
 export class FilterLessonDto {
@@ -29,6 +30,11 @@ export class FilterLessonDto {
   @IsNotEmpty()
   @IsPositive()
   maxPrice?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsIn(Object.values(LessonStatus))
+  status?: LessonStatus;
 
   @IsOptional()
   @IsNotEmpty()

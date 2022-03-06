@@ -18,8 +18,13 @@ export class LessonsService {
     return this.lessonsRepository.getLessons(filterLessonDto);
   }
 
-  findOne(id: number): Promise<Lesson> {
-    return this.lessonsRepository.findOne(id);
+  async findOne(id: number): Promise<Lesson> {
+    const lesson = await this.lessonsRepository.findOne(id);
+
+    if (!lesson) {
+      throw new NotFoundException('Specified lesson does not exist.');
+    }
+    return lesson;
   }
 
   create(createLessonDto: CreateLessonDto): Promise<Lesson> {
