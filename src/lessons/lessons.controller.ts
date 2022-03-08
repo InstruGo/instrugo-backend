@@ -7,13 +7,13 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { LessonsService } from './lessons.service';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { FilterLessonDto } from './dto/lesson-filter.dto';
 import { Lesson } from './entities/lesson.entity';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('lessons')
 @Controller('lessons')
