@@ -36,6 +36,18 @@ export class RatingsService {
     );
     const tutor = await this.userRepository.findOne(createRatingDto.tutorId);
 
+    if (!student) {
+      throw new NotFoundException(
+        `Student with ID ${createRatingDto.studentId} not found.`
+      );
+    }
+
+    if (!tutor) {
+      throw new NotFoundException(
+        `Tutor with ID ${createRatingDto.tutorId} not found.`
+      );
+    }
+
     return this.ratingRepository.createRating(createRatingDto, student, tutor);
   }
 
@@ -44,6 +56,10 @@ export class RatingsService {
     updateRatingDto: UpdateRatingDto
   ): Promise<Rating> {
     const rating = await this.ratingRepository.findOne(id);
+
+    if (!rating) {
+      throw new NotFoundException(`Rating with ID ${id} not found.`);
+    }
 
     return this.ratingRepository.updateRating(rating, updateRatingDto);
   }

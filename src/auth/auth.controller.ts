@@ -4,12 +4,16 @@ import {
   Body,
   ValidationPipe,
   HttpCode,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { RolesGuard } from './roles.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -37,5 +41,15 @@ export class AuthController {
     @Body(ValidationPipe) loginCredentialsDto: LoginCredentialsDto
   ): Promise<{ accessToken: string }> {
     return this.authService.login(loginCredentialsDto);
+  }
+
+  /**
+   * Route for converting a normal user to tutor status.
+   */
+  @Post('/become-a-tutor')
+  @ApiResponse({ status: 201 })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  becomeATutor(@Request() req): Promise<void> {
+    return this.authService.becomeATutor(req.user.id);
   }
 }

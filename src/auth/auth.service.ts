@@ -10,6 +10,7 @@ import { JwtPayload } from './jwt-payload.interface';
 import { UserRepository } from './user.repository';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -44,5 +45,15 @@ export class AuthService {
     const accessToken = this.jwtService.sign(payload);
 
     return { accessToken };
+  }
+
+  async becomeATutor(id: number): Promise<void> {
+    const user = await this.userRepository.findOne(id);
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} does not exist.`);
+    }
+
+    return this.userRepository.becomeATutor(user);
   }
 }

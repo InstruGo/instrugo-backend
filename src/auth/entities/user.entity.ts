@@ -17,7 +17,7 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
@@ -46,7 +46,7 @@ export class User extends BaseEntity {
   @Column('date')
   createdOn: Date;
 
-  @OneToOne(() => Tutor, { nullable: true })
+  @OneToOne(() => Tutor, { nullable: true, eager: true })
   @JoinColumn()
   tutor: Tutor;
 

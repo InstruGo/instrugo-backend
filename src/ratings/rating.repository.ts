@@ -42,6 +42,18 @@ export class RatingRepository extends Repository<Rating> {
     new_rating.tutor = tutor;
 
     await new_rating.save();
+
+    const tutorInfo = tutor.tutor;
+
+    const currentAverage = tutorInfo.averageRating;
+    const ratingsCount = tutorInfo.ratingsCount;
+
+    tutorInfo.averageRating =
+      (ratingsCount * currentAverage + rating) / (ratingsCount + 1);
+    tutorInfo.ratingsCount = tutorInfo.ratingsCount + 1;
+
+    await tutorInfo.save();
+
     return new_rating;
   }
 
