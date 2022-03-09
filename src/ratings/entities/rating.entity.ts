@@ -1,4 +1,12 @@
-import { BaseEntity, PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+import {
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  ManyToOne,
+} from 'typeorm';
+
+import { User } from '../../auth/entities/user.entity';
 
 @Entity()
 export class Rating extends BaseEntity {
@@ -8,9 +16,9 @@ export class Rating extends BaseEntity {
   @Column()
   rating: number;
 
-  @Column()
-  studentId: number;
+  @ManyToOne(() => User)
+  student: User;
 
-  @Column()
-  tutorId: number;
+  @ManyToOne(() => User)
+  tutor: User;
 }
