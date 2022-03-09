@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { LessonsService } from './lessons.service';
 import { LessonsController } from './lessons.controller';
-import { LessonsRepository } from './lessons.repository';
+import { LessonRepository } from './lesson.repository';
 import { UserRepository } from '../auth/user.repository';
 import { Subject } from './entities/subject.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LessonsRepository, UserRepository, Subject]),
+    TypeOrmModule.forFeature([LessonRepository, UserRepository, Subject]),
   ],
   controllers: [LessonsController],
   providers: [LessonsService],

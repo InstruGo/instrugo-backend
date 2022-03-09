@@ -7,7 +7,7 @@ import { User } from '../auth/entities/user.entity';
 import { UpdateRatingDto } from './dto/update-rating.dto';
 
 @EntityRepository(Rating)
-export class RatingsRepository extends Repository<Rating> {
+export class RatingRepository extends Repository<Rating> {
   async getRatings(filterRatingDto: FilterRatingDto): Promise<Rating[]> {
     const { rating, studentId, tutorId } = filterRatingDto;
     const query = this.createQueryBuilder('rating');

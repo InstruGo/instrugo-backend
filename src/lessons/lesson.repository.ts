@@ -9,7 +9,7 @@ import { User } from '../auth/entities/user.entity';
 import { Subject } from './entities/subject.entity';
 
 @EntityRepository(Lesson)
-export class LessonsRepository extends Repository<Lesson> {
+export class LessonRepository extends Repository<Lesson> {
   async getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
     const { level, grade, type, minPrice, maxPrice, status, subjectId } =
       filterLessonDto;
