@@ -6,12 +6,19 @@ import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { FilterLessonDto } from './dto/lesson-filter.dto';
 import { Lesson } from './entities/lesson.entity';
 import { LessonsRepository } from './lessons.repository';
+import { UserRepository } from '../auth/user.repository';
+import { Repository } from 'typeorm';
+import { Subject } from './entities/subject.entity';
 
 @Injectable()
 export class LessonsService {
   constructor(
     @InjectRepository(LessonsRepository)
-    private lessonsRepository: LessonsRepository
+    private lessonsRepository: LessonsRepository,
+    @InjectRepository(UserRepository)
+    private userRepository: UserRepository,
+    @InjectRepository(Subject)
+    private subjectRepository: Repository<Subject>
   ) {}
 
   findAll(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
@@ -27,17 +34,31 @@ export class LessonsService {
     return lesson;
   }
 
-  create(createLessonDto: CreateLessonDto): Promise<Lesson> {
-    return this.lessonsRepository.createLesson(createLessonDto);
+  async create(createLessonDto: CreateLessonDto): Promise<Lesson> {
+    const owner = await this.userRepository.findOne(createLessonDto.userId);
+    const subject = await this.subjectRepository.findOne(
+      createLessonDto.subjectId
+    );
+
+    return this.lessonsRepository.createLesson(createLessonDto, owner, subject);
   }
 
   async update(id: number, updateLessonDto: UpdateLessonDto): Promise<Lesson> {
     const lesson = await this.findOne(id);
 
     if (!lesson) {
-      throw new NotFoundException('Specified player does not exist.');
+      throw new NotFoundException('Specified lesson does not exist.');
     }
-    return this.lessonsRepository.updateLesson(lesson, updateLessonDto);
+
+    const subject = await this.subjectRepository.findOne(
+      updateLessonDto.subjectId
+    );
+
+    return this.lessonsRepository.updateLesson(
+      lesson,
+      updateLessonDto,
+      subject
+    );
   }
 
   async delete(id: number): Promise<void> {

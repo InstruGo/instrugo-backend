@@ -5,6 +5,8 @@ import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { FilterLessonDto } from './dto/lesson-filter.dto';
 import { Lesson } from './entities/lesson.entity';
 import { LessonStatus } from './entities/lesson.status.enum';
+import { User } from '../auth/entities/user.entity';
+import { Subject } from './entities/subject.entity';
 
 @EntityRepository(Lesson)
 export class LessonsRepository extends Repository<Lesson> {
@@ -45,17 +47,13 @@ export class LessonsRepository extends Repository<Lesson> {
     return lessons;
   }
 
-  async createLesson(createLessonDto: CreateLessonDto): Promise<Lesson> {
-    const {
-      subfield,
-      level,
-      grade,
-      description,
-      type,
-      location,
-      budget,
-      subjectId,
-    } = createLessonDto;
+  async createLesson(
+    createLessonDto: CreateLessonDto,
+    owner: User,
+    subject: Subject
+  ): Promise<Lesson> {
+    const { subfield, level, grade, description, type, location, budget } =
+      createLessonDto;
 
     const lesson = new Lesson();
     lesson.subfield = subfield;
@@ -65,31 +63,24 @@ export class LessonsRepository extends Repository<Lesson> {
     lesson.type = type;
     lesson.location = location;
     lesson.budget = budget;
-    lesson.subjectId = subjectId;
     lesson.createdOn = new Date(new Date().toISOString());
     lesson.lastModifiedOn = lesson.createdOn;
     lesson.status = LessonStatus.REQUEST;
 
-    lesson.ownerId = 1; //ovdje promijeniti da bude id stvarnog stvaratelja,
-    //placeholder samo za testiranje
+    lesson.owner = owner;
+    lesson.subject = subject;
+
     await lesson.save();
     return lesson;
   }
 
   async updateLesson(
     lesson: Lesson,
-    updateLessonDto: UpdateLessonDto
+    updateLessonDto: UpdateLessonDto,
+    subject: Subject
   ): Promise<Lesson> {
-    const {
-      subfield,
-      level,
-      grade,
-      description,
-      type,
-      location,
-      budget,
-      subjectId,
-    } = updateLessonDto;
+    const { subfield, level, grade, description, type, location, budget } =
+      updateLessonDto;
 
     if (subfield) lesson.subfield = subfield;
     if (level) lesson.level = level;
@@ -98,7 +89,7 @@ export class LessonsRepository extends Repository<Lesson> {
     if (type) lesson.type = type;
     if (location) lesson.location = location;
     if (budget) lesson.budget = budget;
-    if (subjectId) lesson.subjectId = subjectId;
+    if (subject) lesson.subject = subject;
 
     lesson.lastModifiedOn = new Date(new Date().toISOString());
 

@@ -18,7 +18,7 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async signUp(
+  async register(
     registrationCredentialsDto: RegistrationCredentialsDto
   ): Promise<void> {
     const { password, confirmPassword } = registrationCredentialsDto;
@@ -27,10 +27,10 @@ export class AuthService {
       throw new BadRequestException('passwords do not match');
     }
 
-    return this.userRepository.signUp(registrationCredentialsDto);
+    return this.userRepository.register(registrationCredentialsDto);
   }
 
-  async signIn(
+  async login(
     loginCredentialsDto: LoginCredentialsDto
   ): Promise<{ accessToken: string }> {
     const { id, email, firstName, lastName, role } =

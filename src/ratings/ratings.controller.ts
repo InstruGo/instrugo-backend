@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { RatingsService } from './ratings.service';
@@ -19,27 +11,27 @@ import { Rating } from './entities/rating.entity';
 export class RatingsController {
   constructor(private readonly ratingsService: RatingsService) {}
 
-  @Post()
-  @ApiResponse({ status: 201, type: Rating })
-  create(@Body() createRatingDto: CreateRatingDto) {
-    return this.ratingsService.create(createRatingDto);
-  }
-
   @Get()
   @ApiResponse({ status: 200, type: Rating })
-  findAll(@Body() filterRatingDto: FilterRatingDto) {
+  findAll(@Body() filterRatingDto: FilterRatingDto): Promise<Rating[]> {
     return this.ratingsService.findAll(filterRatingDto);
   }
 
   @Get(':id')
   @ApiResponse({ status: 200, type: Rating })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<Rating> {
     return this.ratingsService.findOne(+id);
+  }
+
+  @Post()
+  @ApiResponse({ status: 201, type: Rating })
+  create(@Body() createRatingDto: CreateRatingDto): Promise<Rating> {
+    return this.ratingsService.create(createRatingDto);
   }
 
   @Delete(':id')
   @ApiResponse({ status: 204 })
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<void> {
     return this.ratingsService.remove(+id);
   }
 }

@@ -19,23 +19,23 @@ export class AuthController {
   /**
    * Route for user registration.
    */
-  @Post('/signup')
+  @Post('/register')
   @ApiResponse({ status: 201 })
-  signUp(
+  register(
     @Body(ValidationPipe) registrationCredentialsDto: RegistrationCredentialsDto
   ): Promise<void> {
-    return this.authService.signUp(registrationCredentialsDto);
+    return this.authService.register(registrationCredentialsDto);
   }
 
   /**
    * Route for user login.
    */
-  @Post('/signin')
+  @Post('/login')
   @HttpCode(200)
   @ApiResponse({ status: 200 })
-  signIn(
+  login(
     @Body(ValidationPipe) loginCredentialsDto: LoginCredentialsDto
   ): Promise<{ accessToken: string }> {
-    return this.authService.signIn(loginCredentialsDto);
+    return this.authService.login(loginCredentialsDto);
   }
 }

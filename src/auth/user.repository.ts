@@ -13,7 +13,7 @@ import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async signUp(
+  async register(
     registrationCredentialsDto: RegistrationCredentialsDto,
     role?: UserRole
   ): Promise<void> {
