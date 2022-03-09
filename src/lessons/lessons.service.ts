@@ -21,11 +21,11 @@ export class LessonsService {
     private subjectRepository: Repository<Subject>
   ) {}
 
-  findAll(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
+  getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
     return this.lessonsRepository.getLessons(filterLessonDto);
   }
 
-  async findOne(id: number): Promise<Lesson> {
+  async getLesson(id: number): Promise<Lesson> {
     const lesson = await this.lessonsRepository.findOne(id);
 
     if (!lesson) {
@@ -34,7 +34,7 @@ export class LessonsService {
     return lesson;
   }
 
-  async create(createLessonDto: CreateLessonDto): Promise<Lesson> {
+  async createLesson(createLessonDto: CreateLessonDto): Promise<Lesson> {
     const owner = await this.userRepository.findOne(createLessonDto.userId);
     const subject = await this.subjectRepository.findOne(
       createLessonDto.subjectId
@@ -43,8 +43,11 @@ export class LessonsService {
     return this.lessonsRepository.createLesson(createLessonDto, owner, subject);
   }
 
-  async update(id: number, updateLessonDto: UpdateLessonDto): Promise<Lesson> {
-    const lesson = await this.findOne(id);
+  async updateLesson(
+    id: number,
+    updateLessonDto: UpdateLessonDto
+  ): Promise<Lesson> {
+    const lesson = await this.lessonsRepository.findOne(id);
 
     if (!lesson) {
       throw new NotFoundException('Specified lesson does not exist.');
@@ -61,7 +64,7 @@ export class LessonsService {
     );
   }
 
-  async delete(id: number): Promise<void> {
+  async deleteLesson(id: number): Promise<void> {
     const result = await this.lessonsRepository.delete(id);
 
     if (!result.affected) {

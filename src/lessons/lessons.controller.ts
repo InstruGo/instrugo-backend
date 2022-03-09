@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -22,34 +23,34 @@ export class LessonsController {
 
   @Get()
   @ApiResponse({ status: 200, type: Lesson })
-  findAll(@Body() filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
-    return this.lessonsService.findAll(filterLessonDto);
+  getLessons(@Body() filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
+    return this.lessonsService.getLessons(filterLessonDto);
   }
 
   @Get(':id')
   @ApiResponse({ status: 200, type: Lesson })
-  findOne(@Param('id') id: string): Promise<Lesson> {
-    return this.lessonsService.findOne(+id);
+  getLesson(@Param('id', ParseIntPipe) id: number): Promise<Lesson> {
+    return this.lessonsService.getLesson(id);
   }
 
   @Post()
   @ApiResponse({ status: 201, type: Lesson })
-  create(@Body() createLessonDto: CreateLessonDto): Promise<Lesson> {
-    return this.lessonsService.create(createLessonDto);
+  createLesson(@Body() createLessonDto: CreateLessonDto): Promise<Lesson> {
+    return this.lessonsService.createLesson(createLessonDto);
   }
 
   @Patch(':id')
   @ApiResponse({ status: 200, type: Lesson })
-  update(
-    @Param('id') id: string,
+  updateLesson(
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateLessonDto: UpdateLessonDto
   ): Promise<Lesson> {
-    return this.lessonsService.update(+id, updateLessonDto);
+    return this.lessonsService.updateLesson(id, updateLessonDto);
   }
 
   @Delete(':id')
   @ApiResponse({ status: 204 })
-  delete(@Param('id') id: string): Promise<void> {
-    return this.lessonsService.delete(+id);
+  deleteLesson(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.lessonsService.deleteLesson(id);
   }
 }
