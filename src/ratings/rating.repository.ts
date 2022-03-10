@@ -5,6 +5,7 @@ import { FilterRatingDto } from './dto/filter-rating.dto';
 import { Rating } from './entities/rating.entity';
 import { User } from '../auth/entities/user.entity';
 import { UpdateRatingDto } from './dto/update-rating.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(Rating)
 export class RatingRepository extends Repository<Rating> {
@@ -61,9 +62,50 @@ export class RatingRepository extends Repository<Rating> {
     rating: Rating,
     updateRatingDto: UpdateRatingDto
   ): Promise<Rating> {
-    if (updateRatingDto.rating) rating.rating = updateRatingDto.rating;
+    const oldValue = rating.rating;
+    const tutor = rating.tutor.tutor;
+
+    const currentAverage = tutor.averageRating;
+    const currentCount = tutor.ratingsCount;
+
+    if (updateRatingDto.rating) {
+      const newAverage =
+        (currentCount * currentAverage - oldValue + updateRatingDto.rating) /
+        currentCount;
+
+      rating.rating = updateRatingDto.rating;
+      tutor.averageRating = newAverage;
+
+      await tutor.save();
+    }
 
     await rating.save();
     return rating;
+  }
+
+  async deleteRating(id: number): Promise<void> {
+    const rating = await this.findOne(id);
+    const value = rating.rating;
+
+    const tutor = rating.tutor.tutor;
+    const currentAverage = tutor.averageRating;
+    const currentCount = tutor.ratingsCount;
+
+    let newAverage = 0;
+
+    if (currentCount > 1) {
+      newAverage = (currentCount * currentAverage - value) / (currentCount - 1);
+    }
+
+    tutor.averageRating = newAverage;
+    tutor.ratingsCount = currentCount - 1;
+
+    const result = await this.delete(id);
+
+    if (!result.affected) {
+      throw new NotFoundException(`Rating with ID ${id} not found.`);
+    }
+
+    await tutor.save();
   }
 }
