@@ -52,16 +52,12 @@ export class UserRepository extends Repository<User> {
       return {
         id: user.id,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
         role: user.role,
       };
     } else {
       return {
         id: null,
         email: null,
-        firstName: null,
-        lastName: null,
         role: null,
       };
     }

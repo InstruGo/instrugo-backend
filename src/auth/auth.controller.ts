@@ -6,12 +6,14 @@ import {
   HttpCode,
   UseGuards,
   Request,
+  Get,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
+import { User } from './entities/user.entity';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
 
@@ -41,6 +43,13 @@ export class AuthController {
     @Body(ValidationPipe) loginCredentialsDto: LoginCredentialsDto
   ): Promise<{ accessToken: string }> {
     return this.authService.login(loginCredentialsDto);
+  }
+
+  @Get('/profile')
+  @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  getProfile(@Request() req): Promise<Partial<User>> {
+    return this.authService.getProfile(req.user.id);
   }
 
   /**
