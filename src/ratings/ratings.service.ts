@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CreateRatingDto } from './dto/create-rating.dto';
@@ -31,6 +35,12 @@ export class RatingsService {
   }
 
   async createRating(createRatingDto: CreateRatingDto): Promise<Rating> {
+    if (createRatingDto.studentId === createRatingDto.tutorId) {
+      throw new BadRequestException(
+        'Student and tutor cannot be the same user.'
+      );
+    }
+
     const student = await this.userRepository.findOne(
       createRatingDto.studentId
     );
