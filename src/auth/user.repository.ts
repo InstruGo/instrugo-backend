@@ -10,10 +10,11 @@ import { UserRole } from './entities/user.role.enum';
 import { JwtPayload } from './jwt-payload.interface';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
+import { Tutor } from './entities/tutor.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
-  async signUp(
+  async register(
     registrationCredentialsDto: RegistrationCredentialsDto,
     role?: UserRole
   ): Promise<void> {
@@ -51,19 +52,26 @@ export class UserRepository extends Repository<User> {
       return {
         id: user.id,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
         role: user.role,
       };
     } else {
       return {
         id: null,
         email: null,
-        firstName: null,
-        lastName: null,
         role: null,
       };
     }
+  }
+
+  async becomeATutor(user: User): Promise<void> {
+    const tutor = new Tutor();
+    tutor.averageRating = 0;
+    tutor.ratingsCount = 0;
+
+    await tutor.save();
+
+    user.tutor = tutor;
+    await user.save();
   }
 
   private hashPassword(password: string, salt: string) {

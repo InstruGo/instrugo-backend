@@ -9,6 +9,7 @@ import { AuthController } from './auth.controller';
 import { UserRepository } from './user.repository';
 import { JwtStrategy } from './jwt.strategy';
 import { jwtConfigOptions } from '../config/jwt.config';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { jwtConfigOptions } from '../config/jwt.config';
     TypeOrmModule.forFeature([UserRepository]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard],
   exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}

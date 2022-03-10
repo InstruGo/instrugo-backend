@@ -1,8 +1,16 @@
-import { BaseEntity, PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+import {
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  ManyToOne,
+} from 'typeorm';
 
 import { EducationLevel } from './lesson.level.enum';
 import { MeetingType } from './lesson.meeting_type.enum';
 import { LessonStatus } from './lesson.status.enum';
+import { User } from '../../auth/entities/user.entity';
+import { Subject } from './subject.entity';
 
 @Entity()
 export class Lesson extends BaseEntity {
@@ -27,7 +35,7 @@ export class Lesson extends BaseEntity {
   @Column()
   location: string;
 
-  @Column('decimal')
+  @Column('numeric')
   budget: number;
 
   @Column()
@@ -39,9 +47,9 @@ export class Lesson extends BaseEntity {
   @Column('date')
   lastModifiedOn: Date;
 
-  @Column()
-  ownerId: number;
+  @ManyToOne(() => User)
+  owner: User;
 
-  @Column()
-  subjectId: number;
+  @ManyToOne(() => Subject)
+  subject: Subject;
 }

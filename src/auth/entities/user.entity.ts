@@ -1,15 +1,23 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 
 import { UserRole } from './user.role.enum';
+import { Tutor } from './tutor.entity';
 
 @Entity()
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
   @Column()
@@ -37,6 +45,10 @@ export class User extends BaseEntity {
 
   @Column('date')
   createdOn: Date;
+
+  @OneToOne(() => Tutor, { nullable: true, eager: true })
+  @JoinColumn()
+  tutor: Tutor;
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);

@@ -35,5 +35,11 @@ export class CreateLessonDto {
 
   @IsNotEmpty()
   @IsInt()
+  @IsPositive()
+  userId: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  @IsPositive()
   subjectId: number;
 }
