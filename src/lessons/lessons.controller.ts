@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -22,24 +24,28 @@ export class LessonsController {
   constructor(private readonly lessonsService: LessonsService) {}
 
   @Get()
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Lesson })
   getLessons(@Body() filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
     return this.lessonsService.getLessons(filterLessonDto);
   }
 
   @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Lesson })
   getLesson(@Param('id', ParseIntPipe) id: number): Promise<Lesson> {
     return this.lessonsService.getLesson(id);
   }
 
   @Post()
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: Lesson })
   createLesson(@Body() createLessonDto: CreateLessonDto): Promise<Lesson> {
     return this.lessonsService.createLesson(createLessonDto);
   }
 
   @Patch(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Lesson })
   updateLesson(
     @Param('id', ParseIntPipe) id: number,

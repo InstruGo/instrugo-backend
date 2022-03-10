@@ -7,6 +7,8 @@ import {
   Delete,
   Patch,
   ParseIntPipe,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -22,24 +24,28 @@ export class RatingsController {
   constructor(private readonly ratingsService: RatingsService) {}
 
   @Get()
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Rating })
   getRatings(@Body() filterRatingDto: FilterRatingDto): Promise<Rating[]> {
     return this.ratingsService.getRatings(filterRatingDto);
   }
 
   @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Rating })
   getRating(@Param('id', ParseIntPipe) id: number): Promise<Rating> {
     return this.ratingsService.getRating(id);
   }
 
   @Post()
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: Rating })
   createRating(@Body() createRatingDto: CreateRatingDto): Promise<Rating> {
     return this.ratingsService.createRating(createRatingDto);
   }
 
   @Patch(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Rating })
   updateRating(
     @Param('id', ParseIntPipe) id: number,
