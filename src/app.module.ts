@@ -6,6 +6,7 @@ import { typeOrmConfig } from './config/typeorm.config';
 import { AuthModule } from './auth/auth.module';
 import { LessonsModule } from './lessons/lessons.module';
 import { RatingsModule } from './ratings/ratings.module';
+import { TutorResponsesModule } from './tutor-responses/tutor-responses.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RatingsModule } from './ratings/ratings.module';
     AuthModule,
     LessonsModule,
     RatingsModule,
+    TutorResponsesModule,
   ],
 })
 export class AppModule {}
