@@ -1,8 +1,14 @@
-import { IsNotEmpty, IsString, IsInt, IsIn, IsOptional } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsInt,
+  IsIn,
+  IsOptional,
+  IsPositive,
+} from 'class-validator';
 
-import { EducationLevel } from '../entities/lesson.level.enum';
-import { MeetingType } from '../entities/lesson.meeting_type.enum';
-import { IsPositive } from 'class-validator';
+import { EducationLevel } from '../../entities/lesson.level.enum';
+import { MeetingType } from '../../entities/lesson.meeting-type.enum';
 
 export class UpdateLessonDto {
   @IsOptional()

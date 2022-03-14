@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString, IsInt, IsIn, IsPositive } from 'class-validator';
 
-import { EducationLevel } from '../entities/lesson.level.enum';
-import { MeetingType } from '../entities/lesson.meeting_type.enum';
+import { EducationLevel } from '../../entities/lesson.level.enum';
+import { MeetingType } from '../../entities/lesson.meeting-type.enum';
 
 export class CreateLessonDto {
   @IsNotEmpty()
