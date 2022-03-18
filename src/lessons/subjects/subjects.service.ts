@@ -19,13 +19,13 @@ export class SubjectsService {
   }
 
   async getSubject(id: number): Promise<Subject> {
-    const lesson = await this.subjectRepository.findOne(id);
+    const subject = await this.subjectRepository.findOne(id);
 
-    if (!lesson) {
+    if (!subject) {
       throw new NotFoundException('Specified subject does not exist.');
     }
 
-    return lesson;
+    return subject;
   }
 
   async createSubject(createSubjectDto: CreateSubjectDto): Promise<Subject> {
@@ -34,7 +34,7 @@ export class SubjectsService {
 
   async updateSubject(
     id: number,
-    updateLessonDto: UpdateSubjectDto
+    updateSubjectDto: UpdateSubjectDto
   ): Promise<Subject> {
     const subject = await this.subjectRepository.findOne(id);
 
@@ -42,7 +42,7 @@ export class SubjectsService {
       throw new NotFoundException('Specified subject does not exist.');
     }
 
-    return this.subjectRepository.updateSubject(subject, updateLessonDto);
+    return this.subjectRepository.updateSubject(subject, updateSubjectDto);
   }
 
   async deleteSubject(id: number): Promise<void> {
