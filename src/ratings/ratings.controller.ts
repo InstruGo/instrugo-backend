@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   ClassSerializerInterceptor,
   UseInterceptors,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -56,6 +57,7 @@ export class RatingsController {
 
   @Delete(':id')
   @ApiResponse({ status: 204 })
+  @HttpCode(204)
   deleteRating(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.ratingsService.deleteRating(id);
   }

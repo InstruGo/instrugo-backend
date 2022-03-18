@@ -1,12 +1,12 @@
 import { Repository, EntityRepository } from 'typeorm';
 
-import { CreateLessonDto } from './dto/create-lesson.dto';
-import { UpdateLessonDto } from './dto/update-lesson.dto';
-import { FilterLessonDto } from './dto/lesson-filter.dto';
 import { Lesson } from './entities/lesson.entity';
 import { LessonStatus } from './entities/lesson.status.enum';
 import { User } from '../auth/entities/user.entity';
 import { Subject } from './entities/subject.entity';
+import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
+import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
+import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 
 @EntityRepository(Lesson)
 export class LessonRepository extends Repository<Lesson> {

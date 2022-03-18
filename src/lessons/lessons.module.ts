@@ -5,13 +5,19 @@ import { LessonsService } from './lessons.service';
 import { LessonsController } from './lessons.controller';
 import { LessonRepository } from './lesson.repository';
 import { UserRepository } from '../auth/user.repository';
-import { Subject } from './entities/subject.entity';
+import { SubjectsService } from './subjects/subjects.service';
+import { SubjectsController } from './subjects/subjects.controller';
+import { SubjectRepository } from './subjects/subject.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LessonRepository, UserRepository, Subject]),
+    TypeOrmModule.forFeature([
+      LessonRepository,
+      UserRepository,
+      SubjectRepository,
+    ]),
   ],
-  controllers: [LessonsController],
-  providers: [LessonsService],
+  controllers: [LessonsController, SubjectsController],
+  providers: [LessonsService, SubjectsService],
 })
 export class LessonsModule {}

@@ -49,8 +49,12 @@ export class RatingRepository extends Repository<Rating> {
     const currentAverage = tutorInfo.averageRating;
     const ratingsCount = tutorInfo.ratingsCount;
 
-    tutorInfo.averageRating =
-      (ratingsCount * currentAverage + rating) / (ratingsCount + 1);
+    tutorInfo.averageRating = this.addToAverage(
+      currentAverage,
+      rating,
+      ratingsCount
+    );
+
     tutorInfo.ratingsCount = tutorInfo.ratingsCount + 1;
 
     await tutorInfo.save();
@@ -69,12 +73,14 @@ export class RatingRepository extends Repository<Rating> {
     const currentCount = tutor.ratingsCount;
 
     if (updateRatingDto.rating) {
-      const newAverage =
-        (currentCount * currentAverage - oldValue + updateRatingDto.rating) /
-        currentCount;
-
       rating.rating = updateRatingDto.rating;
-      tutor.averageRating = newAverage;
+
+      tutor.averageRating = this.updateAverage(
+        currentAverage,
+        oldValue,
+        updateRatingDto.rating,
+        currentCount
+      );
 
       await tutor.save();
     }
@@ -91,13 +97,12 @@ export class RatingRepository extends Repository<Rating> {
     const currentAverage = tutor.averageRating;
     const currentCount = tutor.ratingsCount;
 
-    let newAverage = 0;
+    tutor.averageRating = this.removeFromAverage(
+      currentAverage,
+      value,
+      currentCount
+    );
 
-    if (currentCount > 1) {
-      newAverage = (currentCount * currentAverage - value) / (currentCount - 1);
-    }
-
-    tutor.averageRating = newAverage;
     tutor.ratingsCount = currentCount - 1;
 
     const result = await this.delete(id);
@@ -107,5 +112,24 @@ export class RatingRepository extends Repository<Rating> {
     }
 
     await tutor.save();
+  }
+
+  private addToAverage(avg: number, value: number, count: number) {
+    return (count * avg + value) / (count + 1);
+  }
+
+  private updateAverage(
+    avg: number,
+    oldValue: number,
+    newValue: number,
+    count: number
+  ) {
+    return (count * avg - oldValue + newValue) / count;
+  }
+
+  private removeFromAverage(avg: number, value: number, count: number) {
+    if (count === 1) return 0;
+
+    return (count * avg - value) / (count - 1);
   }
 }

@@ -9,14 +9,15 @@ import {
   ParseIntPipe,
   ClassSerializerInterceptor,
   UseInterceptors,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { LessonsService } from './lessons.service';
-import { CreateLessonDto } from './dto/create-lesson.dto';
-import { UpdateLessonDto } from './dto/update-lesson.dto';
-import { FilterLessonDto } from './dto/lesson-filter.dto';
 import { Lesson } from './entities/lesson.entity';
+import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
+import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
+import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 
 @ApiTags('lessons')
 @Controller('lessons')
@@ -56,6 +57,7 @@ export class LessonsController {
 
   @Delete(':id')
   @ApiResponse({ status: 204 })
+  @HttpCode(204)
   deleteLesson(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.lessonsService.deleteLesson(id);
   }

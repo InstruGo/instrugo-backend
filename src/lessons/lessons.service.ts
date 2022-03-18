@@ -1,14 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CreateLessonDto } from './dto/create-lesson.dto';
-import { UpdateLessonDto } from './dto/update-lesson.dto';
-import { FilterLessonDto } from './dto/lesson-filter.dto';
-import { Lesson } from './entities/lesson.entity';
 import { LessonRepository } from './lesson.repository';
 import { UserRepository } from '../auth/user.repository';
-import { Repository } from 'typeorm';
-import { Subject } from './entities/subject.entity';
+import { Lesson } from './entities/lesson.entity';
+import { SubjectRepository } from './subjects/subject.repository';
+import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
+import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
+import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 
 @Injectable()
 export class LessonsService {
@@ -17,8 +16,8 @@ export class LessonsService {
     private lessonRepository: LessonRepository,
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
-    @InjectRepository(Subject)
-    private subjectRepository: Repository<Subject>
+    @InjectRepository(SubjectRepository)
+    private subjectRepository: SubjectRepository
   ) {}
 
   getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
