@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { LessonRepository } from '../lessons/lesson.repository';
@@ -26,9 +30,27 @@ export class TutorResponsesService {
     const tutor = await this.userRepository.findOne(
       createTutorResponseDto.tutorId
     );
+    if (!tutor) {
+      throw new NotFoundException('This tutor does not exist.');
+    }
+    if (!tutor.tutor) {
+      throw new BadRequestException('Only tutors can make responses.');
+    }
+    console.log(tutor);
     const lesson = await this.lessonRepository.findOne(
       createTutorResponseDto.lessonId
     );
+    console.log(lesson);
+    if (!lesson) {
+      throw new NotFoundException('This lesson does not exist.');
+    }
+    if (!lesson.owner) {
+      throw new NotFoundException('This lesson does not have an owner.');
+    }
+    console.log(lesson, tutor);
+    if (lesson.owner.id === tutor.id) {
+      throw new BadRequestException('You cannot respond to Your own lessons!');
+    }
     return this.tutorResponseRepository.createTutorResponse(
       createTutorResponseDto,
       tutor,

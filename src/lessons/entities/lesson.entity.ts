@@ -4,6 +4,7 @@ import {
   Column,
   Entity,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 import { EducationLevel } from './lesson.level.enum';
@@ -47,9 +48,9 @@ export class Lesson extends BaseEntity {
   @Column('date')
   lastModifiedOn: Date;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   owner: User;
 
-  @ManyToOne(() => Subject)
+  @ManyToOne(() => Subject, { eager: true })
   subject: Subject;
 }

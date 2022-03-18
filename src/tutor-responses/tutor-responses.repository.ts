@@ -37,7 +37,6 @@ export class TutorResponseRepository extends Repository<TutorResponse> {
     lesson: Lesson
   ): Promise<TutorResponse> {
     const { price } = createTutorResponseDto;
-
     const response = new TutorResponse();
     response.price = price;
     response.tutor = tutor;

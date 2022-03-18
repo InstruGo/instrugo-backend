@@ -17,9 +17,9 @@ export class TutorResponse extends BaseEntity {
   @Column('double precision')
   price: number;
 
-  @ManyToOne(() => Lesson)
+  @ManyToOne(() => Lesson, { eager: true })
   lesson: Lesson;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   tutor: User;
 }
