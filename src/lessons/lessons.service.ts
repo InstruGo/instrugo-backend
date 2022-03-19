@@ -35,9 +35,15 @@ export class LessonsService {
 
   async createLesson(createLessonDto: CreateLessonDto): Promise<Lesson> {
     const owner = await this.userRepository.findOne(createLessonDto.userId);
+    if (!owner) {
+      throw new NotFoundException('Owner of lesson does not exist');
+    }
     const subject = await this.subjectRepository.findOne(
       createLessonDto.subjectId
     );
+    if (!subject) {
+      throw new NotFoundException('Subject does not exist');
+    }
 
     return this.lessonRepository.createLesson(createLessonDto, owner, subject);
   }
