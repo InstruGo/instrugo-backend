@@ -33,24 +33,27 @@ export class TutorResponsesService {
     if (!tutor) {
       throw new NotFoundException('This tutor does not exist.');
     }
+
     if (!tutor.tutor) {
       throw new BadRequestException('Only tutors can make responses.');
     }
-    console.log(tutor);
+
     const lesson = await this.lessonRepository.findOne(
       createTutorResponseDto.lessonId
     );
-    console.log(lesson);
+
     if (!lesson) {
       throw new NotFoundException('This lesson does not exist.');
     }
+
     if (!lesson.owner) {
       throw new NotFoundException('This lesson does not have an owner.');
     }
-    console.log(lesson, tutor);
+
     if (lesson.owner.id === tutor.id) {
       throw new BadRequestException('You cannot respond to Your own lessons!');
     }
+
     return this.tutorResponseRepository.createTutorResponse(
       createTutorResponseDto,
       tutor,
@@ -79,9 +82,11 @@ export class TutorResponsesService {
     updateTutorResponseDto: UpdateTutorResponseDto
   ): Promise<TutorResponse> {
     const response = await this.tutorResponseRepository.findOne(id);
+
     if (!response) {
       throw new NotFoundException('Specified response does not exist.');
     }
+
     return this.tutorResponseRepository.updateTutorResponse(
       response,
       updateTutorResponseDto
