@@ -19,6 +19,6 @@ export class Rating extends BaseEntity {
   @ManyToOne(() => User)
   student: User;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   tutor: User;
 }

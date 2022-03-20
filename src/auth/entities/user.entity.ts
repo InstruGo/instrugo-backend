@@ -46,7 +46,7 @@ export class User extends BaseEntity {
   @Column('date')
   createdOn: Date;
 
-  @OneToOne(() => Tutor, { nullable: true, eager: true })
+  @OneToOne(() => Tutor, { eager: true })
   @JoinColumn()
   tutor: Tutor;
 
