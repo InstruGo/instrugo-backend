@@ -19,6 +19,8 @@ export class LessonTimeFrame extends BaseEntity {
   @Column('timestamptz')
   endTime: Date;
 
-  @ManyToOne(() => Lesson, (lesson) => lesson.lessonTimeFrames)
+  @ManyToOne(() => Lesson, (lesson) => lesson.lessonTimeFrames, {
+    onDelete: 'CASCADE',
+  })
   lesson: Lesson;
 }
