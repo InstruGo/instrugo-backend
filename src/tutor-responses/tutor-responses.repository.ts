@@ -6,6 +6,7 @@ import { FilterTutorResponseDto } from './dto/filter-tutor-response.dto';
 import { TutorResponse } from './entities/tutor-response.entity';
 import { User } from '../auth/entities/user.entity';
 import { Lesson } from '../lessons/entities/lesson.entity';
+import { TutorResponseTimeFrame } from './entities/tutor-response-time-frame.entity';
 
 @EntityRepository(TutorResponse)
 export class TutorResponseRepository extends Repository<TutorResponse> {
@@ -34,13 +35,15 @@ export class TutorResponseRepository extends Repository<TutorResponse> {
   async createTutorResponse(
     createTutorResponseDto: CreateTutorResponseDto,
     tutor: User,
-    lesson: Lesson
+    lesson: Lesson,
+    tutorResponseTimeFrames: TutorResponseTimeFrame[]
   ): Promise<TutorResponse> {
     const { price } = createTutorResponseDto;
     const response = new TutorResponse();
     response.price = price;
     response.tutor = tutor;
     response.lesson = lesson;
+    response.tutorResponseTimeFrames = tutorResponseTimeFrames;
 
     await response.save();
     return response;
@@ -48,14 +51,16 @@ export class TutorResponseRepository extends Repository<TutorResponse> {
 
   async updateTutorResponse(
     response: TutorResponse,
-    updateTutorResponseDto: UpdateTutorResponseDto
+    updateTutorResponseDto: UpdateTutorResponseDto,
+    tutorResponseTimeFrames: TutorResponseTimeFrame[]
   ): Promise<TutorResponse> {
     const { price } = updateTutorResponseDto;
 
     if (price) {
       response.price = price;
     }
-
+    if (tutorResponseTimeFrames)
+      response.tutorResponseTimeFrames = tutorResponseTimeFrames;
     await response.save();
     return response;
   }
