@@ -12,7 +12,8 @@ import { CreateTutorResponseDto } from './dto/create-tutor-response.dto';
 import { UpdateTutorResponseDto } from './dto/update-tutor-response.dto';
 import { TutorResponse } from './entities/tutor-response.entity';
 import { TutorResponseRepository } from './tutor-responses.repository';
-
+import { TutorResponseTimeFrameRepository } from './tutor-response-time-frames/tutor-response-time-frames.repository';
+import { TutorResponseTimeFrame } from './entities/tutor-response-time-frame.entity';
 @Injectable()
 export class TutorResponsesService {
   constructor(
@@ -21,7 +22,9 @@ export class TutorResponsesService {
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
     @InjectRepository(TutorResponseRepository)
-    private tutorResponseRepository: TutorResponseRepository
+    private tutorResponseRepository: TutorResponseRepository,
+    @InjectRepository(TutorResponseTimeFrameRepository)
+    private tutorResponseTimeFrameRepository: TutorResponseTimeFrameRepository
   ) {}
 
   async createTutorResponse(
@@ -54,10 +57,16 @@ export class TutorResponsesService {
       throw new BadRequestException('You cannot respond to Your own lessons!');
     }
 
+    const tutorResponseTimeFrames =
+      await this.tutorResponseTimeFrameRepository.createTutorResponseTimeFrames(
+        createTutorResponseDto.tutorTimeFrames
+      );
+
     return this.tutorResponseRepository.createTutorResponse(
       createTutorResponseDto,
       tutor,
-      lesson
+      lesson,
+      tutorResponseTimeFrames
     );
   }
 
@@ -87,9 +96,24 @@ export class TutorResponsesService {
       throw new NotFoundException('Specified response does not exist.');
     }
 
+    const { tutorTimeFrames } = updateTutorResponseDto;
+
+    let tutorResponseTimeFramesArr: TutorResponseTimeFrame[] = [];
+    if (tutorTimeFrames) {
+      await this.tutorResponseTimeFrameRepository.deleteTutorResponseTimeFrames(
+        response.tutorResponseTimeFrames
+      );
+
+      tutorResponseTimeFramesArr =
+        await this.tutorResponseTimeFrameRepository.createTutorResponseTimeFrames(
+          tutorTimeFrames
+        );
+    }
+
     return this.tutorResponseRepository.updateTutorResponse(
       response,
-      updateTutorResponseDto
+      updateTutorResponseDto,
+      tutorResponseTimeFramesArr
     );
   }
 
