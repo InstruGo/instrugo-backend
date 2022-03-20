@@ -1,5 +1,15 @@
-import { IsDecimal, IsPositive, IsNotEmpty, IsInt } from 'class-validator';
+import {
+  IsDecimal,
+  IsPositive,
+  IsNotEmpty,
+  IsInt,
+  IsArray,
+  ArrayNotEmpty,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
+import { CreateTutorResponseTimeFrameDto } from './create-tutor-response-time-frame.dto';
 export class CreateTutorResponseDto {
   @IsNotEmpty()
   @IsDecimal()
@@ -15,4 +25,10 @@ export class CreateTutorResponseDto {
   @IsInt()
   @IsPositive()
   tutorId: number;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CreateTutorResponseTimeFrameDto)
+  tutorTimeFrames: CreateTutorResponseTimeFrameDto[];
 }
