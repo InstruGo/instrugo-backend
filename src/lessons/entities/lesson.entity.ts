@@ -4,7 +4,7 @@ import {
   Column,
   Entity,
   ManyToOne,
-  JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { EducationLevel } from './lesson.level.enum';
@@ -12,6 +12,7 @@ import { MeetingType } from './lesson.meeting-type.enum';
 import { LessonStatus } from './lesson.status.enum';
 import { User } from '../../auth/entities/user.entity';
 import { Subject } from './subject.entity';
+import { LessonTimeFrame } from './lesson-time-frame.entity';
 
 @Entity()
 export class Lesson extends BaseEntity {
@@ -42,10 +43,10 @@ export class Lesson extends BaseEntity {
   @Column()
   status: LessonStatus;
 
-  @Column('date')
+  @Column('timestamptz')
   createdOn: Date;
 
-  @Column('date')
+  @Column('timestamptz')
   lastModifiedOn: Date;
 
   @ManyToOne(() => User, { eager: true })
@@ -53,4 +54,7 @@ export class Lesson extends BaseEntity {
 
   @ManyToOne(() => Subject, { eager: true })
   subject: Subject;
+
+  @OneToMany(() => LessonTimeFrame, (ltf) => ltf.lesson, { eager: true })
+  lessonTimeFrames: LessonTimeFrame[];
 }

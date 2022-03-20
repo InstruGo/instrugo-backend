@@ -1,7 +1,18 @@
-import { IsNotEmpty, IsString, IsInt, IsIn, IsPositive } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsString,
+  IsInt,
+  IsIn,
+  IsPositive,
+  IsArray,
+  ArrayNotEmpty,
+  ValidateNested,
+} from 'class-validator';
 
 import { EducationLevel } from '../../entities/lesson.level.enum';
 import { MeetingType } from '../../entities/lesson.meeting-type.enum';
+import { CreateLessonTimeFrameDto } from '../lesson-time-frames/create-lesson-time-frame.dto';
 
 export class CreateLessonDto {
   @IsNotEmpty()
@@ -42,4 +53,10 @@ export class CreateLessonDto {
   @IsInt()
   @IsPositive()
   subjectId: number;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CreateLessonTimeFrameDto)
+  lessonTimeFrames: CreateLessonTimeFrameDto[];
 }

@@ -7,6 +7,7 @@ import { Subject } from './entities/subject.entity';
 import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
+import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
 
 @EntityRepository(Lesson)
 export class LessonRepository extends Repository<Lesson> {
@@ -43,6 +44,9 @@ export class LessonRepository extends Repository<Lesson> {
       query.andWhere('lesson.budget < :maxPrice', { maxPrice });
     }
 
+    query.leftJoinAndSelect('lesson.subject', 'subject');
+    query.leftJoinAndSelect('lesson.owner', 'user');
+    query.leftJoinAndSelect('lesson.lessonTimeFrames', 'lessonTimeFrame');
     const lessons = await query.getMany();
     return lessons;
   }
@@ -50,7 +54,8 @@ export class LessonRepository extends Repository<Lesson> {
   async createLesson(
     createLessonDto: CreateLessonDto,
     owner: User,
-    subject: Subject
+    subject: Subject,
+    lessonTimeFrames: LessonTimeFrame[]
   ): Promise<Lesson> {
     const { subfield, level, grade, description, type, location, budget } =
       createLessonDto;
@@ -69,15 +74,18 @@ export class LessonRepository extends Repository<Lesson> {
 
     lesson.owner = owner;
     lesson.subject = subject;
+    lesson.lessonTimeFrames = lessonTimeFrames;
 
     await lesson.save();
+
     return lesson;
   }
 
   async updateLesson(
     lesson: Lesson,
     updateLessonDto: UpdateLessonDto,
-    subject: Subject
+    subject: Subject,
+    lessonTimeFrames: LessonTimeFrame[]
   ): Promise<Lesson> {
     const { subfield, level, grade, description, type, location, budget } =
       updateLessonDto;
@@ -89,7 +97,9 @@ export class LessonRepository extends Repository<Lesson> {
     if (type) lesson.type = type;
     if (location) lesson.location = location;
     if (budget) lesson.budget = budget;
+
     if (subject) lesson.subject = subject;
+    if (lessonTimeFrames) lesson.lessonTimeFrames = lessonTimeFrames;
 
     lesson.lastModifiedOn = new Date(new Date().toISOString());
 

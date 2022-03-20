@@ -8,6 +8,9 @@ import { UserRepository } from '../auth/user.repository';
 import { SubjectsService } from './subjects/subjects.service';
 import { SubjectsController } from './subjects/subjects.controller';
 import { SubjectRepository } from './subjects/subject.repository';
+import { LessonTimeFramesService } from './lesson-time-frames/lesson-time-frames.service';
+import { LessonTimeFrameRepository } from './lesson-time-frames/lesson-time-frames.repository';
+import { LessonTimeFramesController } from './lesson-time-frames/lesson-time-frames.controller';
 
 @Module({
   imports: [
@@ -15,9 +18,14 @@ import { SubjectRepository } from './subjects/subject.repository';
       LessonRepository,
       UserRepository,
       SubjectRepository,
+      LessonTimeFrameRepository,
     ]),
   ],
-  controllers: [LessonsController, SubjectsController],
-  providers: [LessonsService, SubjectsService],
+  controllers: [
+    LessonsController,
+    SubjectsController,
+    LessonTimeFramesController,
+  ],
+  providers: [LessonsService, SubjectsService, LessonTimeFramesService],
 })
 export class LessonsModule {}

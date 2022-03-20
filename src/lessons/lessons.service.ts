@@ -8,6 +8,8 @@ import { SubjectRepository } from './subjects/subject.repository';
 import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
+import { LessonTimeFrameRepository } from './lesson-time-frames/lesson-time-frames.repository';
+import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
 
 @Injectable()
 export class LessonsService {
@@ -17,7 +19,9 @@ export class LessonsService {
     @InjectRepository(UserRepository)
     private userRepository: UserRepository,
     @InjectRepository(SubjectRepository)
-    private subjectRepository: SubjectRepository
+    private subjectRepository: SubjectRepository,
+    @InjectRepository(LessonTimeFrameRepository)
+    private lessonTimeFrameRepository: LessonTimeFrameRepository
   ) {}
 
   getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
@@ -45,7 +49,17 @@ export class LessonsService {
       throw new NotFoundException('Subject does not exist');
     }
 
-    return this.lessonRepository.createLesson(createLessonDto, owner, subject);
+    const lessonTimeFrames =
+      await this.lessonTimeFrameRepository.createLessonTimeFrames(
+        createLessonDto.lessonTimeFrames
+      );
+
+    return this.lessonRepository.createLesson(
+      createLessonDto,
+      owner,
+      subject,
+      lessonTimeFrames
+    );
   }
 
   async updateLesson(
@@ -58,11 +72,30 @@ export class LessonsService {
       throw new NotFoundException('Specified lesson does not exist.');
     }
 
-    const subject = await this.subjectRepository.findOne(
-      updateLessonDto.subjectId
-    );
+    const { subjectId, lessonTimeFrames } = updateLessonDto;
 
-    return this.lessonRepository.updateLesson(lesson, updateLessonDto, subject);
+    const subject = subjectId
+      ? await this.subjectRepository.findOne(subjectId)
+      : undefined;
+
+    let lessonTimeFramesArr: LessonTimeFrame[] = [];
+    if (lessonTimeFrames) {
+      await this.lessonTimeFrameRepository.deleteLessonTimeFrames(
+        lesson.lessonTimeFrames
+      );
+
+      lessonTimeFramesArr =
+        await this.lessonTimeFrameRepository.createLessonTimeFrames(
+          lessonTimeFrames
+        );
+    }
+
+    return this.lessonRepository.updateLesson(
+      lesson,
+      updateLessonDto,
+      subject,
+      lessonTimeFramesArr
+    );
   }
 
   async deleteLesson(id: number): Promise<void> {
