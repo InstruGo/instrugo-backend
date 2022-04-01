@@ -61,4 +61,17 @@ export class LessonsController {
   deleteLesson(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.lessonsService.deleteLesson(id);
   }
+
+  @Post('resolve/:id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiResponse({ status: 200, type: Lesson })
+  resolveLessonRequest(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() chosenTutorResponseTimeFrameId: number
+  ): Promise<Lesson> {
+    return this.lessonsService.resolveLessonRequest(
+      id,
+      chosenTutorResponseTimeFrameId
+    );
+  }
 }

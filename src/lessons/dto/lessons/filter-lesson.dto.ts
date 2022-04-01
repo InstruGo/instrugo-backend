@@ -45,4 +45,9 @@ export class FilterLessonDto {
   @IsNotEmpty()
   @IsInt()
   subjectId?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsInt()
+  ownerId?: number;
 }

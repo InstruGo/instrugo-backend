@@ -8,12 +8,21 @@ import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
+import { TutorResponseTimeFrame } from '../tutor-responses/entities/tutor-response-time-frame.entity';
 
 @EntityRepository(Lesson)
 export class LessonRepository extends Repository<Lesson> {
   async getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
-    const { level, grade, type, minPrice, maxPrice, status, subjectId } =
-      filterLessonDto;
+    const {
+      level,
+      grade,
+      type,
+      minPrice,
+      maxPrice,
+      status,
+      subjectId,
+      ownerId,
+    } = filterLessonDto;
     const query = this.createQueryBuilder('lesson');
 
     if (level) {
@@ -30,6 +39,10 @@ export class LessonRepository extends Repository<Lesson> {
 
     if (subjectId) {
       query.andWhere('lesson.subjectId = :subjectId', { subjectId });
+    }
+
+    if (ownerId) {
+      query.andWhere('lesson.ownerId = :ownerId', { ownerId });
     }
 
     if (status) {
@@ -102,6 +115,16 @@ export class LessonRepository extends Repository<Lesson> {
     if (lessonTimeFrames) lesson.lessonTimeFrames = lessonTimeFrames;
 
     lesson.lastModifiedOn = new Date(new Date().toISOString());
+
+    await lesson.save();
+    return lesson;
+  }
+
+  async resolveLessonRequest(
+    lesson: Lesson,
+    chosenTutorResponseTimeFrame: TutorResponseTimeFrame
+  ): Promise<Lesson> {
+    lesson.status = LessonStatus.LESSON;
 
     await lesson.save();
     return lesson;

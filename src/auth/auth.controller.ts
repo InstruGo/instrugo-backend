@@ -7,6 +7,8 @@ import {
   UseGuards,
   Request,
   Get,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -47,6 +49,7 @@ export class AuthController {
 
   @Get('/profile')
   @ApiResponse({ status: 200 })
+  @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(JwtAuthGuard, RolesGuard)
   getProfile(@Request() req): Promise<Partial<User>> {
     return this.authService.getProfile(req.user.id);

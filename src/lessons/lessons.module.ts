@@ -11,6 +11,7 @@ import { SubjectRepository } from './subjects/subject.repository';
 import { LessonTimeFramesService } from './lesson-time-frames/lesson-time-frames.service';
 import { LessonTimeFrameRepository } from './lesson-time-frames/lesson-time-frames.repository';
 import { LessonTimeFramesController } from './lesson-time-frames/lesson-time-frames.controller';
+import { TutorResponseTimeFrameRepository } from '../tutor-responses/tutor-response-time-frames/tutor-response-time-frames.repository';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { LessonTimeFramesController } from './lesson-time-frames/lesson-time-fra
       UserRepository,
       SubjectRepository,
       LessonTimeFrameRepository,
+      TutorResponseTimeFrameRepository,
     ]),
   ],
   controllers: [

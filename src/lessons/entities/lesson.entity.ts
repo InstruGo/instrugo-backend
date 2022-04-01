@@ -13,6 +13,7 @@ import { LessonStatus } from './lesson.status.enum';
 import { User } from '../../auth/entities/user.entity';
 import { Subject } from './subject.entity';
 import { LessonTimeFrame } from './lesson-time-frame.entity';
+import { TutorResponse } from '../../tutor-responses/entities/tutor-response.entity';
 
 @Entity()
 export class Lesson extends BaseEntity {
@@ -57,4 +58,7 @@ export class Lesson extends BaseEntity {
 
   @OneToMany(() => LessonTimeFrame, (ltf) => ltf.lesson, { eager: true })
   lessonTimeFrames: LessonTimeFrame[];
+
+  @OneToMany(() => TutorResponse, (tr) => tr.lesson, { eager: true })
+  tutorResponses: TutorResponse[];
 }

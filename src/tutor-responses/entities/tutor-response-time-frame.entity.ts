@@ -25,4 +25,8 @@ export class TutorResponseTimeFrame extends BaseEntity {
     { onDelete: 'CASCADE' }
   )
   tutorResponse: TutorResponse;
+
+  compare(other: TutorResponseTimeFrame) {
+    return this.id === other.id;
+  }
 }

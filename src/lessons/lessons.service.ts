@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { LessonRepository } from './lesson.repository';
@@ -10,6 +14,9 @@ import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 import { LessonTimeFrameRepository } from './lesson-time-frames/lesson-time-frames.repository';
 import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
+import { CreateLessonTimeFrameDto } from './dto/lesson-time-frames/create-lesson-time-frame.dto';
+import { LessonStatus } from './entities/lesson.status.enum';
+import { TutorResponseTimeFrameRepository } from '../tutor-responses/tutor-response-time-frames/tutor-response-time-frames.repository';
 
 @Injectable()
 export class LessonsService {
@@ -21,7 +28,9 @@ export class LessonsService {
     @InjectRepository(SubjectRepository)
     private subjectRepository: SubjectRepository,
     @InjectRepository(LessonTimeFrameRepository)
-    private lessonTimeFrameRepository: LessonTimeFrameRepository
+    private lessonTimeFrameRepository: LessonTimeFrameRepository,
+    @InjectRepository(TutorResponseTimeFrameRepository)
+    private tutorResponseTimeFrameRepository: TutorResponseTimeFrameRepository
   ) {}
 
   getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
@@ -104,5 +113,32 @@ export class LessonsService {
     if (!result.affected) {
       throw new NotFoundException(`Lesson with ID ${id} not found.`);
     }
+  }
+
+  async resolveLessonRequest(
+    id: number,
+    chosenTutorResponseTimeFrameId: number
+  ): Promise<Lesson> {
+    const lesson = await this.lessonRepository.findOne(id);
+
+    if (!lesson) {
+      throw new NotFoundException('Specified lesson does not exist.');
+    }
+
+    if (lesson.status !== LessonStatus.REQUEST) {
+      throw new BadRequestException(
+        'This lesson object has already been resolved.'
+      );
+    }
+
+    const chosenTutorResponseTimeFrame =
+      await this.tutorResponseTimeFrameRepository.findOne(
+        chosenTutorResponseTimeFrameId
+      );
+
+    return this.lessonRepository.resolveLessonRequest(
+      lesson,
+      chosenTutorResponseTimeFrame
+    );
   }
 }

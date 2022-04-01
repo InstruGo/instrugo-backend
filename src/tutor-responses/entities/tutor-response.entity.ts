@@ -19,7 +19,7 @@ export class TutorResponse extends BaseEntity {
   @Column('double precision')
   price: number;
 
-  @ManyToOne(() => Lesson, { eager: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Lesson, { onDelete: 'CASCADE' })
   lesson: Lesson;
 
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
