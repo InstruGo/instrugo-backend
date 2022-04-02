@@ -37,27 +37,25 @@ export class RatingRepository extends Repository<Rating> {
     const { rating } = createRatingDto;
 
     const new_rating = new Rating();
-    new_rating.rating = rating;
+    new_rating.studentRating = rating;
 
     new_rating.student = student;
     new_rating.tutor = tutor;
 
     await new_rating.save();
 
-    const tutorInfo = tutor.tutor;
+    const currentAverage = tutor.averageRating;
+    const ratingsCount = tutor.ratingsCount;
 
-    const currentAverage = tutorInfo.averageRating;
-    const ratingsCount = tutorInfo.ratingsCount;
-
-    tutorInfo.averageRating = this.addToAverage(
+    tutor.averageRating = this.addToAverage(
       currentAverage,
       rating,
       ratingsCount
     );
 
-    tutorInfo.ratingsCount = tutorInfo.ratingsCount + 1;
+    tutor.ratingsCount = tutor.ratingsCount + 1;
 
-    await tutorInfo.save();
+    await tutor.save();
 
     return new_rating;
   }
@@ -66,14 +64,14 @@ export class RatingRepository extends Repository<Rating> {
     rating: Rating,
     updateRatingDto: UpdateRatingDto
   ): Promise<Rating> {
-    const oldValue = rating.rating;
-    const tutor = rating.tutor.tutor;
+    const oldValue = rating.studentRating;
+    const tutor = rating.tutor;
 
     const currentAverage = tutor.averageRating;
     const currentCount = tutor.ratingsCount;
 
     if (updateRatingDto.rating) {
-      rating.rating = updateRatingDto.rating;
+      rating.studentRating = updateRatingDto.rating;
 
       tutor.averageRating = this.updateAverage(
         currentAverage,
@@ -91,9 +89,9 @@ export class RatingRepository extends Repository<Rating> {
 
   async deleteRating(id: number): Promise<void> {
     const rating = await this.findOne(id);
-    const value = rating.rating;
+    const value = rating.studentRating;
 
-    const tutor = rating.tutor.tutor;
+    const tutor = rating.tutor;
     const currentAverage = tutor.averageRating;
     const currentCount = tutor.ratingsCount;
 

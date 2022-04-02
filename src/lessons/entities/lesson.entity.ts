@@ -45,13 +45,22 @@ export class Lesson extends BaseEntity {
   status: LessonStatus;
 
   @Column('timestamptz')
+  startTime: Date;
+
+  @Column('timestamptz')
+  endTime: Date;
+
+  @Column('timestamptz')
   createdOn: Date;
 
   @Column('timestamptz')
-  lastModifiedOn: Date;
+  modifiedOn: Date;
 
   @ManyToOne(() => User, { eager: true })
   owner: User;
+
+  @ManyToOne(() => User, { eager: true })
+  tutor: User;
 
   @ManyToOne(() => Subject, { eager: true })
   subject: Subject;

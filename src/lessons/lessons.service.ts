@@ -14,7 +14,6 @@ import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 import { LessonTimeFrameRepository } from './lesson-time-frames/lesson-time-frames.repository';
 import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
-import { CreateLessonTimeFrameDto } from './dto/lesson-time-frames/create-lesson-time-frame.dto';
 import { LessonStatus } from './entities/lesson.status.enum';
 import { TutorResponseTimeFrameRepository } from '../tutor-responses/tutor-response-time-frames/tutor-response-time-frames.repository';
 
@@ -125,7 +124,7 @@ export class LessonsService {
       throw new NotFoundException('Specified lesson does not exist.');
     }
 
-    if (lesson.status !== LessonStatus.REQUEST) {
+    if (lesson.status !== LessonStatus.REQUESTED) {
       throw new BadRequestException(
         'This lesson object has already been resolved.'
       );

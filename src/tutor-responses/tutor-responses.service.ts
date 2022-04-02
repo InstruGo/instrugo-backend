@@ -14,6 +14,8 @@ import { TutorResponse } from './entities/tutor-response.entity';
 import { TutorResponseRepository } from './tutor-responses.repository';
 import { TutorResponseTimeFrameRepository } from './tutor-response-time-frames/tutor-response-time-frames.repository';
 import { TutorResponseTimeFrame } from './entities/tutor-response-time-frame.entity';
+import { UserRole } from 'src/auth/entities/user.role.enum';
+
 @Injectable()
 export class TutorResponsesService {
   constructor(
@@ -37,7 +39,7 @@ export class TutorResponsesService {
       throw new NotFoundException('This tutor does not exist.');
     }
 
-    if (!tutor.tutor) {
+    if (tutor.role !== UserRole.TUTOR) {
       throw new BadRequestException('Only tutors can make responses.');
     }
 
@@ -63,7 +65,6 @@ export class TutorResponsesService {
       );
 
     return this.tutorResponseRepository.createTutorResponse(
-      createTutorResponseDto,
       tutor,
       lesson,
       tutorResponseTimeFrames
@@ -112,7 +113,6 @@ export class TutorResponsesService {
 
     return this.tutorResponseRepository.updateTutorResponse(
       response,
-      updateTutorResponseDto,
       tutorResponseTimeFramesArr
     );
   }

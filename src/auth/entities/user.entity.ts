@@ -2,15 +2,15 @@ import {
   BaseEntity,
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 
 import { UserRole } from './user.role.enum';
-import { Tutor } from './tutor.entity';
+import { Subject } from '../../lessons/entities/subject.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -43,12 +43,21 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   avatarUrl: string;
 
-  @Column('date')
+  @Column('numeric')
+  averageRating: number;
+
+  @Column()
+  ratingsCount: number;
+
+  @Column('timestamptz')
   createdOn: Date;
 
-  @OneToOne(() => Tutor, { eager: true })
-  @JoinColumn()
-  tutor: Tutor;
+  @Column('timestamptz')
+  modifiedOn: Date;
+
+  @ManyToMany(() => Subject, { eager: true })
+  @JoinTable()
+  subjects: Subject[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);

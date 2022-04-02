@@ -7,4 +7,7 @@ export class Subject extends BaseEntity {
 
   @Column({ unique: true })
   name: string;
+
+  @Column({ unique: true })
+  color: string;
 }

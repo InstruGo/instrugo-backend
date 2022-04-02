@@ -1,7 +1,6 @@
 import {
   BaseEntity,
   PrimaryGeneratedColumn,
-  Column,
   Entity,
   ManyToOne,
   OneToMany,
@@ -15,9 +14,6 @@ import { TutorResponseTimeFrame } from './tutor-response-time-frame.entity';
 export class TutorResponse extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column('double precision')
-  price: number;
 
   @ManyToOne(() => Lesson, { onDelete: 'CASCADE' })
   lesson: Lesson;

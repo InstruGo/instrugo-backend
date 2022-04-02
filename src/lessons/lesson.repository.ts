@@ -82,8 +82,8 @@ export class LessonRepository extends Repository<Lesson> {
     lesson.location = location;
     lesson.budget = budget;
     lesson.createdOn = new Date(new Date().toISOString());
-    lesson.lastModifiedOn = lesson.createdOn;
-    lesson.status = LessonStatus.REQUEST;
+    lesson.modifiedOn = lesson.createdOn;
+    lesson.status = LessonStatus.REQUESTED;
 
     lesson.owner = owner;
     lesson.subject = subject;
@@ -114,7 +114,7 @@ export class LessonRepository extends Repository<Lesson> {
     if (subject) lesson.subject = subject;
     if (lessonTimeFrames) lesson.lessonTimeFrames = lessonTimeFrames;
 
-    lesson.lastModifiedOn = new Date(new Date().toISOString());
+    lesson.modifiedOn = new Date(new Date().toISOString());
 
     await lesson.save();
     return lesson;
@@ -124,7 +124,7 @@ export class LessonRepository extends Repository<Lesson> {
     lesson: Lesson,
     chosenTutorResponseTimeFrame: TutorResponseTimeFrame
   ): Promise<Lesson> {
-    lesson.status = LessonStatus.LESSON;
+    lesson.status = LessonStatus.PENDING;
 
     await lesson.save();
     return lesson;

@@ -1,22 +1,15 @@
 import {
-  IsDecimal,
   IsPositive,
   IsNotEmpty,
   IsInt,
   IsArray,
   ArrayNotEmpty,
   ValidateNested,
-  IsNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
 import { CreateTutorResponseTimeFrameDto } from './create-tutor-response-time-frame.dto';
 export class CreateTutorResponseDto {
-  @IsNotEmpty()
-  @IsNumber()
-  @IsPositive()
-  price: number;
-
   @IsNotEmpty()
   @IsInt()
   @IsPositive()

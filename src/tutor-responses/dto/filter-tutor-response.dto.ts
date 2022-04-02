@@ -1,18 +1,6 @@
-import {
-  IsOptional,
-  IsPositive,
-  IsDecimal,
-  IsNotEmpty,
-  IsInt,
-} from 'class-validator';
+import { IsOptional, IsPositive, IsNotEmpty, IsInt } from 'class-validator';
 
 export class FilterTutorResponseDto {
-  @IsNotEmpty()
-  @IsDecimal()
-  @IsPositive()
-  @IsOptional()
-  price: number;
-
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
