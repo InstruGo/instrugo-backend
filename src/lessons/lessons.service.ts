@@ -16,6 +16,7 @@ import { LessonTimeFrameRepository } from './lesson-time-frames/lesson-time-fram
 import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
 import { LessonStatus } from './entities/lesson.status.enum';
 import { TutorResponseTimeFrameRepository } from '../tutor-responses/tutor-response-time-frames/tutor-response-time-frames.repository';
+import { User } from '../auth/entities/user.entity';
 
 @Injectable()
 export class LessonsService {
@@ -45,23 +46,17 @@ export class LessonsService {
     return lesson;
   }
 
-  async createLesson(createLessonDto: CreateLessonDto): Promise<Lesson> {
-    const {
-      studentId,
-      subjectId,
-      lessonTimeFrames: lessonTimeFrameDtos,
-    } = createLessonDto;
-
-    const student = await this.userRepository.findOne(studentId);
-
-    if (!student) {
-      throw new NotFoundException('Student does not exist');
-    }
+  async createLesson(
+    user: User,
+    createLessonDto: CreateLessonDto
+  ): Promise<Lesson> {
+    const { subjectId, lessonTimeFrames: lessonTimeFrameDtos } =
+      createLessonDto;
 
     const subject = await this.subjectRepository.findOne(subjectId);
 
     if (!subject) {
-      throw new NotFoundException('Subject does not exist');
+      throw new NotFoundException('Subject does not exist.');
     }
 
     const lessonTimeFrames =
@@ -71,7 +66,7 @@ export class LessonsService {
 
     return this.lessonRepository.createLesson(
       createLessonDto,
-      student,
+      user,
       subject,
       lessonTimeFrames
     );

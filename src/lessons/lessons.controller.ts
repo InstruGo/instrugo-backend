@@ -18,6 +18,8 @@ import { Lesson } from './entities/lesson.entity';
 import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
+import { User } from 'src/auth/user.decorator';
+import { User as UserEntity } from 'src/auth/entities/user.entity';
 
 @ApiTags('lessons')
 @Controller('lessons')
@@ -41,8 +43,11 @@ export class LessonsController {
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: Lesson })
-  createLesson(@Body() createLessonDto: CreateLessonDto): Promise<Lesson> {
-    return this.lessonsService.createLesson(createLessonDto);
+  createLesson(
+    @User() user: UserEntity,
+    @Body() createLessonDto: CreateLessonDto
+  ): Promise<Lesson> {
+    return this.lessonsService.createLesson(user, createLessonDto);
   }
 
   @Patch(':id')
