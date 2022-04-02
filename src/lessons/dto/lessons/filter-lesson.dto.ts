@@ -49,5 +49,5 @@ export class FilterLessonDto {
   @IsOptional()
   @IsNotEmpty()
   @IsInt()
-  ownerId?: number;
+  studentId?: number;
 }

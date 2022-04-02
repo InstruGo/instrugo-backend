@@ -53,7 +53,7 @@ export class RatingsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() rateLessonDto: RateLessonDto
   ): Promise<Rating> {
-    return this.ratingsService.updateRating(id, rateLessonDto);
+    return this.ratingsService.rateLesson(id, rateLessonDto);
   }
 
   @Patch('feedback/:id')
@@ -63,7 +63,7 @@ export class RatingsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() leaveFeedbackDto: LeaveFeedbackDto
   ): Promise<Rating> {
-    return this.ratingsService.updateRating(id, leaveFeedbackDto);
+    return this.ratingsService.leaveFeedback(id, leaveFeedbackDto);
   }
 
   @Delete(':id')

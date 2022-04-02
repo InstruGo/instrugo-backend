@@ -4,7 +4,6 @@ import { NotFoundException } from '@nestjs/common';
 import { FilterRatingDto } from './dto/filter-rating.dto';
 import { Rating } from './entities/rating.entity';
 import { User } from '../auth/entities/user.entity';
-import { addToAverage, updateAverage, removeFromAverage } from './ratings.util';
 import { Lesson } from '../lessons/entities/lesson.entity';
 import { RateLessonDto } from './dto/rate-lesson.dto';
 import { LeaveFeedbackDto } from './dto/leave-feedback.dto';
@@ -60,31 +59,17 @@ export class RatingRepository extends Repository<Rating> {
     const oldValue = rating.studentRating;
     const tutor = rating.tutor;
 
-    const currentAverage = tutor.averageRating;
-    const currentCount = tutor.ratingsCount;
-
-    rating.studentRating = studentRating;
-
     if (!oldValue) {
-      tutor.averageRating = addToAverage(
-        currentAverage,
-        studentRating,
-        currentCount
-      );
-
-      tutor.ratingsCount = tutor.ratingsCount + 1;
+      tutor.addRatingAndUpdateRatingsCount(studentRating);
     } else {
-      tutor.averageRating = updateAverage(
-        currentAverage,
-        oldValue,
-        studentRating,
-        currentCount
-      );
+      tutor.updateRating(oldValue, studentRating);
     }
 
     await tutor.save();
 
+    rating.studentRating = studentRating;
     await rating.save();
+
     return rating;
   }
 
@@ -98,28 +83,17 @@ export class RatingRepository extends Repository<Rating> {
     return rating;
   }
 
-  async deleteRating(id: number): Promise<void> {
-    const rating = await this.findOne(id);
-    const value = rating.studentRating;
-
+  async deleteRating(rating: Rating): Promise<void> {
+    const studentRating = rating.studentRating;
     const tutor = rating.tutor;
-    const currentAverage = tutor.averageRating;
-    const currentCount = tutor.ratingsCount;
 
-    tutor.averageRating = removeFromAverage(
-      currentAverage,
-      value,
-      currentCount
-    );
-
-    tutor.ratingsCount = currentCount - 1;
-
-    const result = await this.delete(id);
+    const result = await this.delete(rating.id);
 
     if (!result.affected) {
-      throw new NotFoundException(`Rating with ID ${id} not found.`);
+      throw new NotFoundException(`Rating with ID ${rating.id} not found.`);
     }
 
+    tutor.deleteRatingAndUpdateRatingsCount(studentRating);
     await tutor.save();
   }
 }

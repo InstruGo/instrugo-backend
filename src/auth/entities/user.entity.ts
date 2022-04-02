@@ -65,4 +65,32 @@ export class User extends BaseEntity {
     const hash = await bcrypt.hash(password, this.salt);
     return hash === this.password;
   }
+
+  addRatingAndUpdateRatingsCount(value: number) {
+    const { averageRating, ratingsCount } = this;
+
+    this.averageRating =
+      (ratingsCount * averageRating + value) / (ratingsCount + 1);
+    this.ratingsCount = ratingsCount + 1;
+  }
+
+  updateRating(valueToUpdate: number, newValue: number) {
+    const { averageRating, ratingsCount } = this;
+
+    this.averageRating =
+      (ratingsCount * averageRating - valueToUpdate + newValue) / ratingsCount;
+  }
+
+  deleteRatingAndUpdateRatingsCount(value: number) {
+    const { averageRating, ratingsCount } = this;
+
+    if (ratingsCount === 1) {
+      this.averageRating = 0;
+    } else {
+      this.averageRating =
+        (ratingsCount * averageRating - value) / (ratingsCount - 1);
+    }
+
+    this.ratingsCount = ratingsCount - 1;
+  }
 }

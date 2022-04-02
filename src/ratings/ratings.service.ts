@@ -92,6 +92,12 @@ export class RatingsService {
   }
 
   async deleteRating(id: number): Promise<void> {
-    return this.ratingRepository.deleteRating(id);
+    const rating = await this.ratingRepository.findOne(id);
+
+    if (!rating) {
+      throw new NotFoundException(`Rating with ID ${id} not found.`);
+    }
+
+    return this.ratingRepository.deleteRating(rating);
   }
 }

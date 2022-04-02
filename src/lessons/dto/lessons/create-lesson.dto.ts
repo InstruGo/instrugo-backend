@@ -47,7 +47,7 @@ export class CreateLessonDto {
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
-  userId: number;
+  studentId: number;
 
   @IsNotEmpty()
   @IsInt()

@@ -21,7 +21,7 @@ export class LessonRepository extends Repository<Lesson> {
       maxPrice,
       status,
       subjectId,
-      ownerId,
+      studentId,
     } = filterLessonDto;
     const query = this.createQueryBuilder('lesson');
 
@@ -41,8 +41,8 @@ export class LessonRepository extends Repository<Lesson> {
       query.andWhere('lesson.subjectId = :subjectId', { subjectId });
     }
 
-    if (ownerId) {
-      query.andWhere('lesson.ownerId = :ownerId', { ownerId });
+    if (studentId) {
+      query.andWhere('lesson.studentId = :studentId', { studentId });
     }
 
     if (status) {
@@ -58,7 +58,7 @@ export class LessonRepository extends Repository<Lesson> {
     }
 
     query.leftJoinAndSelect('lesson.subject', 'subject');
-    query.leftJoinAndSelect('lesson.owner', 'user');
+    query.leftJoinAndSelect('lesson.student', 'user');
     query.leftJoinAndSelect('lesson.lessonTimeFrames', 'lessonTimeFrame');
     const lessons = await query.getMany();
     return lessons;
@@ -66,7 +66,7 @@ export class LessonRepository extends Repository<Lesson> {
 
   async createLesson(
     createLessonDto: CreateLessonDto,
-    owner: User,
+    student: User,
     subject: Subject,
     lessonTimeFrames: LessonTimeFrame[]
   ): Promise<Lesson> {
@@ -83,12 +83,11 @@ export class LessonRepository extends Repository<Lesson> {
     lesson.budget = budget;
     lesson.status = LessonStatus.REQUESTED;
 
-    lesson.owner = owner;
+    lesson.student = student;
     lesson.subject = subject;
     lesson.lessonTimeFrames = lessonTimeFrames;
 
     await lesson.save();
-
     return lesson;
   }
 

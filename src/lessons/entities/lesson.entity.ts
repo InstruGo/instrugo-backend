@@ -59,7 +59,7 @@ export class Lesson extends BaseEntity {
   modifiedOn: Date;
 
   @ManyToOne(() => User, { eager: true })
-  owner: User;
+  student: User;
 
   @ManyToOne(() => User, { eager: true })
   tutor: User;

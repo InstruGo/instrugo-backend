@@ -46,25 +46,32 @@ export class LessonsService {
   }
 
   async createLesson(createLessonDto: CreateLessonDto): Promise<Lesson> {
-    const owner = await this.userRepository.findOne(createLessonDto.userId);
-    if (!owner) {
-      throw new NotFoundException('Owner of lesson does not exist');
+    const {
+      studentId,
+      subjectId,
+      lessonTimeFrames: lessonTimeFrameDtos,
+    } = createLessonDto;
+
+    const student = await this.userRepository.findOne(studentId);
+
+    if (!student) {
+      throw new NotFoundException('Student does not exist');
     }
-    const subject = await this.subjectRepository.findOne(
-      createLessonDto.subjectId
-    );
+
+    const subject = await this.subjectRepository.findOne(subjectId);
+
     if (!subject) {
       throw new NotFoundException('Subject does not exist');
     }
 
     const lessonTimeFrames =
       await this.lessonTimeFrameRepository.createLessonTimeFrames(
-        createLessonDto.lessonTimeFrames
+        lessonTimeFrameDtos
       );
 
     return this.lessonRepository.createLesson(
       createLessonDto,
-      owner,
+      student,
       subject,
       lessonTimeFrames
     );
