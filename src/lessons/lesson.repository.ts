@@ -81,8 +81,6 @@ export class LessonRepository extends Repository<Lesson> {
     lesson.type = type;
     lesson.location = location;
     lesson.budget = budget;
-    lesson.createdOn = new Date(new Date().toISOString());
-    lesson.modifiedOn = lesson.createdOn;
     lesson.status = LessonStatus.REQUESTED;
 
     lesson.owner = owner;
@@ -113,8 +111,6 @@ export class LessonRepository extends Repository<Lesson> {
 
     if (subject) lesson.subject = subject;
     if (lessonTimeFrames) lesson.lessonTimeFrames = lessonTimeFrames;
-
-    lesson.modifiedOn = new Date(new Date().toISOString());
 
     await lesson.save();
     return lesson;

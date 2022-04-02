@@ -6,6 +6,8 @@ import {
   ManyToOne,
   OneToOne,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { User } from '../../auth/entities/user.entity';
@@ -21,6 +23,12 @@ export class Rating extends BaseEntity {
 
   @Column()
   tutorFeedback: string;
+
+  @CreateDateColumn()
+  createdOn: Date;
+
+  @UpdateDateColumn()
+  modifiedOn: Date;
 
   @OneToOne(() => Lesson, { onDelete: 'CASCADE' })
   @JoinColumn()

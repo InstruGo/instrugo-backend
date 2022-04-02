@@ -1,10 +1,12 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
@@ -49,10 +51,10 @@ export class User extends BaseEntity {
   @Column()
   ratingsCount: number;
 
-  @Column('timestamptz')
+  @CreateDateColumn()
   createdOn: Date;
 
-  @Column('timestamptz')
+  @UpdateDateColumn()
   modifiedOn: Date;
 
   @ManyToMany(() => Subject, { eager: true })

@@ -5,6 +5,8 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { EducationLevel } from './lesson.level.enum';
@@ -50,10 +52,10 @@ export class Lesson extends BaseEntity {
   @Column('timestamptz')
   endTime: Date;
 
-  @Column('timestamptz')
+  @CreateDateColumn()
   createdOn: Date;
 
-  @Column('timestamptz')
+  @UpdateDateColumn()
   modifiedOn: Date;
 
   @ManyToOne(() => User, { eager: true })
