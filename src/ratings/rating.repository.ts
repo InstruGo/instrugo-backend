@@ -1,20 +1,28 @@
 import { Repository, EntityRepository } from 'typeorm';
+import { NotFoundException } from '@nestjs/common';
 
-import { CreateRatingDto } from './dto/create-rating.dto';
 import { FilterRatingDto } from './dto/filter-rating.dto';
 import { Rating } from './entities/rating.entity';
 import { User } from '../auth/entities/user.entity';
-import { UpdateRatingDto } from './dto/update-rating.dto';
-import { NotFoundException } from '@nestjs/common';
+import { addToAverage, updateAverage, removeFromAverage } from './ratings.util';
+import { Lesson } from '../lessons/entities/lesson.entity';
+import { RateLessonDto } from './dto/rate-lesson.dto';
+import { LeaveFeedbackDto } from './dto/leave-feedback.dto';
 
 @EntityRepository(Rating)
 export class RatingRepository extends Repository<Rating> {
   async getRatings(filterRatingDto: FilterRatingDto): Promise<Rating[]> {
-    const { rating, studentId, tutorId } = filterRatingDto;
+    const { studentRating, lessonId, studentId, tutorId } = filterRatingDto;
     const query = this.createQueryBuilder('rating');
 
-    if (rating) {
-      query.andWhere('rating.rating = :rating', { rating });
+    if (studentRating) {
+      query.andWhere('rating.studentRating = :studentRating', {
+        studentRating,
+      });
+    }
+
+    if (lessonId) {
+      query.andWhere('rating.lessonId = :lessonId', { lessonId });
     }
 
     if (studentId) {
@@ -30,60 +38,63 @@ export class RatingRepository extends Repository<Rating> {
   }
 
   async createRating(
-    createRatingDto: CreateRatingDto,
+    lesson: Lesson,
     student: User,
     tutor: User
   ): Promise<Rating> {
-    const { rating } = createRatingDto;
+    const newRating = new Rating();
+    newRating.lesson = lesson;
+    newRating.student = student;
+    newRating.tutor = tutor;
 
-    const new_rating = new Rating();
-    new_rating.studentRating = rating;
-
-    new_rating.student = student;
-    new_rating.tutor = tutor;
-
-    await new_rating.save();
-
-    const currentAverage = tutor.averageRating;
-    const ratingsCount = tutor.ratingsCount;
-
-    tutor.averageRating = this.addToAverage(
-      currentAverage,
-      rating,
-      ratingsCount
-    );
-
-    tutor.ratingsCount = tutor.ratingsCount + 1;
-
-    await tutor.save();
-
-    return new_rating;
+    await newRating.save();
+    return newRating;
   }
 
-  async updateRating(
+  async rateLesson(
     rating: Rating,
-    updateRatingDto: UpdateRatingDto
+    rateLessonDto: RateLessonDto
   ): Promise<Rating> {
+    const { studentRating } = rateLessonDto;
+
     const oldValue = rating.studentRating;
     const tutor = rating.tutor;
 
     const currentAverage = tutor.averageRating;
     const currentCount = tutor.ratingsCount;
 
-    if (updateRatingDto.rating) {
-      rating.studentRating = updateRatingDto.rating;
+    rating.studentRating = studentRating;
 
-      tutor.averageRating = this.updateAverage(
+    if (!oldValue) {
+      tutor.averageRating = addToAverage(
         currentAverage,
-        oldValue,
-        updateRatingDto.rating,
+        studentRating,
         currentCount
       );
 
-      await tutor.save();
+      tutor.ratingsCount = tutor.ratingsCount + 1;
+    } else {
+      tutor.averageRating = updateAverage(
+        currentAverage,
+        oldValue,
+        studentRating,
+        currentCount
+      );
     }
 
+    await tutor.save();
+
     await rating.save();
+    return rating;
+  }
+
+  async leaveFeedback(
+    rating: Rating,
+    leaveFeedbackDto: LeaveFeedbackDto
+  ): Promise<Rating> {
+    rating.tutorFeedback = leaveFeedbackDto.tutorFeedback;
+
+    rating.save();
     return rating;
   }
 
@@ -95,7 +106,7 @@ export class RatingRepository extends Repository<Rating> {
     const currentAverage = tutor.averageRating;
     const currentCount = tutor.ratingsCount;
 
-    tutor.averageRating = this.removeFromAverage(
+    tutor.averageRating = removeFromAverage(
       currentAverage,
       value,
       currentCount
@@ -110,24 +121,5 @@ export class RatingRepository extends Repository<Rating> {
     }
 
     await tutor.save();
-  }
-
-  private addToAverage(avg: number, value: number, count: number) {
-    return (count * avg + value) / (count + 1);
-  }
-
-  private updateAverage(
-    avg: number,
-    oldValue: number,
-    newValue: number,
-    count: number
-  ) {
-    return (count * avg - oldValue + newValue) / count;
-  }
-
-  private removeFromAverage(avg: number, value: number, count: number) {
-    if (count === 1) return 0;
-
-    return (count * avg - value) / (count - 1);
   }
 }

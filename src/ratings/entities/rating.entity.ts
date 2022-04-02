@@ -22,7 +22,7 @@ export class Rating extends BaseEntity {
   @Column()
   tutorFeedback: string;
 
-  @OneToOne(() => Lesson)
+  @OneToOne(() => Lesson, { onDelete: 'CASCADE' })
   @JoinColumn()
   lesson: Lesson;
 

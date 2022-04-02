@@ -5,4 +5,9 @@ export class UpdateSubjectDto {
   @IsNotEmpty()
   @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  color?: string;
 }

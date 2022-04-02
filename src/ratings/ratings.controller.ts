@@ -17,7 +17,8 @@ import { RatingsService } from './ratings.service';
 import { CreateRatingDto } from './dto/create-rating.dto';
 import { FilterRatingDto } from './dto/filter-rating.dto';
 import { Rating } from './entities/rating.entity';
-import { UpdateRatingDto } from './dto/update-rating.dto';
+import { RateLessonDto } from './dto/rate-lesson.dto';
+import { LeaveFeedbackDto } from './dto/leave-feedback.dto';
 
 @ApiTags('ratings')
 @Controller('ratings')
@@ -45,14 +46,24 @@ export class RatingsController {
     return this.ratingsService.createRating(createRatingDto);
   }
 
-  @Patch(':id')
+  @Patch('rate/:id')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Rating })
-  updateRating(
+  rateLesson(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateRatingDto: UpdateRatingDto
+    @Body() rateLessonDto: RateLessonDto
   ): Promise<Rating> {
-    return this.ratingsService.updateRating(id, updateRatingDto);
+    return this.ratingsService.updateRating(id, rateLessonDto);
+  }
+
+  @Patch('feedback/:id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiResponse({ status: 200, type: Rating })
+  leaveFeedback(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() leaveFeedbackDto: LeaveFeedbackDto
+  ): Promise<Rating> {
+    return this.ratingsService.updateRating(id, leaveFeedbackDto);
   }
 
   @Delete(':id')

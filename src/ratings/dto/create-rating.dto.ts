@@ -4,13 +4,15 @@ export class CreateRatingDto {
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
-  rating: number;
+  lessonId: number;
 
   @IsNotEmpty()
   @IsInt()
+  @IsPositive()
   studentId: number;
 
   @IsNotEmpty()
   @IsInt()
+  @IsPositive()
   tutorId: number;
 }

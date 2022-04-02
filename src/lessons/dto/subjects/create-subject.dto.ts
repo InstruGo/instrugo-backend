@@ -4,4 +4,8 @@ export class CreateSubjectDto {
   @IsNotEmpty()
   @IsString()
   name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  color: string;
 }

@@ -5,6 +5,7 @@ import {
   IsEmail,
   IsPhoneNumber,
   IsOptional,
+  IsBoolean,
 } from 'class-validator';
 
 export class RegistrationCredentialsDto {
@@ -33,4 +34,7 @@ export class RegistrationCredentialsDto {
   @MinLength(6)
   @MaxLength(20)
   confirmPassword: string;
+
+  @IsBoolean()
+  isTutor: boolean;
 }

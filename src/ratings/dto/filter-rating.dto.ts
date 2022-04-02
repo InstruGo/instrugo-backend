@@ -5,15 +5,23 @@ export class FilterRatingDto {
   @IsInt()
   @IsPositive()
   @IsOptional()
-  rating?: number;
+  studentRating?: number;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsInt()
+  @IsPositive()
+  lessonId?: number;
+
   @IsOptional()
+  @IsNotEmpty()
+  @IsInt()
+  @IsPositive()
   studentId?: number;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsInt()
-  @IsOptional()
+  @IsPositive()
   tutorId?: number;
 }

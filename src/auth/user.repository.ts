@@ -14,10 +14,9 @@ import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   async register(
-    registrationCredentialsDto: RegistrationCredentialsDto,
-    role?: UserRole
+    registrationCredentialsDto: RegistrationCredentialsDto
   ): Promise<void> {
-    const { email, firstName, lastName, phone, password } =
+    const { email, firstName, lastName, phone, password, isTutor } =
       registrationCredentialsDto;
 
     const user = new User();
@@ -27,7 +26,7 @@ export class UserRepository extends Repository<User> {
     user.phone = phone;
     user.salt = await bcrypt.genSalt();
     user.password = await this.hashPassword(password, user.salt);
-    user.role = role ? role : UserRole.USER;
+    user.role = isTutor ? UserRole.TUTOR : UserRole.STUDENT;
     user.createdOn = new Date(new Date().toISOString());
 
     try {
