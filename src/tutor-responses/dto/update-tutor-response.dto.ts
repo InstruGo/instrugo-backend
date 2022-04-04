@@ -5,13 +5,13 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CreateTutorResponseTimeFrameDto } from './create-tutor-response-time-frame.dto';
+import { CreateLessonTimeFrameDto } from '../../lessons/dto/lesson-time-frames/create-lesson-time-frame.dto';
 
 export class UpdateTutorResponseDto {
   @IsOptional()
   @IsArray()
   @ArrayNotEmpty()
   @ValidateNested({ each: true })
-  @Type(() => CreateTutorResponseTimeFrameDto)
-  tutorTimeFrames?: CreateTutorResponseTimeFrameDto[];
+  @Type(() => CreateLessonTimeFrameDto)
+  tutorTimeFrames?: CreateLessonTimeFrameDto[];
 }

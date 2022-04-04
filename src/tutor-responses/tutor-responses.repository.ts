@@ -4,7 +4,7 @@ import { FilterTutorResponseDto } from './dto/filter-tutor-response.dto';
 import { TutorResponse } from './entities/tutor-response.entity';
 import { User } from '../auth/entities/user.entity';
 import { Lesson } from '../lessons/entities/lesson.entity';
-import { TutorResponseTimeFrame } from './entities/tutor-response-time-frame.entity';
+import { LessonTimeFrame } from '../lessons/entities/lesson-time-frame.entity';
 
 @EntityRepository(TutorResponse)
 export class TutorResponseRepository extends Repository<TutorResponse> {
@@ -29,7 +29,7 @@ export class TutorResponseRepository extends Repository<TutorResponse> {
   async createTutorResponse(
     tutor: User,
     lesson: Lesson,
-    tutorResponseTimeFrames: TutorResponseTimeFrame[]
+    tutorResponseTimeFrames: LessonTimeFrame[]
   ): Promise<TutorResponse> {
     const response = new TutorResponse();
     response.tutor = tutor;
@@ -42,7 +42,7 @@ export class TutorResponseRepository extends Repository<TutorResponse> {
 
   async updateTutorResponse(
     response: TutorResponse,
-    tutorResponseTimeFrames: TutorResponseTimeFrame[]
+    tutorResponseTimeFrames: LessonTimeFrame[]
   ): Promise<TutorResponse> {
     if (tutorResponseTimeFrames)
       response.tutorResponseTimeFrames = tutorResponseTimeFrames;

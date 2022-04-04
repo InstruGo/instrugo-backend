@@ -6,9 +6,7 @@ import { TutorResponsesController } from './tutor-responses.controller';
 import { TutorResponseRepository } from './tutor-responses.repository';
 import { LessonRepository } from '../lessons/lesson.repository';
 import { UserRepository } from '../auth/user.repository';
-import { TutorResponseTimeFrameRepository } from './tutor-response-time-frames/tutor-response-time-frames.repository';
-import { TutorResponseTimeFramesController } from './tutor-response-time-frames/tutor-response-time-frames.controller';
-import { TutorResponseTimeFramesService } from './tutor-response-time-frames/tutor-response-time-frames.service';
+import { LessonTimeFrameRepository } from '../lessons/lesson-time-frames/lesson-time-frames.repository';
 
 @Module({
   imports: [
@@ -16,10 +14,10 @@ import { TutorResponseTimeFramesService } from './tutor-response-time-frames/tut
       LessonRepository,
       UserRepository,
       TutorResponseRepository,
-      TutorResponseTimeFrameRepository,
+      LessonTimeFrameRepository,
     ]),
   ],
-  controllers: [TutorResponsesController, TutorResponseTimeFramesController],
-  providers: [TutorResponsesService, TutorResponseTimeFramesService],
+  controllers: [TutorResponsesController],
+  providers: [TutorResponsesService],
 })
 export class TutorResponsesModule {}

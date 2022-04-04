@@ -8,7 +8,8 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { CreateTutorResponseTimeFrameDto } from './create-tutor-response-time-frame.dto';
+import { CreateLessonTimeFrameDto } from '../../lessons/dto/lesson-time-frames/create-lesson-time-frame.dto';
+
 export class CreateTutorResponseDto {
   @IsNotEmpty()
   @IsInt()
@@ -23,6 +24,6 @@ export class CreateTutorResponseDto {
   @IsArray()
   @ArrayNotEmpty()
   @ValidateNested({ each: true })
-  @Type(() => CreateTutorResponseTimeFrameDto)
-  tutorTimeFrames: CreateTutorResponseTimeFrameDto[];
+  @Type(() => CreateLessonTimeFrameDto)
+  tutorTimeFrames: CreateLessonTimeFrameDto[];
 }

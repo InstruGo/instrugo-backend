@@ -6,7 +6,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { LessonRepository } from './lesson.repository';
-import { UserRepository } from '../auth/user.repository';
 import { Lesson } from './entities/lesson.entity';
 import { SubjectRepository } from './subjects/subject.repository';
 import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
@@ -15,22 +14,20 @@ import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 import { LessonTimeFrameRepository } from './lesson-time-frames/lesson-time-frames.repository';
 import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
 import { LessonStatus } from './entities/lesson.status.enum';
-import { TutorResponseTimeFrameRepository } from '../tutor-responses/tutor-response-time-frames/tutor-response-time-frames.repository';
 import { User } from '../auth/entities/user.entity';
+import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repository';
 
 @Injectable()
 export class LessonsService {
   constructor(
     @InjectRepository(LessonRepository)
     private lessonRepository: LessonRepository,
-    @InjectRepository(UserRepository)
-    private userRepository: UserRepository,
     @InjectRepository(SubjectRepository)
     private subjectRepository: SubjectRepository,
     @InjectRepository(LessonTimeFrameRepository)
     private lessonTimeFrameRepository: LessonTimeFrameRepository,
-    @InjectRepository(TutorResponseTimeFrameRepository)
-    private tutorResponseTimeFrameRepository: TutorResponseTimeFrameRepository
+    @InjectRepository(TutorResponseRepository)
+    private tutorResponseRepository: TutorResponseRepository
   ) {}
 
   getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
@@ -117,10 +114,11 @@ export class LessonsService {
   }
 
   async resolveLessonRequest(
-    id: number,
-    chosenTutorResponseTimeFrameId: number
+    lessonId: number,
+    chosenTutorResponseId: number,
+    chosenTimeFrameId: number
   ): Promise<Lesson> {
-    const lesson = await this.lessonRepository.findOne(id);
+    const lesson = await this.lessonRepository.findOne(lessonId);
 
     if (!lesson) {
       throw new NotFoundException('Specified lesson does not exist.');
@@ -132,14 +130,18 @@ export class LessonsService {
       );
     }
 
-    const chosenTutorResponseTimeFrame =
-      await this.tutorResponseTimeFrameRepository.findOne(
-        chosenTutorResponseTimeFrameId
-      );
+    const chosenTutorResponse = await this.tutorResponseRepository.findOne(
+      chosenTutorResponseId
+    );
+
+    const chosenTimeFrame = await this.lessonTimeFrameRepository.findOne(
+      chosenTimeFrameId
+    );
 
     return this.lessonRepository.resolveLessonRequest(
       lesson,
-      chosenTutorResponseTimeFrame
+      chosenTutorResponse,
+      chosenTimeFrame
     );
   }
 }

@@ -8,7 +8,7 @@ import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
-import { TutorResponseTimeFrame } from '../tutor-responses/entities/tutor-response-time-frame.entity';
+import { TutorResponse } from '../tutor-responses/entities/tutor-response.entity';
 
 @EntityRepository(Lesson)
 export class LessonRepository extends Repository<Lesson> {
@@ -118,9 +118,13 @@ export class LessonRepository extends Repository<Lesson> {
 
   async resolveLessonRequest(
     lesson: Lesson,
-    chosenTutorResponseTimeFrame: TutorResponseTimeFrame
+    chosenTutorResponse: TutorResponse,
+    chosenTimeFrame: LessonTimeFrame
   ): Promise<Lesson> {
     lesson.status = LessonStatus.PENDING;
+    lesson.startTime = chosenTimeFrame.startTime;
+    lesson.endTime = chosenTimeFrame.endTime;
+    lesson.tutor = chosenTutorResponse.tutor;
 
     await lesson.save();
     return lesson;

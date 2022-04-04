@@ -3,12 +3,12 @@ import {
   PrimaryGeneratedColumn,
   Entity,
   ManyToOne,
-  OneToMany,
+  ManyToMany,
 } from 'typeorm';
 
 import { User } from '../../auth/entities/user.entity';
 import { Lesson } from '../../lessons/entities/lesson.entity';
-import { TutorResponseTimeFrame } from './tutor-response-time-frame.entity';
+import { LessonTimeFrame } from '../../lessons/entities/lesson-time-frame.entity';
 
 @Entity()
 export class TutorResponse extends BaseEntity {
@@ -21,8 +21,8 @@ export class TutorResponse extends BaseEntity {
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   tutor: User;
 
-  @OneToMany(() => TutorResponseTimeFrame, (trtf) => trtf.tutorResponse, {
+  @ManyToMany(() => LessonTimeFrame, {
     eager: true,
   })
-  tutorResponseTimeFrames: TutorResponseTimeFrame[];
+  tutorResponseTimeFrames: LessonTimeFrame[];
 }
