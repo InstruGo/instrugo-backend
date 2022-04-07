@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsString,
   MinLength,
@@ -10,31 +11,35 @@ import {
 
 export class RegistrationCredentialsDto {
   @IsEmail()
+  @ApiProperty()
   email: string;
 
   @IsString()
+  @ApiProperty()
   firstName: string;
 
   @IsString()
+  @ApiProperty()
   lastName: string;
 
   @IsOptional()
   @IsPhoneNumber()
+  @ApiPropertyOptional()
   phone?: string;
 
   @IsString()
   @MinLength(6)
   @MaxLength(20)
-  // @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-  //   message: 'password too weak',
-  // })
+  @ApiProperty()
   password: string;
 
   @IsString()
   @MinLength(6)
   @MaxLength(20)
+  @ApiProperty()
   confirmPassword: string;
 
   @IsBoolean()
+  @ApiProperty()
   isTutor: boolean;
 }

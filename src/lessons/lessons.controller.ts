@@ -11,7 +11,12 @@ import {
   UseInterceptors,
   HttpCode,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { LessonsService } from './lessons.service';
 import { Lesson } from './entities/lesson.entity';
@@ -29,21 +34,21 @@ export class LessonsController {
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiResponse({ status: 200, type: Lesson })
+  @ApiOkResponse({ type: [Lesson] })
   getLessons(@Body() filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
     return this.lessonsService.getLessons(filterLessonDto);
   }
 
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiResponse({ status: 200, type: Lesson })
+  @ApiOkResponse({ type: Lesson })
   getLesson(@Param('id', ParseIntPipe) id: number): Promise<Lesson> {
     return this.lessonsService.getLesson(id);
   }
 
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiResponse({ status: 201, type: Lesson })
+  @ApiCreatedResponse({ type: Lesson })
   createLesson(
     @User() user: UserEntity,
     @Body() createLessonDto: CreateLessonDto
@@ -53,7 +58,7 @@ export class LessonsController {
 
   @Patch(':id')
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiResponse({ status: 200, type: Lesson })
+  @ApiOkResponse({ type: Lesson })
   updateLesson(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateLessonDto: UpdateLessonDto
@@ -62,7 +67,7 @@ export class LessonsController {
   }
 
   @Delete(':id')
-  @ApiResponse({ status: 204 })
+  @ApiNoContentResponse()
   @HttpCode(204)
   deleteLesson(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.lessonsService.deleteLesson(id);
@@ -70,7 +75,7 @@ export class LessonsController {
 
   @Post('resolve/:id')
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiResponse({ status: 200, type: Lesson })
+  @ApiOkResponse({ type: Lesson })
   resolveLessonRequest(
     @Param('id', ParseIntPipe) id: number,
     @Body() resolveLessonRequestDto: ResolveLessonRequestDto
