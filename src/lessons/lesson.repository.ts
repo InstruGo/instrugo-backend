@@ -122,8 +122,9 @@ export class LessonRepository extends Repository<Lesson> {
     chosenTimeFrame: TimeFrame
   ): Promise<Lesson> {
     lesson.status = LessonStatus.PENDING;
-    lesson.startTime = chosenTimeFrame.startTime;
-    lesson.endTime = chosenTimeFrame.endTime;
+    lesson.finalStartTime = chosenTimeFrame.startTime;
+    lesson.finalEndTime = chosenTimeFrame.endTime;
+    lesson.finalPrice = chosenTutorResponse.price;
     lesson.tutor = chosenTutorResponse.tutor;
 
     await lesson.save();

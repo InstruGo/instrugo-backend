@@ -19,6 +19,11 @@ export class CreateTutorResponseDto {
   lessonId: number;
 
   @IsNotEmpty()
+  @IsPositive()
+  @ApiProperty()
+  price: number;
+
+  @IsNotEmpty()
   @IsInt()
   @IsPositive()
   @ApiProperty()

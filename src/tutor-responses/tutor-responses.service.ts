@@ -67,7 +67,8 @@ export class TutorResponsesService {
     return this.tutorResponseRepository.createTutorResponse(
       tutor,
       lesson,
-      tutorResponseTimeFrames
+      tutorResponseTimeFrames,
+      createTutorResponseDto
     );
   }
 
@@ -111,7 +112,8 @@ export class TutorResponsesService {
 
     return this.tutorResponseRepository.updateTutorResponse(
       response,
-      tutorResponseTimeFramesArr
+      tutorResponseTimeFramesArr,
+      updateTutorResponseDto
     );
   }
 

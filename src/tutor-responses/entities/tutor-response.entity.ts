@@ -4,6 +4,7 @@ import {
   Entity,
   ManyToOne,
   ManyToMany,
+  Column,
 } from 'typeorm';
 
 import { User } from '../../auth/entities/user.entity';
@@ -14,6 +15,9 @@ import { TimeFrame } from '../../time-frames/entities/time-frame.entity';
 export class TutorResponse extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column('numeric')
+  price: number;
 
   @ManyToOne(() => Lesson, { onDelete: 'CASCADE' })
   lesson: Lesson;
