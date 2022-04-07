@@ -8,10 +8,10 @@ import { UserRepository } from '../auth/user.repository';
 import { SubjectsService } from './subjects/subjects.service';
 import { SubjectsController } from './subjects/subjects.controller';
 import { SubjectRepository } from './subjects/subject.repository';
-import { LessonTimeFramesService } from './lesson-time-frames/lesson-time-frames.service';
-import { LessonTimeFrameRepository } from './lesson-time-frames/lesson-time-frames.repository';
-import { LessonTimeFramesController } from './lesson-time-frames/lesson-time-frames.controller';
-import { TutorResponseTimeFrameRepository } from '../tutor-responses/tutor-response-time-frames/tutor-response-time-frames.repository';
+import { TimeFramesController } from 'src/time-frames/time-frames.controller';
+import { TimeFrameRepository } from 'src/time-frames/time-frames.repository';
+import { TimeFramesService } from 'src/time-frames/time-frames.service';
+import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repository';
 
 @Module({
   imports: [
@@ -19,15 +19,11 @@ import { TutorResponseTimeFrameRepository } from '../tutor-responses/tutor-respo
       LessonRepository,
       UserRepository,
       SubjectRepository,
-      LessonTimeFrameRepository,
-      TutorResponseTimeFrameRepository,
+      TutorResponseRepository,
+      TimeFrameRepository,
     ]),
   ],
-  controllers: [
-    LessonsController,
-    SubjectsController,
-    LessonTimeFramesController,
-  ],
-  providers: [LessonsService, SubjectsService, LessonTimeFramesService],
+  controllers: [LessonsController, SubjectsController, TimeFramesController],
+  providers: [LessonsService, SubjectsService, TimeFramesService],
 })
 export class LessonsModule {}

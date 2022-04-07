@@ -7,5 +7,5 @@ export class ResolveLessonRequestDto {
 
   @IsInt()
   @IsPositive()
-  chosenTimeFrameId: number;
+  timeFrameId: number;
 }

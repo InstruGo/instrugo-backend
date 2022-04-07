@@ -6,10 +6,10 @@ import {
   ManyToOne,
 } from 'typeorm';
 
-import { Lesson } from './lesson.entity';
+import { Lesson } from '../../lessons/entities/lesson.entity';
 
 @Entity()
-export class LessonTimeFrame extends BaseEntity {
+export class TimeFrame extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

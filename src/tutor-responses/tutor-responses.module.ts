@@ -6,7 +6,7 @@ import { TutorResponsesController } from './tutor-responses.controller';
 import { TutorResponseRepository } from './tutor-responses.repository';
 import { LessonRepository } from '../lessons/lesson.repository';
 import { UserRepository } from '../auth/user.repository';
-import { LessonTimeFrameRepository } from '../lessons/lesson-time-frames/lesson-time-frames.repository';
+import { TimeFrameRepository } from '../time-frames/time-frames.repository';
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { LessonTimeFrameRepository } from '../lessons/lesson-time-frames/lesson-
       LessonRepository,
       UserRepository,
       TutorResponseRepository,
-      LessonTimeFrameRepository,
+      TimeFrameRepository,
     ]),
   ],
   controllers: [TutorResponsesController],

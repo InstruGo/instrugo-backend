@@ -18,8 +18,9 @@ import { Lesson } from './entities/lesson.entity';
 import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
-import { User } from 'src/auth/user.decorator';
-import { User as UserEntity } from 'src/auth/entities/user.entity';
+import { User } from '../auth/user.decorator';
+import { User as UserEntity } from '../auth/entities/user.entity';
+import { ResolveLessonRequestDto } from './dto/lessons/resolve-lesson-request.dto';
 
 @ApiTags('lessons')
 @Controller('lessons')
@@ -72,11 +73,12 @@ export class LessonsController {
   @ApiResponse({ status: 200, type: Lesson })
   resolveLessonRequest(
     @Param('id', ParseIntPipe) id: number,
-    @Body() chosenTutorResponseTimeFrameId: number
+    @Body() resolveLessonRequestDto: ResolveLessonRequestDto
   ): Promise<Lesson> {
     return this.lessonsService.resolveLessonRequest(
       id,
-      chosenTutorResponseTimeFrameId
+      resolveLessonRequestDto.tutorResponseId,
+      resolveLessonRequestDto.timeFrameId
     );
   }
 }

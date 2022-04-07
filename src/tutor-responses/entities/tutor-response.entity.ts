@@ -8,7 +8,7 @@ import {
 
 import { User } from '../../auth/entities/user.entity';
 import { Lesson } from '../../lessons/entities/lesson.entity';
-import { LessonTimeFrame } from '../../lessons/entities/lesson-time-frame.entity';
+import { TimeFrame } from '../../time-frames/entities/time-frame.entity';
 
 @Entity()
 export class TutorResponse extends BaseEntity {
@@ -21,8 +21,8 @@ export class TutorResponse extends BaseEntity {
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   tutor: User;
 
-  @ManyToMany(() => LessonTimeFrame, {
+  @ManyToMany(() => TimeFrame, {
     eager: true,
   })
-  tutorResponseTimeFrames: LessonTimeFrame[];
+  tutorResponseTimeFrames: TimeFrame[];
 }

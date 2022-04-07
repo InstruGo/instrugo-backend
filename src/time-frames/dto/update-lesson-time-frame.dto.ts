@@ -1,6 +1,6 @@
 import { IsISO8601, IsNotEmpty, IsOptional } from 'class-validator';
 
-export class UpdateLessonTimeFrameDto {
+export class UpdateTimeFrameDto {
   @IsOptional()
   @IsNotEmpty()
   @IsISO8601()

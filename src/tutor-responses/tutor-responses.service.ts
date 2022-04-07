@@ -13,8 +13,8 @@ import { UpdateTutorResponseDto } from './dto/update-tutor-response.dto';
 import { TutorResponse } from './entities/tutor-response.entity';
 import { TutorResponseRepository } from './tutor-responses.repository';
 import { UserRole } from 'src/auth/entities/user.role.enum';
-import { LessonTimeFrameRepository } from '../lessons/lesson-time-frames/lesson-time-frames.repository';
-import { LessonTimeFrame } from '../lessons/entities/lesson-time-frame.entity';
+import { TimeFrameRepository } from '../time-frames/time-frames.repository';
+import { TimeFrame } from '../time-frames/entities/time-frame.entity';
 
 @Injectable()
 export class TutorResponsesService {
@@ -25,8 +25,8 @@ export class TutorResponsesService {
     private userRepository: UserRepository,
     @InjectRepository(TutorResponseRepository)
     private tutorResponseRepository: TutorResponseRepository,
-    @InjectRepository(LessonTimeFrameRepository)
-    private lessonTimeFrameRepository: LessonTimeFrameRepository
+    @InjectRepository(TimeFrameRepository)
+    private timeFrameRepository: TimeFrameRepository
   ) {}
 
   async createTutorResponse(
@@ -60,7 +60,7 @@ export class TutorResponsesService {
     }
 
     const tutorResponseTimeFrames =
-      await this.lessonTimeFrameRepository.createLessonTimeFrames(
+      await this.timeFrameRepository.createTimeFrames(
         createTutorResponseDto.tutorTimeFrames
       );
 
@@ -99,16 +99,14 @@ export class TutorResponsesService {
 
     const { tutorTimeFrames } = updateTutorResponseDto;
 
-    let tutorResponseTimeFramesArr: LessonTimeFrame[] = [];
+    let tutorResponseTimeFramesArr: TimeFrame[] = [];
     if (tutorTimeFrames) {
-      await this.lessonTimeFrameRepository.deleteLessonTimeFrames(
+      await this.timeFrameRepository.deleteTimeFrames(
         response.tutorResponseTimeFrames
       );
 
       tutorResponseTimeFramesArr =
-        await this.lessonTimeFrameRepository.createLessonTimeFrames(
-          tutorTimeFrames
-        );
+        await this.timeFrameRepository.createTimeFrames(tutorTimeFrames);
     }
 
     return this.tutorResponseRepository.updateTutorResponse(

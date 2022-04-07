@@ -11,11 +11,11 @@ import { SubjectRepository } from './subjects/subject.repository';
 import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
-import { LessonTimeFrameRepository } from './lesson-time-frames/lesson-time-frames.repository';
-import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
 import { LessonStatus } from './entities/lesson.status.enum';
 import { User } from '../auth/entities/user.entity';
 import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repository';
+import { TimeFrameRepository } from '../time-frames/time-frames.repository';
+import { TimeFrame } from '../time-frames/entities/time-frame.entity';
 
 @Injectable()
 export class LessonsService {
@@ -24,8 +24,8 @@ export class LessonsService {
     private lessonRepository: LessonRepository,
     @InjectRepository(SubjectRepository)
     private subjectRepository: SubjectRepository,
-    @InjectRepository(LessonTimeFrameRepository)
-    private lessonTimeFrameRepository: LessonTimeFrameRepository,
+    @InjectRepository(TimeFrameRepository)
+    private timeFrameRepository: TimeFrameRepository,
     @InjectRepository(TutorResponseRepository)
     private tutorResponseRepository: TutorResponseRepository
   ) {}
@@ -56,10 +56,9 @@ export class LessonsService {
       throw new NotFoundException('Subject does not exist.');
     }
 
-    const lessonTimeFrames =
-      await this.lessonTimeFrameRepository.createLessonTimeFrames(
-        lessonTimeFrameDtos
-      );
+    const lessonTimeFrames = await this.timeFrameRepository.createTimeFrames(
+      lessonTimeFrameDtos
+    );
 
     return this.lessonRepository.createLesson(
       createLessonDto,
@@ -85,16 +84,13 @@ export class LessonsService {
       ? await this.subjectRepository.findOne(subjectId)
       : undefined;
 
-    let lessonTimeFramesArr: LessonTimeFrame[] = [];
+    let lessonTimeFramesArr: TimeFrame[] = [];
     if (lessonTimeFrames) {
-      await this.lessonTimeFrameRepository.deleteLessonTimeFrames(
-        lesson.lessonTimeFrames
-      );
+      await this.timeFrameRepository.deleteTimeFrames(lesson.lessonTimeFrames);
 
-      lessonTimeFramesArr =
-        await this.lessonTimeFrameRepository.createLessonTimeFrames(
-          lessonTimeFrames
-        );
+      lessonTimeFramesArr = await this.timeFrameRepository.createTimeFrames(
+        lessonTimeFrames
+      );
     }
 
     return this.lessonRepository.updateLesson(
@@ -134,7 +130,7 @@ export class LessonsService {
       chosenTutorResponseId
     );
 
-    const chosenTimeFrame = await this.lessonTimeFrameRepository.findOne(
+    const chosenTimeFrame = await this.timeFrameRepository.findOne(
       chosenTimeFrameId
     );
 

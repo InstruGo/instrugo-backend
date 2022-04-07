@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsISO8601 } from 'class-validator';
 
-export class CreateLessonTimeFrameDto {
+export class CreateTimeFrameDto {
   @IsNotEmpty()
   @IsISO8601()
   startTime: string;

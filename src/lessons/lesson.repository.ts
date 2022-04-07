@@ -7,7 +7,7 @@ import { Subject } from './entities/subject.entity';
 import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
-import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
+import { TimeFrame } from '../time-frames/entities/time-frame.entity';
 import { TutorResponse } from '../tutor-responses/entities/tutor-response.entity';
 
 @EntityRepository(Lesson)
@@ -69,7 +69,7 @@ export class LessonRepository extends Repository<Lesson> {
     createLessonDto: CreateLessonDto,
     student: User,
     subject: Subject,
-    lessonTimeFrames: LessonTimeFrame[]
+    lessonTimeFrames: TimeFrame[]
   ): Promise<Lesson> {
     const { subfield, level, grade, description, type, location, budget } =
       createLessonDto;
@@ -96,7 +96,7 @@ export class LessonRepository extends Repository<Lesson> {
     lesson: Lesson,
     updateLessonDto: UpdateLessonDto,
     subject: Subject,
-    lessonTimeFrames: LessonTimeFrame[]
+    lessonTimeFrames: TimeFrame[]
   ): Promise<Lesson> {
     const { subfield, level, grade, description, type, location, budget } =
       updateLessonDto;
@@ -119,7 +119,7 @@ export class LessonRepository extends Repository<Lesson> {
   async resolveLessonRequest(
     lesson: Lesson,
     chosenTutorResponse: TutorResponse,
-    chosenTimeFrame: LessonTimeFrame
+    chosenTimeFrame: TimeFrame
   ): Promise<Lesson> {
     lesson.status = LessonStatus.PENDING;
     lesson.startTime = chosenTimeFrame.startTime;

@@ -14,7 +14,7 @@ import { MeetingType } from './lesson.meeting-type.enum';
 import { LessonStatus } from './lesson.status.enum';
 import { User } from '../../auth/entities/user.entity';
 import { Subject } from './subject.entity';
-import { LessonTimeFrame } from './lesson-time-frame.entity';
+import { TimeFrame } from '../../time-frames/entities/time-frame.entity';
 import { TutorResponse } from '../../tutor-responses/entities/tutor-response.entity';
 
 @Entity()
@@ -67,8 +67,8 @@ export class Lesson extends BaseEntity {
   @ManyToOne(() => Subject, { eager: true })
   subject: Subject;
 
-  @OneToMany(() => LessonTimeFrame, (ltf) => ltf.lesson, { eager: true })
-  lessonTimeFrames: LessonTimeFrame[];
+  @OneToMany(() => TimeFrame, (ltf) => ltf.lesson, { eager: true })
+  lessonTimeFrames: TimeFrame[];
 
   @OneToMany(() => TutorResponse, (tr) => tr.lesson, { eager: true })
   tutorResponses: TutorResponse[];
