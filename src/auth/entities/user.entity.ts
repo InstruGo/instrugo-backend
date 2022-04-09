@@ -1,16 +1,18 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
-  JoinColumn,
-  OneToOne,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 
 import { UserRole } from './user.role.enum';
-import { Tutor } from './tutor.entity';
+import { Subject } from '../../lessons/entities/subject.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -43,15 +45,52 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   avatarUrl: string;
 
-  @Column('date')
+  @Column('numeric', { nullable: true })
+  averageRating: number;
+
+  @Column({ nullable: true })
+  ratingsCount: number;
+
+  @CreateDateColumn()
   createdOn: Date;
 
-  @OneToOne(() => Tutor, { eager: true })
-  @JoinColumn()
-  tutor: Tutor;
+  @UpdateDateColumn()
+  modifiedOn: Date;
+
+  @ManyToMany(() => Subject, { eager: true })
+  @JoinTable()
+  subjects: Subject[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
     return hash === this.password;
+  }
+
+  addRatingAndUpdateRatingsCount(value: number) {
+    const { averageRating, ratingsCount } = this;
+
+    this.averageRating =
+      (ratingsCount * averageRating + value) / (ratingsCount + 1);
+    this.ratingsCount = ratingsCount + 1;
+  }
+
+  updateRating(valueToUpdate: number, newValue: number) {
+    const { averageRating, ratingsCount } = this;
+
+    this.averageRating =
+      (ratingsCount * averageRating - valueToUpdate + newValue) / ratingsCount;
+  }
+
+  deleteRatingAndUpdateRatingsCount(value: number) {
+    const { averageRating, ratingsCount } = this;
+
+    if (ratingsCount === 1) {
+      this.averageRating = 0;
+    } else {
+      this.averageRating =
+        (ratingsCount * averageRating - value) / (ratingsCount - 1);
+    }
+
+    this.ratingsCount = ratingsCount - 1;
   }
 }

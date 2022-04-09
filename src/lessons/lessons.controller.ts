@@ -11,13 +11,21 @@ import {
   UseInterceptors,
   HttpCode,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { LessonsService } from './lessons.service';
 import { Lesson } from './entities/lesson.entity';
 import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
+import { User } from '../auth/user.decorator';
+import { User as UserEntity } from '../auth/entities/user.entity';
+import { ResolveLessonRequestDto } from './dto/lessons/resolve-lesson-request.dto';
 
 @ApiTags('lessons')
 @Controller('lessons')
@@ -26,28 +34,31 @@ export class LessonsController {
 
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiResponse({ status: 200, type: Lesson })
+  @ApiOkResponse({ type: [Lesson] })
   getLessons(@Body() filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
     return this.lessonsService.getLessons(filterLessonDto);
   }
 
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiResponse({ status: 200, type: Lesson })
+  @ApiOkResponse({ type: Lesson })
   getLesson(@Param('id', ParseIntPipe) id: number): Promise<Lesson> {
     return this.lessonsService.getLesson(id);
   }
 
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiResponse({ status: 201, type: Lesson })
-  createLesson(@Body() createLessonDto: CreateLessonDto): Promise<Lesson> {
-    return this.lessonsService.createLesson(createLessonDto);
+  @ApiCreatedResponse({ type: Lesson })
+  createLesson(
+    @User() user: UserEntity,
+    @Body() createLessonDto: CreateLessonDto
+  ): Promise<Lesson> {
+    return this.lessonsService.createLesson(user, createLessonDto);
   }
 
   @Patch(':id')
   @UseInterceptors(ClassSerializerInterceptor)
-  @ApiResponse({ status: 200, type: Lesson })
+  @ApiOkResponse({ type: Lesson })
   updateLesson(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateLessonDto: UpdateLessonDto
@@ -56,9 +67,23 @@ export class LessonsController {
   }
 
   @Delete(':id')
-  @ApiResponse({ status: 204 })
+  @ApiNoContentResponse()
   @HttpCode(204)
   deleteLesson(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.lessonsService.deleteLesson(id);
+  }
+
+  @Post('resolve/:id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOkResponse({ type: Lesson })
+  resolveLessonRequest(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() resolveLessonRequestDto: ResolveLessonRequestDto
+  ): Promise<Lesson> {
+    return this.lessonsService.resolveLessonRequest(
+      id,
+      resolveLessonRequestDto.tutorResponseId,
+      resolveLessonRequestDto.timeFrameId
+    );
   }
 }

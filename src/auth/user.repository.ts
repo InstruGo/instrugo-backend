@@ -10,15 +10,13 @@ import { UserRole } from './entities/user.role.enum';
 import { JwtPayload } from './jwt-payload.interface';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
-import { Tutor } from './entities/tutor.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   async register(
-    registrationCredentialsDto: RegistrationCredentialsDto,
-    role?: UserRole
+    registrationCredentialsDto: RegistrationCredentialsDto
   ): Promise<void> {
-    const { email, firstName, lastName, phone, password } =
+    const { email, firstName, lastName, phone, password, isTutor } =
       registrationCredentialsDto;
 
     const user = new User();
@@ -28,8 +26,7 @@ export class UserRepository extends Repository<User> {
     user.phone = phone;
     user.salt = await bcrypt.genSalt();
     user.password = await this.hashPassword(password, user.salt);
-    user.role = role ? role : UserRole.USER;
-    user.createdOn = new Date(new Date().toISOString());
+    user.role = isTutor ? UserRole.TUTOR : UserRole.STUDENT;
 
     try {
       await user.save();
@@ -37,6 +34,7 @@ export class UserRepository extends Repository<User> {
       if (error.code === '23505') {
         throw new ConflictException('Username already exists');
       } else {
+        console.log(error);
         throw new InternalServerErrorException();
       }
     }
@@ -64,13 +62,10 @@ export class UserRepository extends Repository<User> {
   }
 
   async becomeATutor(user: User): Promise<void> {
-    const tutor = new Tutor();
-    tutor.averageRating = 0;
-    tutor.ratingsCount = 0;
+    user.averageRating = 0;
+    user.ratingsCount = 0;
+    user.role = UserRole.TUTOR;
 
-    await tutor.save();
-
-    user.tutor = tutor;
     await user.save();
   }
 

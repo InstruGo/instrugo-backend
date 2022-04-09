@@ -7,15 +7,19 @@ import {
   UseGuards,
   Request,
   Get,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
-import { User } from './entities/user.entity';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
+import { User } from './user.decorator';
+import { User as UserEntity } from './entities/user.entity';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -47,9 +51,12 @@ export class AuthController {
 
   @Get('/profile')
   @ApiResponse({ status: 200 })
+  @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  getProfile(@Request() req): Promise<Partial<User>> {
-    return this.authService.getProfile(req.user.id);
+  getProfile(
+    @User('id', ParseIntPipe) id: number
+  ): Promise<Partial<UserEntity>> {
+    return this.authService.getProfile(id);
   }
 
   /**
@@ -58,7 +65,7 @@ export class AuthController {
   @Post('/become-a-tutor')
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard, RolesGuard)
-  becomeATutor(@Request() req): Promise<void> {
-    return this.authService.becomeATutor(req.user.id);
+  becomeATutor(@User('id', ParseIntPipe) id: number): Promise<void> {
+    return this.authService.becomeATutor(id);
   }
 }

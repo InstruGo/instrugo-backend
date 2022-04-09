@@ -1,6 +1,7 @@
 import {
-  BadRequestException,
   Injectable,
+  BadRequestException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,8 +11,8 @@ import { JwtPayload } from './jwt-payload.interface';
 import { UserRepository } from './user.repository';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
-import { NotFoundException } from '@nestjs/common';
 import { User } from './entities/user.entity';
+import { UserRole } from './entities/user.role.enum';
 
 @Injectable()
 export class AuthService {
@@ -59,6 +60,10 @@ export class AuthService {
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} does not exist.`);
+    }
+
+    if (user.role !== UserRole.STUDENT) {
+      throw new BadRequestException('You are already a tutor.');
     }
 
     return this.userRepository.becomeATutor(user);

@@ -12,8 +12,10 @@ import { CreateTutorResponseDto } from './dto/create-tutor-response.dto';
 import { UpdateTutorResponseDto } from './dto/update-tutor-response.dto';
 import { TutorResponse } from './entities/tutor-response.entity';
 import { TutorResponseRepository } from './tutor-responses.repository';
-import { TutorResponseTimeFrameRepository } from './tutor-response-time-frames/tutor-response-time-frames.repository';
-import { TutorResponseTimeFrame } from './entities/tutor-response-time-frame.entity';
+import { UserRole } from 'src/auth/entities/user.role.enum';
+import { TimeFrameRepository } from '../time-frames/time-frames.repository';
+import { TimeFrame } from '../time-frames/entities/time-frame.entity';
+
 @Injectable()
 export class TutorResponsesService {
   constructor(
@@ -23,8 +25,8 @@ export class TutorResponsesService {
     private userRepository: UserRepository,
     @InjectRepository(TutorResponseRepository)
     private tutorResponseRepository: TutorResponseRepository,
-    @InjectRepository(TutorResponseTimeFrameRepository)
-    private tutorResponseTimeFrameRepository: TutorResponseTimeFrameRepository
+    @InjectRepository(TimeFrameRepository)
+    private timeFrameRepository: TimeFrameRepository
   ) {}
 
   async createTutorResponse(
@@ -37,7 +39,7 @@ export class TutorResponsesService {
       throw new NotFoundException('This tutor does not exist.');
     }
 
-    if (!tutor.tutor) {
+    if (tutor.role !== UserRole.TUTOR) {
       throw new BadRequestException('Only tutors can make responses.');
     }
 
@@ -49,24 +51,24 @@ export class TutorResponsesService {
       throw new NotFoundException('This lesson does not exist.');
     }
 
-    if (!lesson.owner) {
+    if (!lesson.student) {
       throw new NotFoundException('This lesson does not have an owner.');
     }
 
-    if (lesson.owner.id === tutor.id) {
-      throw new BadRequestException('You cannot respond to Your own lessons!');
+    if (lesson.student.id === tutor.id) {
+      throw new BadRequestException('You cannot respond to your own lessons!');
     }
 
     const tutorResponseTimeFrames =
-      await this.tutorResponseTimeFrameRepository.createTutorResponseTimeFrames(
+      await this.timeFrameRepository.createTimeFrames(
         createTutorResponseDto.tutorTimeFrames
       );
 
     return this.tutorResponseRepository.createTutorResponse(
-      createTutorResponseDto,
       tutor,
       lesson,
-      tutorResponseTimeFrames
+      tutorResponseTimeFrames,
+      createTutorResponseDto
     );
   }
 
@@ -98,31 +100,28 @@ export class TutorResponsesService {
 
     const { tutorTimeFrames } = updateTutorResponseDto;
 
-    let tutorResponseTimeFramesArr: TutorResponseTimeFrame[] = [];
+    let tutorResponseTimeFramesArr: TimeFrame[] = [];
     if (tutorTimeFrames) {
-      await this.tutorResponseTimeFrameRepository.deleteTutorResponseTimeFrames(
+      await this.timeFrameRepository.deleteTimeFrames(
         response.tutorResponseTimeFrames
       );
 
       tutorResponseTimeFramesArr =
-        await this.tutorResponseTimeFrameRepository.createTutorResponseTimeFrames(
-          tutorTimeFrames
-        );
+        await this.timeFrameRepository.createTimeFrames(tutorTimeFrames);
     }
 
     return this.tutorResponseRepository.updateTutorResponse(
       response,
-      updateTutorResponseDto,
-      tutorResponseTimeFramesArr
+      tutorResponseTimeFramesArr,
+      updateTutorResponseDto
     );
   }
 
   async deleteTutorResponse(id: number): Promise<void> {
     const result = await this.tutorResponseRepository.delete(id);
+
     if (!result.affected) {
-      throw new NotFoundException(
-        `Specified response with Id ${id} does not exist.`
-      );
+      throw new NotFoundException(`Response with id ${id} does not exist.`);
     }
   }
 }

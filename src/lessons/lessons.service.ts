@@ -1,27 +1,33 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { LessonRepository } from './lesson.repository';
-import { UserRepository } from '../auth/user.repository';
 import { Lesson } from './entities/lesson.entity';
 import { SubjectRepository } from './subjects/subject.repository';
 import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
-import { LessonTimeFrameRepository } from './lesson-time-frames/lesson-time-frames.repository';
-import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
+import { LessonStatus } from './entities/lesson.status.enum';
+import { User } from '../auth/entities/user.entity';
+import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repository';
+import { TimeFrameRepository } from '../time-frames/time-frames.repository';
+import { TimeFrame } from '../time-frames/entities/time-frame.entity';
 
 @Injectable()
 export class LessonsService {
   constructor(
     @InjectRepository(LessonRepository)
     private lessonRepository: LessonRepository,
-    @InjectRepository(UserRepository)
-    private userRepository: UserRepository,
     @InjectRepository(SubjectRepository)
     private subjectRepository: SubjectRepository,
-    @InjectRepository(LessonTimeFrameRepository)
-    private lessonTimeFrameRepository: LessonTimeFrameRepository
+    @InjectRepository(TimeFrameRepository)
+    private timeFrameRepository: TimeFrameRepository,
+    @InjectRepository(TutorResponseRepository)
+    private tutorResponseRepository: TutorResponseRepository
   ) {}
 
   getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
@@ -37,26 +43,26 @@ export class LessonsService {
     return lesson;
   }
 
-  async createLesson(createLessonDto: CreateLessonDto): Promise<Lesson> {
-    const owner = await this.userRepository.findOne(createLessonDto.userId);
-    if (!owner) {
-      throw new NotFoundException('Owner of lesson does not exist');
-    }
-    const subject = await this.subjectRepository.findOne(
-      createLessonDto.subjectId
-    );
+  async createLesson(
+    user: User,
+    createLessonDto: CreateLessonDto
+  ): Promise<Lesson> {
+    const { subjectId, lessonTimeFrames: lessonTimeFrameDtos } =
+      createLessonDto;
+
+    const subject = await this.subjectRepository.findOne(subjectId);
+
     if (!subject) {
-      throw new NotFoundException('Subject does not exist');
+      throw new NotFoundException('Subject does not exist.');
     }
 
-    const lessonTimeFrames =
-      await this.lessonTimeFrameRepository.createLessonTimeFrames(
-        createLessonDto.lessonTimeFrames
-      );
+    const lessonTimeFrames = await this.timeFrameRepository.createTimeFrames(
+      lessonTimeFrameDtos
+    );
 
     return this.lessonRepository.createLesson(
       createLessonDto,
-      owner,
+      user,
       subject,
       lessonTimeFrames
     );
@@ -78,16 +84,13 @@ export class LessonsService {
       ? await this.subjectRepository.findOne(subjectId)
       : undefined;
 
-    let lessonTimeFramesArr: LessonTimeFrame[] = [];
+    let lessonTimeFramesArr: TimeFrame[] = [];
     if (lessonTimeFrames) {
-      await this.lessonTimeFrameRepository.deleteLessonTimeFrames(
-        lesson.lessonTimeFrames
-      );
+      await this.timeFrameRepository.deleteTimeFrames(lesson.lessonTimeFrames);
 
-      lessonTimeFramesArr =
-        await this.lessonTimeFrameRepository.createLessonTimeFrames(
-          lessonTimeFrames
-        );
+      lessonTimeFramesArr = await this.timeFrameRepository.createTimeFrames(
+        lessonTimeFrames
+      );
     }
 
     return this.lessonRepository.updateLesson(
@@ -104,5 +107,37 @@ export class LessonsService {
     if (!result.affected) {
       throw new NotFoundException(`Lesson with ID ${id} not found.`);
     }
+  }
+
+  async resolveLessonRequest(
+    lessonId: number,
+    chosenTutorResponseId: number,
+    chosenTimeFrameId: number
+  ): Promise<Lesson> {
+    const lesson = await this.lessonRepository.findOne(lessonId);
+
+    if (!lesson) {
+      throw new NotFoundException('Specified lesson does not exist.');
+    }
+
+    if (lesson.status !== LessonStatus.REQUESTED) {
+      throw new BadRequestException(
+        'This lesson object has already been resolved.'
+      );
+    }
+
+    const chosenTutorResponse = await this.tutorResponseRepository.findOne(
+      chosenTutorResponseId
+    );
+
+    const chosenTimeFrame = await this.timeFrameRepository.findOne(
+      chosenTimeFrameId
+    );
+
+    return this.lessonRepository.resolveLessonRequest(
+      lesson,
+      chosenTutorResponse,
+      chosenTimeFrame
+    );
   }
 }

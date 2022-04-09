@@ -1,5 +1,6 @@
 export enum LessonStatus {
-  REQUEST = 'Request',
-  LESSON = 'Lesson',
+  REQUESTED = 'Requested',
+  PENDING = 'Pending',
   COMPLETED = 'Completed',
+  CANCELED = 'Canceled',
 }

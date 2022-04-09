@@ -7,13 +7,22 @@ import { Subject } from './entities/subject.entity';
 import { CreateLessonDto } from './dto/lessons/create-lesson.dto';
 import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
-import { LessonTimeFrame } from './entities/lesson-time-frame.entity';
+import { TimeFrame } from '../time-frames/entities/time-frame.entity';
+import { TutorResponse } from '../tutor-responses/entities/tutor-response.entity';
 
 @EntityRepository(Lesson)
 export class LessonRepository extends Repository<Lesson> {
   async getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
-    const { level, grade, type, minPrice, maxPrice, status, subjectId } =
-      filterLessonDto;
+    const {
+      level,
+      grade,
+      type,
+      minPrice,
+      maxPrice,
+      status,
+      subjectId,
+      studentId,
+    } = filterLessonDto;
     const query = this.createQueryBuilder('lesson');
 
     if (level) {
@@ -32,6 +41,10 @@ export class LessonRepository extends Repository<Lesson> {
       query.andWhere('lesson.subjectId = :subjectId', { subjectId });
     }
 
+    if (studentId) {
+      query.andWhere('lesson.studentId = :studentId', { studentId });
+    }
+
     if (status) {
       query.andWhere('lesson.status = :status', { status });
     }
@@ -45,17 +58,18 @@ export class LessonRepository extends Repository<Lesson> {
     }
 
     query.leftJoinAndSelect('lesson.subject', 'subject');
-    query.leftJoinAndSelect('lesson.owner', 'user');
+    query.leftJoinAndSelect('lesson.student', 'user');
     query.leftJoinAndSelect('lesson.lessonTimeFrames', 'lessonTimeFrame');
+
     const lessons = await query.getMany();
     return lessons;
   }
 
   async createLesson(
     createLessonDto: CreateLessonDto,
-    owner: User,
+    student: User,
     subject: Subject,
-    lessonTimeFrames: LessonTimeFrame[]
+    lessonTimeFrames: TimeFrame[]
   ): Promise<Lesson> {
     const { subfield, level, grade, description, type, location, budget } =
       createLessonDto;
@@ -68,16 +82,13 @@ export class LessonRepository extends Repository<Lesson> {
     lesson.type = type;
     lesson.location = location;
     lesson.budget = budget;
-    lesson.createdOn = new Date(new Date().toISOString());
-    lesson.lastModifiedOn = lesson.createdOn;
-    lesson.status = LessonStatus.REQUEST;
+    lesson.status = LessonStatus.REQUESTED;
 
-    lesson.owner = owner;
+    lesson.student = student;
     lesson.subject = subject;
     lesson.lessonTimeFrames = lessonTimeFrames;
 
     await lesson.save();
-
     return lesson;
   }
 
@@ -85,7 +96,7 @@ export class LessonRepository extends Repository<Lesson> {
     lesson: Lesson,
     updateLessonDto: UpdateLessonDto,
     subject: Subject,
-    lessonTimeFrames: LessonTimeFrame[]
+    lessonTimeFrames: TimeFrame[]
   ): Promise<Lesson> {
     const { subfield, level, grade, description, type, location, budget } =
       updateLessonDto;
@@ -101,7 +112,20 @@ export class LessonRepository extends Repository<Lesson> {
     if (subject) lesson.subject = subject;
     if (lessonTimeFrames) lesson.lessonTimeFrames = lessonTimeFrames;
 
-    lesson.lastModifiedOn = new Date(new Date().toISOString());
+    await lesson.save();
+    return lesson;
+  }
+
+  async resolveLessonRequest(
+    lesson: Lesson,
+    chosenTutorResponse: TutorResponse,
+    chosenTimeFrame: TimeFrame
+  ): Promise<Lesson> {
+    lesson.status = LessonStatus.PENDING;
+    lesson.finalStartTime = chosenTimeFrame.startTime;
+    lesson.finalEndTime = chosenTimeFrame.endTime;
+    lesson.finalPrice = chosenTutorResponse.price;
+    lesson.tutor = chosenTutorResponse.tutor;
 
     await lesson.save();
     return lesson;

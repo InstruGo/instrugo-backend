@@ -5,6 +5,8 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { EducationLevel } from './lesson.level.enum';
@@ -12,7 +14,8 @@ import { MeetingType } from './lesson.meeting-type.enum';
 import { LessonStatus } from './lesson.status.enum';
 import { User } from '../../auth/entities/user.entity';
 import { Subject } from './subject.entity';
-import { LessonTimeFrame } from './lesson-time-frame.entity';
+import { TimeFrame } from '../../time-frames/entities/time-frame.entity';
+import { TutorResponse } from '../../tutor-responses/entities/tutor-response.entity';
 
 @Entity()
 export class Lesson extends BaseEntity {
@@ -43,18 +46,33 @@ export class Lesson extends BaseEntity {
   @Column()
   status: LessonStatus;
 
-  @Column('timestamptz')
+  @Column('timestamptz', { nullable: true })
+  finalStartTime: Date;
+
+  @Column('timestamptz', { nullable: true })
+  finalEndTime: Date;
+
+  @Column('numeric', { nullable: true })
+  finalPrice: number;
+
+  @CreateDateColumn()
   createdOn: Date;
 
-  @Column('timestamptz')
-  lastModifiedOn: Date;
+  @UpdateDateColumn()
+  modifiedOn: Date;
 
   @ManyToOne(() => User, { eager: true })
-  owner: User;
+  student: User;
+
+  @ManyToOne(() => User, { eager: true })
+  tutor: User;
 
   @ManyToOne(() => Subject, { eager: true })
   subject: Subject;
 
-  @OneToMany(() => LessonTimeFrame, (ltf) => ltf.lesson, { eager: true })
-  lessonTimeFrames: LessonTimeFrame[];
+  @OneToMany(() => TimeFrame, (ltf) => ltf.lesson, { eager: true })
+  lessonTimeFrames: TimeFrame[];
+
+  @OneToMany(() => TutorResponse, (tr) => tr.lesson, { eager: true })
+  tutorResponses: TutorResponse[];
 }

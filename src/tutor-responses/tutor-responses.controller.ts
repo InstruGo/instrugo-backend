@@ -18,7 +18,7 @@ import { UpdateTutorResponseDto } from './dto/update-tutor-response.dto';
 import { TutorResponse } from './entities/tutor-response.entity';
 import { FilterTutorResponseDto } from './dto/filter-tutor-response.dto';
 
-@ApiTags('tutor-responses')
+@ApiTags('tutor responses')
 @Controller('tutor-responses')
 export class TutorResponsesController {
   constructor(private readonly tutorResponsesService: TutorResponsesService) {}

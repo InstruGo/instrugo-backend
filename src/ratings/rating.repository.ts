@@ -1,20 +1,27 @@
 import { Repository, EntityRepository } from 'typeorm';
+import { NotFoundException } from '@nestjs/common';
 
-import { CreateRatingDto } from './dto/create-rating.dto';
 import { FilterRatingDto } from './dto/filter-rating.dto';
 import { Rating } from './entities/rating.entity';
 import { User } from '../auth/entities/user.entity';
-import { UpdateRatingDto } from './dto/update-rating.dto';
-import { NotFoundException } from '@nestjs/common';
+import { Lesson } from '../lessons/entities/lesson.entity';
+import { RateLessonDto } from './dto/rate-lesson.dto';
+import { LeaveFeedbackDto } from './dto/leave-feedback.dto';
 
 @EntityRepository(Rating)
 export class RatingRepository extends Repository<Rating> {
   async getRatings(filterRatingDto: FilterRatingDto): Promise<Rating[]> {
-    const { rating, studentId, tutorId } = filterRatingDto;
+    const { studentRating, lessonId, studentId, tutorId } = filterRatingDto;
     const query = this.createQueryBuilder('rating');
 
-    if (rating) {
-      query.andWhere('rating.rating = :rating', { rating });
+    if (studentRating) {
+      query.andWhere('rating.studentRating = :studentRating', {
+        studentRating,
+      });
+    }
+
+    if (lessonId) {
+      query.andWhere('rating.lessonId = :lessonId', { lessonId });
     }
 
     if (studentId) {
@@ -30,106 +37,63 @@ export class RatingRepository extends Repository<Rating> {
   }
 
   async createRating(
-    createRatingDto: CreateRatingDto,
+    lesson: Lesson,
     student: User,
     tutor: User
   ): Promise<Rating> {
-    const { rating } = createRatingDto;
+    const newRating = new Rating();
+    newRating.lesson = lesson;
+    newRating.student = student;
+    newRating.tutor = tutor;
 
-    const new_rating = new Rating();
-    new_rating.rating = rating;
-
-    new_rating.student = student;
-    new_rating.tutor = tutor;
-
-    await new_rating.save();
-
-    const tutorInfo = tutor.tutor;
-
-    const currentAverage = tutorInfo.averageRating;
-    const ratingsCount = tutorInfo.ratingsCount;
-
-    tutorInfo.averageRating = this.addToAverage(
-      currentAverage,
-      rating,
-      ratingsCount
-    );
-
-    tutorInfo.ratingsCount = tutorInfo.ratingsCount + 1;
-
-    await tutorInfo.save();
-
-    return new_rating;
+    await newRating.save();
+    return newRating;
   }
 
-  async updateRating(
+  async rateLesson(
     rating: Rating,
-    updateRatingDto: UpdateRatingDto
+    rateLessonDto: RateLessonDto
   ): Promise<Rating> {
-    const oldValue = rating.rating;
-    const tutor = rating.tutor.tutor;
+    const { studentRating } = rateLessonDto;
 
-    const currentAverage = tutor.averageRating;
-    const currentCount = tutor.ratingsCount;
+    const oldValue = rating.studentRating;
+    const tutor = rating.tutor;
 
-    if (updateRatingDto.rating) {
-      rating.rating = updateRatingDto.rating;
-
-      tutor.averageRating = this.updateAverage(
-        currentAverage,
-        oldValue,
-        updateRatingDto.rating,
-        currentCount
-      );
-
-      await tutor.save();
-    }
-
-    await rating.save();
-    return rating;
-  }
-
-  async deleteRating(id: number): Promise<void> {
-    const rating = await this.findOne(id);
-    const value = rating.rating;
-
-    const tutor = rating.tutor.tutor;
-    const currentAverage = tutor.averageRating;
-    const currentCount = tutor.ratingsCount;
-
-    tutor.averageRating = this.removeFromAverage(
-      currentAverage,
-      value,
-      currentCount
-    );
-
-    tutor.ratingsCount = currentCount - 1;
-
-    const result = await this.delete(id);
-
-    if (!result.affected) {
-      throw new NotFoundException(`Rating with ID ${id} not found.`);
+    if (!oldValue) {
+      tutor.addRatingAndUpdateRatingsCount(studentRating);
+    } else {
+      tutor.updateRating(oldValue, studentRating);
     }
 
     await tutor.save();
+
+    rating.studentRating = studentRating;
+    await rating.save();
+
+    return rating;
   }
 
-  private addToAverage(avg: number, value: number, count: number) {
-    return (count * avg + value) / (count + 1);
+  async leaveFeedback(
+    rating: Rating,
+    leaveFeedbackDto: LeaveFeedbackDto
+  ): Promise<Rating> {
+    rating.tutorFeedback = leaveFeedbackDto.tutorFeedback;
+
+    rating.save();
+    return rating;
   }
 
-  private updateAverage(
-    avg: number,
-    oldValue: number,
-    newValue: number,
-    count: number
-  ) {
-    return (count * avg - oldValue + newValue) / count;
-  }
+  async deleteRating(rating: Rating): Promise<void> {
+    const studentRating = rating.studentRating;
+    const tutor = rating.tutor;
 
-  private removeFromAverage(avg: number, value: number, count: number) {
-    if (count === 1) return 0;
+    const result = await this.delete(rating.id);
 
-    return (count * avg - value) / (count - 1);
+    if (!result.affected) {
+      throw new NotFoundException(`Rating with ID ${rating.id} not found.`);
+    }
+
+    tutor.deleteRatingAndUpdateRatingsCount(studentRating);
+    await tutor.save();
   }
 }

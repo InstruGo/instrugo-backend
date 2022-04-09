@@ -20,10 +20,11 @@ export class SubjectRepository extends Repository<Subject> {
   }
 
   async createSubject(createSubjectDto: CreateSubjectDto): Promise<Subject> {
-    const { name } = createSubjectDto;
+    const { name, color } = createSubjectDto;
 
     const subject = new Subject();
     subject.name = name;
+    subject.color = color;
 
     await subject.save();
     return subject;
@@ -33,9 +34,10 @@ export class SubjectRepository extends Repository<Subject> {
     subject: Subject,
     updateSubjectDto: UpdateSubjectDto
   ): Promise<Subject> {
-    const { name } = updateSubjectDto;
+    const { name, color } = updateSubjectDto;
 
     if (name) subject.name = name;
+    if (color) subject.color = color;
 
     await subject.save();
     return subject;

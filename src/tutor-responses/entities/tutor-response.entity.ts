@@ -1,32 +1,32 @@
 import {
   BaseEntity,
   PrimaryGeneratedColumn,
-  Column,
   Entity,
   ManyToOne,
-  OneToMany,
+  ManyToMany,
+  Column,
 } from 'typeorm';
 
 import { User } from '../../auth/entities/user.entity';
 import { Lesson } from '../../lessons/entities/lesson.entity';
-import { TutorResponseTimeFrame } from './tutor-response-time-frame.entity';
+import { TimeFrame } from '../../time-frames/entities/time-frame.entity';
 
 @Entity()
 export class TutorResponse extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('double precision')
+  @Column('numeric')
   price: number;
 
-  @ManyToOne(() => Lesson, { eager: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => Lesson, { onDelete: 'CASCADE' })
   lesson: Lesson;
 
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   tutor: User;
 
-  @OneToMany(() => TutorResponseTimeFrame, (trtf) => trtf.tutorResponse, {
+  @ManyToMany(() => TimeFrame, {
     eager: true,
   })
-  tutorResponseTimeFrames: TutorResponseTimeFrame[];
+  tutorResponseTimeFrames: TimeFrame[];
 }

@@ -4,9 +4,14 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import { User } from '../../auth/entities/user.entity';
+import { Lesson } from '../../lessons/entities/lesson.entity';
 
 @Entity()
 export class Rating extends BaseEntity {
@@ -14,11 +19,24 @@ export class Rating extends BaseEntity {
   id: number;
 
   @Column()
-  rating: number;
+  studentRating: number;
+
+  @Column()
+  tutorFeedback: string;
+
+  @CreateDateColumn()
+  createdOn: Date;
+
+  @UpdateDateColumn()
+  modifiedOn: Date;
+
+  @OneToOne(() => Lesson, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  lesson: Lesson;
 
   @ManyToOne(() => User)
   student: User;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User)
   tutor: User;
 }

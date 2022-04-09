@@ -1,24 +1,20 @@
 import { Repository, EntityRepository } from 'typeorm';
 
-import { CreateTutorResponseDto } from './dto/create-tutor-response.dto';
-import { UpdateTutorResponseDto } from './dto/update-tutor-response.dto';
 import { FilterTutorResponseDto } from './dto/filter-tutor-response.dto';
 import { TutorResponse } from './entities/tutor-response.entity';
 import { User } from '../auth/entities/user.entity';
 import { Lesson } from '../lessons/entities/lesson.entity';
-import { TutorResponseTimeFrame } from './entities/tutor-response-time-frame.entity';
+import { TimeFrame } from '../time-frames/entities/time-frame.entity';
+import { CreateTutorResponseDto } from './dto/create-tutor-response.dto';
+import { UpdateTutorResponseDto } from './dto/update-tutor-response.dto';
 
 @EntityRepository(TutorResponse)
 export class TutorResponseRepository extends Repository<TutorResponse> {
   async getTutorResponses(
     filterTutorResponseDto: FilterTutorResponseDto
   ): Promise<TutorResponse[]> {
-    const { price, tutorId, lessonId } = filterTutorResponseDto;
+    const { tutorId, lessonId } = filterTutorResponseDto;
     const query = this.createQueryBuilder('tutor-response');
-
-    if (price) {
-      query.andWhere('tutor-response.price = :price', { price });
-    }
 
     if (tutorId) {
       query.andWhere('tutor-response.tutorId = :tutorId', { tutorId });
@@ -33,14 +29,13 @@ export class TutorResponseRepository extends Repository<TutorResponse> {
   }
 
   async createTutorResponse(
-    createTutorResponseDto: CreateTutorResponseDto,
     tutor: User,
     lesson: Lesson,
-    tutorResponseTimeFrames: TutorResponseTimeFrame[]
+    tutorResponseTimeFrames: TimeFrame[],
+    createTutorResponseDto: CreateTutorResponseDto
   ): Promise<TutorResponse> {
-    const { price } = createTutorResponseDto;
     const response = new TutorResponse();
-    response.price = price;
+    response.price = createTutorResponseDto.price;
     response.tutor = tutor;
     response.lesson = lesson;
     response.tutorResponseTimeFrames = tutorResponseTimeFrames;
@@ -51,16 +46,16 @@ export class TutorResponseRepository extends Repository<TutorResponse> {
 
   async updateTutorResponse(
     response: TutorResponse,
-    updateTutorResponseDto: UpdateTutorResponseDto,
-    tutorResponseTimeFrames: TutorResponseTimeFrame[]
+    tutorResponseTimeFrames: TimeFrame[],
+    updateTutorResponseDto: UpdateTutorResponseDto
   ): Promise<TutorResponse> {
-    const { price } = updateTutorResponseDto;
-
-    if (price) {
-      response.price = price;
+    if (updateTutorResponseDto.price) {
+      response.price = updateTutorResponseDto.price;
     }
+
     if (tutorResponseTimeFrames)
       response.tutorResponseTimeFrames = tutorResponseTimeFrames;
+
     await response.save();
     return response;
   }

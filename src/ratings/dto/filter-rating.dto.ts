@@ -1,19 +1,32 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsInt, IsPositive, IsOptional } from 'class-validator';
 
 export class FilterRatingDto {
+  @IsOptional()
   @IsNotEmpty()
   @IsInt()
   @IsPositive()
-  @IsOptional()
-  rating?: number;
+  @ApiPropertyOptional()
+  studentRating?: number;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsInt()
+  @IsPositive()
+  @ApiPropertyOptional()
+  lessonId?: number;
+
   @IsOptional()
+  @IsNotEmpty()
+  @IsInt()
+  @IsPositive()
+  @ApiPropertyOptional()
   studentId?: number;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsInt()
-  @IsOptional()
+  @IsPositive()
+  @ApiPropertyOptional()
   tutorId?: number;
 }

@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { LessonsModule } from './lessons/lessons.module';
 import { RatingsModule } from './ratings/ratings.module';
 import { TutorResponsesModule } from './tutor-responses/tutor-responses.module';
+import { TimeFramesModule } from './time-frames/time-frames.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { TutorResponsesModule } from './tutor-responses/tutor-responses.module';
     LessonsModule,
     RatingsModule,
     TutorResponsesModule,
+    TimeFramesModule,
   ],
 })
 export class AppModule {}
