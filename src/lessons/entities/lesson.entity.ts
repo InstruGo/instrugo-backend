@@ -46,13 +46,13 @@ export class Lesson extends BaseEntity {
   @Column()
   status: LessonStatus;
 
-  @Column('timestamptz')
+  @Column('timestamptz', { nullable: true })
   finalStartTime: Date;
 
-  @Column('timestamptz')
+  @Column('timestamptz', { nullable: true })
   finalEndTime: Date;
 
-  @Column('numeric')
+  @Column('numeric', { nullable: true })
   finalPrice: number;
 
   @CreateDateColumn()

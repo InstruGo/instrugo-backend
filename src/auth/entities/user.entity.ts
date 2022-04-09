@@ -45,10 +45,10 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   avatarUrl: string;
 
-  @Column('numeric')
+  @Column('numeric', { nullable: true })
   averageRating: number;
 
-  @Column()
+  @Column({ nullable: true })
   ratingsCount: number;
 
   @CreateDateColumn()
