@@ -6,7 +6,7 @@ import { UpdateTimeFrameDto } from './dto/update-lesson-time-frame.dto';
 @EntityRepository(TimeFrame)
 export class TimeFrameRepository extends Repository<TimeFrame> {
   async getTimeFrames() {
-    const query = this.createQueryBuilder('lesson-time-frame');
+    const query = this.createQueryBuilder('time-frame');
     const lessonTimeFrames = await query.getMany();
 
     return lessonTimeFrames;
