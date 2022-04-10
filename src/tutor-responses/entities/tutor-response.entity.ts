@@ -5,6 +5,7 @@ import {
   ManyToOne,
   ManyToMany,
   Column,
+  JoinTable,
 } from 'typeorm';
 
 import { User } from '../../auth/entities/user.entity';
@@ -25,6 +26,7 @@ export class TutorResponse extends BaseEntity {
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   tutor: User;
 
+  @JoinTable()
   @ManyToMany(() => TimeFrame, {
     eager: true,
   })
