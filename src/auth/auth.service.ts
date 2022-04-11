@@ -24,10 +24,15 @@ export class AuthService {
   async register(
     registrationCredentialsDto: RegistrationCredentialsDto
   ): Promise<void> {
-    const { password, confirmPassword } = registrationCredentialsDto;
+    const { password, confirmPassword, phone, isTutor } =
+      registrationCredentialsDto;
 
     if (password !== confirmPassword) {
-      throw new BadRequestException('passwords do not match');
+      throw new BadRequestException('Passwords do not match.');
+    }
+
+    if (isTutor && !phone) {
+      throw new BadRequestException('Phone is required for tutors.');
     }
 
     return this.userRepository.register(registrationCredentialsDto);
@@ -41,7 +46,7 @@ export class AuthService {
     );
 
     if (!email) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Invalid credentials.');
     }
 
     const payload: JwtPayload = { id, email, role };

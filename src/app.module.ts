@@ -8,6 +8,7 @@ import { LessonsModule } from './lessons/lessons.module';
 import { RatingsModule } from './ratings/ratings.module';
 import { TutorResponsesModule } from './tutor-responses/tutor-responses.module';
 import { TimeFramesModule } from './time-frames/time-frames.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TimeFramesModule } from './time-frames/time-frames.module';
     RatingsModule,
     TutorResponsesModule,
     TimeFramesModule,
+    SeedModule,
   ],
 })
 export class AppModule {}
