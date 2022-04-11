@@ -59,7 +59,7 @@ export class LessonRepository extends Repository<Lesson> {
 
     query.leftJoinAndSelect('lesson.subject', 'subject');
     query.leftJoinAndSelect('lesson.student', 'user');
-    query.leftJoinAndSelect('lesson.lessonTimeFrames', 'lessonTimeFrame');
+    query.leftJoinAndSelect('lesson.lessonTimeFrames', 'timeFrame');
 
     const lessons = await query.getMany();
     return lessons;

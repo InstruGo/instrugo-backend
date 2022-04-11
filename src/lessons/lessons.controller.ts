@@ -10,6 +10,7 @@ import {
   ClassSerializerInterceptor,
   UseInterceptors,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -26,9 +27,12 @@ import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 import { User } from '../auth/user.decorator';
 import { User as UserEntity } from '../auth/entities/user.entity';
 import { ResolveLessonRequestDto } from './dto/lessons/resolve-lesson-request.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
 
 @ApiTags('lessons')
 @Controller('lessons')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class LessonsController {
   constructor(private readonly lessonsService: LessonsService) {}
 
