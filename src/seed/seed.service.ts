@@ -40,23 +40,26 @@ export class SeedService implements OnApplicationBootstrap {
   }
 
   async onApplicationBootstrap() {
-    const isDatabaseEmpty = await this.isDatabaseEmpty();
+    const shouldSeed = await this.shouldSeed();
 
-    if (!isDatabaseEmpty) {
+    if (!shouldSeed) {
       return;
     }
 
-    const seed = parseInt(this.configService.get('SEED_DB'));
+    await this.seedAdmins();
+    await this.seedStudents();
+    await this.seedTutors();
+    await this.seedSubjects();
+    await this.seedLessons();
 
-    if (seed) {
-      await this.seedAdmins();
-      await this.seedStudents();
-      await this.seedTutors();
-      await this.seedSubjects();
-      await this.seedLessons();
+    this.logger.log('Database seeding completed.');
+  }
 
-      this.logger.log('Database seeding completed.');
-    }
+  private async shouldSeed() {
+    const isDatabaseEmpty = await this.isDatabaseEmpty();
+    const isSeedEnv = !!parseInt(this.configService.get('SEED_DB'));
+
+    return isDatabaseEmpty && isSeedEnv;
   }
 
   private async isDatabaseEmpty() {
@@ -107,7 +110,6 @@ export class SeedService implements OnApplicationBootstrap {
       where: { email: 'ivan.skorupan@fer.hr' },
     });
 
-    // Seed lessons
     await this.lessonsService.createLesson(student1, lessons[0]);
     await this.lessonsService.createLesson(student2, lessons[1]);
   }

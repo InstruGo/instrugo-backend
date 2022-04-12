@@ -130,4 +130,11 @@ export class LessonRepository extends Repository<Lesson> {
     await lesson.save();
     return lesson;
   }
+
+  async cancelPendingLesson(lesson: Lesson): Promise<Lesson> {
+    lesson.status = LessonStatus.CANCELED;
+
+    lesson.save();
+    return lesson;
+  }
 }
