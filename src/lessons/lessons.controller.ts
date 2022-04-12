@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   HttpCode,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -89,5 +90,12 @@ export class LessonsController {
       resolveLessonRequestDto.tutorResponseId,
       resolveLessonRequestDto.timeFrameId
     );
+  }
+
+  @Put('cancel/:id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOkResponse({ type: Lesson })
+  cancelPendingLesson(@Param('id', ParseIntPipe) id: number) {
+    return this.lessonsService.cancelPendingLesson(id);
   }
 }

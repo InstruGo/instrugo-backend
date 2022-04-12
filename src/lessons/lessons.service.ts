@@ -78,6 +78,15 @@ export class LessonsService {
       throw new NotFoundException('Specified lesson does not exist.');
     }
 
+    if (
+      lesson.status === LessonStatus.COMPLETED ||
+      lesson.status === LessonStatus.CANCELED
+    ) {
+      throw new BadRequestException(
+        'Completed or canceled lessons cannot be updated.'
+      );
+    }
+
     const { subjectId, lessonTimeFrames } = updateLessonDto;
 
     const subject = subjectId
@@ -139,5 +148,19 @@ export class LessonsService {
       chosenTutorResponse,
       chosenTimeFrame
     );
+  }
+
+  async cancelPendingLesson(lessonId: number): Promise<Lesson> {
+    const lesson = await this.lessonRepository.findOne(lessonId);
+
+    if (!lesson) {
+      throw new NotFoundException('Specified lesson does not exist.');
+    }
+
+    if (lesson.status !== LessonStatus.PENDING) {
+      throw new BadRequestException('Only pending lessons can be canceled.');
+    }
+
+    return this.lessonRepository.cancelPendingLesson(lesson);
   }
 }
