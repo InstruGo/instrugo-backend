@@ -5,11 +5,11 @@ import {
   ValidationPipe,
   HttpCode,
   UseGuards,
-  Request,
   Get,
   UseInterceptors,
   ClassSerializerInterceptor,
   ParseIntPipe,
+  Patch,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -20,6 +20,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { RolesGuard } from './roles.guard';
 import { User } from './user.decorator';
 import { User as UserEntity } from './entities/user.entity';
+import { UpdateProfileDto } from './dto/profile-update.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -57,6 +58,16 @@ export class AuthController {
     @User('id', ParseIntPipe) id: number
   ): Promise<Partial<UserEntity>> {
     return this.authService.getProfile(id);
+  }
+  @Patch('/profile')
+  @ApiResponse({ status: 200 })
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  updateProfile(
+    @User('id', ParseIntPipe) id: number,
+    @Body() updateProfileDto: UpdateProfileDto
+  ): Promise<void> {
+    return this.authService.updateProfile(id, updateProfileDto);
   }
 
   /**

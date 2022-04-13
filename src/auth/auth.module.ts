@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserRepository } from './user.repository';
+import { SubjectRepository } from 'src/lessons/subjects/subject.repository';
 import { JwtStrategy } from './jwt.strategy';
 import { jwtConfigOptions } from '../config/jwt.config';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -19,7 +20,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
       useFactory: async (configService: ConfigService) =>
         jwtConfigOptions(configService),
     }),
-    TypeOrmModule.forFeature([UserRepository]),
+    TypeOrmModule.forFeature([UserRepository, SubjectRepository]),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, JwtAuthGuard],

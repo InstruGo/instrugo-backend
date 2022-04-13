@@ -9,15 +9,20 @@ import { JwtService } from '@nestjs/jwt';
 
 import { JwtPayload } from './jwt-payload.interface';
 import { UserRepository } from './user.repository';
+import { SubjectRepository } from 'src/lessons/subjects/subject.repository';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
 import { User } from './entities/user.entity';
+import { Subject } from '../lessons/entities/subject.entity';
 import { UserRole } from './entities/user.role.enum';
+import { UpdateProfileDto } from './dto/profile-update.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UserRepository) private userRepository: UserRepository,
+    @InjectRepository(SubjectRepository)
+    private subjectRepository: SubjectRepository,
     private jwtService: JwtService
   ) {}
 
@@ -59,7 +64,21 @@ export class AuthService {
     const user = await this.userRepository.findOne(id);
     return user;
   }
-
+  async updateProfile(
+    id: number,
+    updateProfileDto: UpdateProfileDto
+  ): Promise<void> {
+    const user = await this.userRepository.findOne(id);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} does not exist.`);
+    }
+    const subjects: Subject[] = [];
+    updateProfileDto.subjectIds?.map(async (id) => {
+      const subject = await this.subjectRepository.findOne(id);
+      if (subject) subjects.push(subject);
+    });
+    return this.userRepository.updateProfile(user, updateProfileDto, subjects);
+  }
   async becomeATutor(id: number): Promise<void> {
     const user = await this.userRepository.findOne(id);
 
