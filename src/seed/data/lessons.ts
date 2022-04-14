@@ -43,4 +43,24 @@ export const lessons: CreateLessonDto[] = [
       },
     ],
   },
+  {
+    subfield: 'past tense',
+    level: EducationLevel.HIGH,
+    grade: 1,
+    description: 'English is not my favourite subject...',
+    type: MeetingType.IRL,
+    location: 'Travanjska 11, Zagreb',
+    budget: 50,
+    subjectId: 4,
+    lessonTimeFrames: [
+      {
+        startTime: '2022-06-25T14:00Z',
+        endTime: '2022-06-25T15:00Z',
+      },
+      {
+        startTime: '2022-06-25T10:15Z',
+        endTime: '2022-06-25T12:15Z',
+      },
+    ],
+  },
 ];

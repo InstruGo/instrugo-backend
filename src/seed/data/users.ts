@@ -10,6 +10,15 @@ export const admins: RegistrationCredentialsDto[] = [
     confirmPassword: 'admin',
     isTutor: true,
   },
+  {
+    email: 'adminka@instrugo.com',
+    firstName: 'Monika',
+    lastName: 'Belluci',
+    phone: '+38598826321',
+    password: 'admin',
+    confirmPassword: 'admin',
+    isTutor: true,
+  },
 ];
 
 export const students: RegistrationCredentialsDto[] = [
@@ -40,6 +49,24 @@ export const students: RegistrationCredentialsDto[] = [
     confirmPassword: 'ifkec72',
     isTutor: false,
   },
+  {
+    email: 'pero.perica@fer.hr',
+    firstName: 'Pero',
+    lastName: 'Perica',
+    phone: '+385998321457',
+    password: 'pero22',
+    confirmPassword: 'pero22',
+    isTutor: false,
+  },
+  {
+    email: 'stef.stefek@fer.hr',
+    firstName: 'Štef',
+    lastName: 'Štefek',
+    phone: '+385998321457',
+    password: 'stef11',
+    confirmPassword: 'stef11',
+    isTutor: false,
+  },
 ];
 
 export const tutors: RegistrationCredentialsDto[] = [
@@ -59,6 +86,33 @@ export const tutors: RegistrationCredentialsDto[] = [
     phone: '+385917654321',
     password: 'diskobanana',
     confirmPassword: 'diskobanana',
+    isTutor: true,
+  },
+  {
+    email: 'tutor.tutorich@fer.hr',
+    firstName: 'Tutor',
+    lastName: 'Tutorić',
+    phone: '+385917654321',
+    password: 'tutor',
+    confirmPassword: 'tutor',
+    isTutor: true,
+  },
+  {
+    email: 'natrijev.klorid@fer.hr',
+    firstName: 'Natrij',
+    lastName: 'Klorid',
+    phone: '+385917654321',
+    password: 'klorid',
+    confirmPassword: 'klorid',
+    isTutor: true,
+  },
+  {
+    email: 'gospon.covjek@fer.hr',
+    firstName: 'Gospodin',
+    lastName: 'Čovjek',
+    phone: '+385917654321',
+    password: 'gospodin',
+    confirmPassword: 'gospodin',
     isTutor: true,
   },
 ];

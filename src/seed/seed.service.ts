@@ -112,5 +112,6 @@ export class SeedService implements OnApplicationBootstrap {
 
     await this.lessonsService.createLesson(student1, lessons[0]);
     await this.lessonsService.createLesson(student2, lessons[1]);
+    await this.lessonsService.createLesson(student2, lessons[2]);
   }
 }
