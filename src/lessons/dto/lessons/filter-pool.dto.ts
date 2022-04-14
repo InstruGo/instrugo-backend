@@ -10,6 +10,7 @@ import {
 import { EducationLevel } from '../../entities/lesson.level.enum';
 import { MeetingType } from '../../entities/lesson.meeting-type.enum';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsISO8601 } from 'class-validator';
 
 export class FilterPoolDto {
   @IsOptional()
@@ -41,6 +42,18 @@ export class FilterPoolDto {
   @IsPositive()
   @ApiPropertyOptional()
   maxBudget?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsISO8601()
+  @ApiPropertyOptional()
+  after?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsISO8601()
+  @ApiPropertyOptional()
+  before?: string;
 
   @IsOptional()
   @IsNotEmpty()

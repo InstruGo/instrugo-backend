@@ -6,6 +6,7 @@ import {
   IsPositive,
   IsBoolean,
   IsArray,
+  IsISO8601,
 } from 'class-validator';
 
 import { EducationLevel } from '../../entities/lesson.level.enum';
@@ -55,6 +56,18 @@ export class FilterLessonDto {
   @IsArray()
   @ApiPropertyOptional({ isArray: true })
   subjectIds?: number[];
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsISO8601()
+  @ApiPropertyOptional()
+  after?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsISO8601()
+  @ApiPropertyOptional()
+  before?: string;
 
   @IsOptional()
   @IsNotEmpty()

@@ -25,8 +25,11 @@ export class LessonRepository extends Repository<Lesson> {
       maxPrice,
       status,
       subjectIds,
+      after,
+      before,
       isLessonTutor,
     } = filterLessonDto;
+
     const query = this.createQueryBuilder('lesson');
 
     if (level) {
@@ -67,14 +70,37 @@ export class LessonRepository extends Repository<Lesson> {
     query.leftJoinAndSelect('lesson.student', 'user');
     query.leftJoinAndSelect('lesson.lessonTimeFrames', 'timeFrame');
 
-    const lessons = await query.getMany();
+    let lessons = await query.getMany();
+
+    if (after) {
+      lessons = lessons.filter((lesson) =>
+        lesson.hasTimeSlotAfterDate(new Date(after))
+      );
+    }
+
+    if (before) {
+      lessons = lessons.filter((lesson) =>
+        lesson.hasTimeSlotBeforeDate(new Date(before))
+      );
+    }
+
     return lessons;
   }
 
   async getPublicPool(filterPoolDto: FilterPoolDto): Promise<Lesson[]> {
-    const { level, grade, type, minBudget, maxBudget, subjectIds } =
-      filterPoolDto;
+    const {
+      level,
+      grade,
+      type,
+      minBudget,
+      maxBudget,
+      after,
+      before,
+      subjectIds,
+    } = filterPoolDto;
+
     const query = this.createQueryBuilder('pool');
+    query.where('lesson.status = :status', { status: LessonStatus.REQUESTED });
 
     if (level) {
       query.andWhere('lesson.level = :level', { level });
@@ -104,7 +130,20 @@ export class LessonRepository extends Repository<Lesson> {
     query.leftJoinAndSelect('lesson.student', 'user');
     query.leftJoinAndSelect('lesson.lessonTimeFrames', 'timeFrame');
 
-    const pool = await query.getMany();
+    let pool = await query.getMany();
+
+    if (after) {
+      pool = pool.filter((lesson) =>
+        lesson.hasTimeSlotAfterDate(new Date(after))
+      );
+    }
+
+    if (before) {
+      pool = pool.filter((lesson) =>
+        lesson.hasTimeSlotBeforeDate(new Date(before))
+      );
+    }
+
     return pool;
   }
 

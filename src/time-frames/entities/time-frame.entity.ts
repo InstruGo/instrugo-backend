@@ -23,4 +23,16 @@ export class TimeFrame extends BaseEntity {
     onDelete: 'CASCADE',
   })
   lesson: Lesson;
+
+  isBetweenDates(begin: Date, end: Date) {
+    return this.startTime >= begin && this.endTime <= end;
+  }
+
+  isAfterDate(after: Date) {
+    return this.startTime >= after;
+  }
+
+  isBeforeDate(before: Date) {
+    return this.endTime <= before;
+  }
 }
