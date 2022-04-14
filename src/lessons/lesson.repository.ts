@@ -9,10 +9,14 @@ import { UpdateLessonDto } from './dto/lessons/update-lesson.dto';
 import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { TimeFrame } from '../time-frames/entities/time-frame.entity';
 import { TutorResponse } from '../tutor-responses/entities/tutor-response.entity';
+import { FilterPoolDto } from './dto/lessons/filter-pool.dto';
 
 @EntityRepository(Lesson)
 export class LessonRepository extends Repository<Lesson> {
-  async getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
+  async getLessons(
+    filterLessonDto: FilterLessonDto,
+    userId: number
+  ): Promise<Lesson[]> {
     const {
       level,
       grade,
@@ -20,10 +24,57 @@ export class LessonRepository extends Repository<Lesson> {
       minPrice,
       maxPrice,
       status,
-      subjectId,
-      studentId,
+      subjectIds,
+      isLessonTutor,
     } = filterLessonDto;
     const query = this.createQueryBuilder('lesson');
+
+    if (level) {
+      query.andWhere('lesson.level = :level', { level });
+    }
+
+    if (grade) {
+      query.andWhere('lesson.grade = :grade', { grade });
+    }
+
+    if (type) {
+      query.andWhere('lesson.type = :type', { type });
+    }
+
+    if (subjectIds) {
+      query.andWhere('lesson.subjectId IN (:...subjectIds)', { subjectIds });
+    }
+
+    if (isLessonTutor) {
+      query.andWhere('lesson.tutorId = :userId', { userId });
+    } else {
+      query.andWhere('lesson.studentId = :userId', { userId });
+    }
+
+    if (status) {
+      query.andWhere('lesson.status = :status', { status });
+    }
+
+    if (minPrice) {
+      query.andWhere('lesson.budget >= :minPrice', { minPrice });
+    }
+
+    if (maxPrice) {
+      query.andWhere('lesson.budget <= :maxPrice', { maxPrice });
+    }
+
+    query.leftJoinAndSelect('lesson.subject', 'subject');
+    query.leftJoinAndSelect('lesson.student', 'user');
+    query.leftJoinAndSelect('lesson.lessonTimeFrames', 'timeFrame');
+
+    const lessons = await query.getMany();
+    return lessons;
+  }
+
+  async getPublicPool(filterPoolDto: FilterPoolDto): Promise<Lesson[]> {
+    const { level, grade, type, minBudget, maxBudget, subjectIds } =
+      filterPoolDto;
+    const query = this.createQueryBuilder('pool');
 
     if (level) {
       query.andWhere('lesson.level = :level', { level });
@@ -37,32 +88,24 @@ export class LessonRepository extends Repository<Lesson> {
       query.andWhere('lesson.type = :grade', { type });
     }
 
-    if (subjectId) {
-      query.andWhere('lesson.subjectId = :subjectId', { subjectId });
+    if (subjectIds) {
+      query.andWhere('lesson.subjectId IN (:...subjectIds)', { subjectIds });
     }
 
-    if (studentId) {
-      query.andWhere('lesson.studentId = :studentId', { studentId });
+    if (minBudget) {
+      query.andWhere('lesson.budget >= :minBudget', { minBudget });
     }
 
-    if (status) {
-      query.andWhere('lesson.status = :status', { status });
-    }
-
-    if (minPrice) {
-      query.andWhere('lesson.budget > :minPrice', { minPrice });
-    }
-
-    if (maxPrice) {
-      query.andWhere('lesson.budget < :maxPrice', { maxPrice });
+    if (maxBudget) {
+      query.andWhere('lesson.budget <= :maxBudget', { maxBudget });
     }
 
     query.leftJoinAndSelect('lesson.subject', 'subject');
     query.leftJoinAndSelect('lesson.student', 'user');
     query.leftJoinAndSelect('lesson.lessonTimeFrames', 'timeFrame');
 
-    const lessons = await query.getMany();
-    return lessons;
+    const pool = await query.getMany();
+    return pool;
   }
 
   async createLesson(

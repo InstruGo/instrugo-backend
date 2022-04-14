@@ -16,6 +16,7 @@ import { User } from '../auth/entities/user.entity';
 import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repository';
 import { TimeFrameRepository } from '../time-frames/time-frames.repository';
 import { TimeFrame } from '../time-frames/entities/time-frame.entity';
+import { FilterPoolDto } from './dto/lessons/filter-pool.dto';
 
 @Injectable()
 export class LessonsService {
@@ -30,8 +31,15 @@ export class LessonsService {
     private tutorResponseRepository: TutorResponseRepository
   ) {}
 
-  getLessons(filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
-    return this.lessonRepository.getLessons(filterLessonDto);
+  getLessons(
+    filterLessonDto: FilterLessonDto,
+    userId: number
+  ): Promise<Lesson[]> {
+    return this.lessonRepository.getLessons(filterLessonDto, userId);
+  }
+
+  getPublicPool(filterPoolDto: FilterPoolDto): Promise<Lesson[]> {
+    return this.lessonRepository.getPublicPool(filterPoolDto);
   }
 
   async getLesson(id: number): Promise<Lesson> {
@@ -40,6 +48,7 @@ export class LessonsService {
     if (!lesson) {
       throw new NotFoundException('Specified lesson does not exist.');
     }
+
     return lesson;
   }
 
