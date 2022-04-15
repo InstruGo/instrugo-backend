@@ -64,21 +64,27 @@ export class AuthService {
     const user = await this.userRepository.findOne(id);
     return user;
   }
+
   async updateProfile(
     id: number,
     updateProfileDto: UpdateProfileDto
   ): Promise<void> {
     const user = await this.userRepository.findOne(id);
+
     if (!user) {
       throw new NotFoundException(`User with ID ${id} does not exist.`);
     }
+
     const subjects: Subject[] = [];
+
     updateProfileDto.subjectIds?.map(async (id) => {
       const subject = await this.subjectRepository.findOne(id);
       if (subject) subjects.push(subject);
     });
+
     return this.userRepository.updateProfile(user, updateProfileDto, subjects);
   }
+
   async becomeATutor(id: number): Promise<void> {
     const user = await this.userRepository.findOne(id);
 

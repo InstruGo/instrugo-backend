@@ -10,8 +10,10 @@ import {
   ClassSerializerInterceptor,
   ParseIntPipe,
   Patch,
+  Res,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
 import { AuthService } from './auth.service';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
@@ -27,9 +29,6 @@ import { UpdateProfileDto } from './dto/profile-update.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  /**
-   * Route for user registration.
-   */
   @Post('/register')
   @ApiResponse({ status: 201 })
   register(
@@ -38,16 +37,17 @@ export class AuthController {
     return this.authService.register(registrationCredentialsDto);
   }
 
-  /**
-   * Route for user login.
-   */
   @Post('/login')
   @HttpCode(200)
   @ApiResponse({ status: 200 })
-  login(
-    @Body(ValidationPipe) loginCredentialsDto: LoginCredentialsDto
-  ): Promise<{ accessToken: string }> {
-    return this.authService.login(loginCredentialsDto);
+  async loginJwtCookie(
+    @Body(ValidationPipe) loginCredentialsDto: LoginCredentialsDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const token = await this.authService.login(loginCredentialsDto);
+
+    res.cookie('jwt', token, { httpOnly: true });
+    return { msg: 'success' };
   }
 
   @Get('/profile')
@@ -59,6 +59,7 @@ export class AuthController {
   ): Promise<Partial<UserEntity>> {
     return this.authService.getProfile(id);
   }
+
   @Patch('/profile')
   @ApiResponse({ status: 200 })
   @UseInterceptors(ClassSerializerInterceptor)
@@ -70,9 +71,6 @@ export class AuthController {
     return this.authService.updateProfile(id, updateProfileDto);
   }
 
-  /**
-   * Route for converting a normal user to tutor status.
-   */
   @Post('/become-a-tutor')
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard, RolesGuard)

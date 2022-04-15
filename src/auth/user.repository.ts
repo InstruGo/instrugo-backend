@@ -73,12 +73,14 @@ export class UserRepository extends Repository<User> {
       };
     }
   }
+
   async updateProfile(
     user: User,
     updateProfileDto: UpdateProfileDto,
     subjects: Subject[]
   ): Promise<void> {
     const { firstName, lastName, phone } = updateProfileDto;
+
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (phone) user.phone = phone;
@@ -86,6 +88,7 @@ export class UserRepository extends Repository<User> {
 
     await user.save();
   }
+
   async becomeATutor(user: User): Promise<void> {
     user.averageRating = 0;
     user.ratingsCount = 0;
