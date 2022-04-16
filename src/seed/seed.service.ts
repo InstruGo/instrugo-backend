@@ -9,10 +9,10 @@ import { LessonRepository } from '../lessons/lesson.repository';
 import { RatingRepository } from '../ratings/rating.repository';
 import { TimeFrameRepository } from '../time-frames/time-frames.repository';
 import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repository';
-import { admins, tutors, students } from './data/users';
 import { subjects } from './data/subjects';
-import { lessons } from './data/lessons';
 import { LessonsService } from '../lessons/lessons.service';
+import { admins, students, tutors } from './data/users';
+import { filipLessons, ivanLessons } from './data/lessons';
 
 @Injectable()
 export class SeedService implements OnApplicationBootstrap {
@@ -102,16 +102,31 @@ export class SeedService implements OnApplicationBootstrap {
   }
 
   private async seedLessons() {
-    const student1 = await this.userRepository.findOne({
+    await this.seedFilipLessons();
+    await this.seedIvanLessons();
+  }
+
+  private async seedFilipLessons() {
+    const userFilip = await this.userRepository.findOne({
       where: { email: 'filip.todoric@fer.hr' },
     });
 
-    const student2 = await this.userRepository.findOne({
+    await Promise.all(
+      filipLessons.map(async (lesson) => {
+        await this.lessonsService.createLesson(userFilip, lesson);
+      })
+    );
+  }
+
+  private async seedIvanLessons() {
+    const userIvan = await this.userRepository.findOne({
       where: { email: 'ivan.skorupan@fer.hr' },
     });
 
-    await this.lessonsService.createLesson(student1, lessons[0]);
-    await this.lessonsService.createLesson(student2, lessons[1]);
-    await this.lessonsService.createLesson(student2, lessons[2]);
+    await Promise.all(
+      ivanLessons.map(async (lesson) => {
+        await this.lessonsService.createLesson(userIvan, lesson);
+      })
+    );
   }
 }
