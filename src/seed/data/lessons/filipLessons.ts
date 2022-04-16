@@ -43,4 +43,64 @@ export const filipLessons: CreateLessonDto[] = [
       },
     ],
   },
+  {
+    subfield: 'Python Lists',
+    level: EducationLevel.HIGH,
+    grade: 1,
+    description: 'Python is dead to me',
+    type: MeetingType.IRL,
+    location: 'Travanjska 11, Zagreb',
+    budget: 50,
+    subjectId: 10,
+    lessonTimeFrames: [
+      {
+        startTime: '2022-06-25T14:00Z',
+        endTime: '2022-06-25T15:00Z',
+      },
+      {
+        startTime: '2022-06-25T10:15Z',
+        endTime: '2022-06-25T12:15Z',
+      },
+    ],
+  },
+  {
+    subfield: 'Set Theory',
+    level: EducationLevel.HIGH,
+    grade: 1,
+    description: 'Sets go brrrr...',
+    type: MeetingType.IRL,
+    location: 'Travanjska 11, Zagreb',
+    budget: 50,
+    subjectId: 1,
+    lessonTimeFrames: [
+      {
+        startTime: '2022-06-25T14:00Z',
+        endTime: '2022-06-25T15:00Z',
+      },
+      {
+        startTime: '2022-06-25T10:15Z',
+        endTime: '2022-06-25T12:15Z',
+      },
+    ],
+  },
+  {
+    subfield: 'Lorem Ipsum',
+    level: EducationLevel.HIGH,
+    grade: 1,
+    description: 'Latin is a dead language',
+    type: MeetingType.IRL,
+    location: 'Travanjska 11, Zagreb',
+    budget: 50,
+    subjectId: 8,
+    lessonTimeFrames: [
+      {
+        startTime: '2022-06-25T14:00Z',
+        endTime: '2022-06-25T15:00Z',
+      },
+      {
+        startTime: '2022-06-25T10:15Z',
+        endTime: '2022-06-25T12:15Z',
+      },
+    ],
+  },
 ];
