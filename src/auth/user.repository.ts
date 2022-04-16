@@ -6,10 +6,12 @@ import { Repository, EntityRepository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
+import { Subject } from 'src/lessons/entities/subject.entity';
 import { UserRole } from './entities/user.role.enum';
 import { JwtPayload } from './jwt-payload.interface';
 import { LoginCredentialsDto } from './dto/login-credentials.dto';
 import { RegistrationCredentialsDto } from './dto/registration-credentials.dto';
+import { UpdateProfileDto } from './dto/profile-update.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -71,7 +73,19 @@ export class UserRepository extends Repository<User> {
       };
     }
   }
+  async updateProfile(
+    user: User,
+    updateProfileDto: UpdateProfileDto,
+    subjects: Subject[]
+  ): Promise<void> {
+    const { firstName, lastName, phone } = updateProfileDto;
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (phone) user.phone = phone;
+    if (subjects) user.subjects = subjects;
 
+    await user.save();
+  }
   async becomeATutor(user: User): Promise<void> {
     user.averageRating = 0;
     user.ratingsCount = 0;
