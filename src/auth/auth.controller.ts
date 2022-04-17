@@ -50,6 +50,15 @@ export class AuthController {
     return { msg: 'success' };
   }
 
+  @Get('/logout')
+  @HttpCode(200)
+  @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard)
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('jwt', { httpOnly: true });
+    return { msg: 'success' };
+  }
+
   @Get('/profile')
   @ApiResponse({ status: 200 })
   @UseInterceptors(ClassSerializerInterceptor)
