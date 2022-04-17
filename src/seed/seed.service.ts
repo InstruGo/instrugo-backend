@@ -5,14 +5,12 @@ import { Connection } from 'typeorm';
 
 import { UserRepository } from '../auth/user.repository';
 import { SubjectRepository } from '../lessons/subjects/subject.repository';
-import { LessonRepository } from '../lessons/lesson.repository';
-import { RatingRepository } from '../ratings/rating.repository';
-import { TimeFrameRepository } from '../time-frames/time-frames.repository';
-import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repository';
-import { admins, tutors, students } from './data/users';
 import { subjects } from './data/subjects';
-import { lessons } from './data/lessons';
 import { LessonsService } from '../lessons/lessons.service';
+import { admins, students, tutors } from './data/users';
+import { filipLessons, ivanLessons } from './data/lessons';
+import { tutorResponses } from './data/tutorResponses';
+import { TutorResponsesService } from '../tutor-responses/tutor-responses.service';
 
 @Injectable()
 export class SeedService implements OnApplicationBootstrap {
@@ -24,15 +22,8 @@ export class SeedService implements OnApplicationBootstrap {
     @InjectRepository(UserRepository) private userRepository: UserRepository,
     @InjectRepository(SubjectRepository)
     private subjectRepository: SubjectRepository,
-    @InjectRepository(LessonRepository)
-    private lessonRepository: LessonRepository,
-    @InjectRepository(RatingRepository)
-    private ratingRepository: RatingRepository,
-    @InjectRepository(TutorResponseRepository)
-    private tutorResponseRepository: TutorResponseRepository,
-    @InjectRepository(TimeFrameRepository)
-    private timeFrameRepository: TimeFrameRepository,
-    private readonly lessonsService: LessonsService
+    private readonly lessonsService: LessonsService,
+    private readonly tutorResponsesService: TutorResponsesService
   ) {}
 
   getDbHandle(): Connection {
@@ -51,6 +42,8 @@ export class SeedService implements OnApplicationBootstrap {
     await this.seedTutors();
     await this.seedSubjects();
     await this.seedLessons();
+    await this.seedTutorResponses();
+    await this.resolveLessonRequests();
 
     this.logger.log('Database seeding completed.');
   }
@@ -102,15 +95,43 @@ export class SeedService implements OnApplicationBootstrap {
   }
 
   private async seedLessons() {
-    const student1 = await this.userRepository.findOne({
+    await this.seedFilipLessons();
+    await this.seedIvanLessons();
+  }
+
+  private async seedFilipLessons() {
+    const userFilip = await this.userRepository.findOne({
       where: { email: 'filip.todoric@fer.hr' },
     });
 
-    const student2 = await this.userRepository.findOne({
+    await Promise.all(
+      filipLessons.map(async (lesson) => {
+        await this.lessonsService.createLesson(userFilip, lesson);
+      })
+    );
+  }
+
+  private async seedIvanLessons() {
+    const userIvan = await this.userRepository.findOne({
       where: { email: 'ivan.skorupan@fer.hr' },
     });
 
-    await this.lessonsService.createLesson(student1, lessons[0]);
-    await this.lessonsService.createLesson(student2, lessons[1]);
+    await Promise.all(
+      ivanLessons.map(async (lesson) => {
+        await this.lessonsService.createLesson(userIvan, lesson);
+      })
+    );
+  }
+
+  private async seedTutorResponses() {
+    await Promise.all(
+      tutorResponses.map(async (tutorResponse) => {
+        await this.tutorResponsesService.createTutorResponse(tutorResponse);
+      })
+    );
+  }
+
+  private async resolveLessonRequests() {
+    await this.lessonsService.resolveLessonRequest(1, 1, 1);
   }
 }

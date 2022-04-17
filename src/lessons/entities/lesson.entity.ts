@@ -75,4 +75,34 @@ export class Lesson extends BaseEntity {
 
   @OneToMany(() => TutorResponse, (tr) => tr.lesson, { eager: true })
   tutorResponses: TutorResponse[];
+
+  hasTimeSlotBetweenDates(begin: Date, end: Date) {
+    for (const timeFrame of this.lessonTimeFrames) {
+      if (timeFrame.isBetweenDates(begin, end)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  hasTimeSlotAfterDate(after: Date) {
+    for (const timeFrame of this.lessonTimeFrames) {
+      if (timeFrame.isAfterDate(after)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  hasTimeSlotBeforeDate(before: Date) {
+    for (const timeFrame of this.lessonTimeFrames) {
+      if (timeFrame.isBeforeDate(before)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
 }

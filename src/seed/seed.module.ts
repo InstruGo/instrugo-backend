@@ -3,12 +3,12 @@ import { SeedService } from './seed.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserRepository } from '../auth/user.repository';
 import { SubjectRepository } from '../lessons/subjects/subject.repository';
-import { LessonRepository } from '../lessons/lesson.repository';
-import { RatingRepository } from '../ratings/rating.repository';
-import { TimeFrameRepository } from '../time-frames/time-frames.repository';
-import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repository';
 import { LessonsModule } from '../lessons/lessons.module';
 import { LessonsService } from '../lessons/lessons.service';
+import { TutorResponsesService } from '../tutor-responses/tutor-responses.service';
+import { LessonRepository } from '../lessons/lesson.repository';
+import { TimeFrameRepository } from '../time-frames/time-frames.repository';
+import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repository';
 
 @Module({
   imports: [
@@ -16,12 +16,11 @@ import { LessonsService } from '../lessons/lessons.service';
       UserRepository,
       SubjectRepository,
       LessonRepository,
-      RatingRepository,
-      TutorResponseRepository,
       TimeFrameRepository,
+      TutorResponseRepository,
     ]),
     LessonsModule,
   ],
-  providers: [SeedService, LessonsService],
+  providers: [SeedService, LessonsService, TutorResponsesService],
 })
 export class SeedModule {}

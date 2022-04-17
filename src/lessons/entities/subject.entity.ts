@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import {
   BaseEntity,
   Column,
@@ -18,9 +19,11 @@ export class Subject extends BaseEntity {
   @Column({ unique: true })
   color: string;
 
+  @Exclude()
   @CreateDateColumn()
   createdOn: Date;
 
+  @Exclude()
   @UpdateDateColumn()
   modifiedOn: Date;
 }

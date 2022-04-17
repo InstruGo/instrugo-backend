@@ -12,6 +12,7 @@ import {
   HttpCode,
   UseGuards,
   Put,
+  Query,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -30,6 +31,9 @@ import { User as UserEntity } from '../auth/entities/user.entity';
 import { ResolveLessonRequestDto } from './dto/lessons/resolve-lesson-request.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
+import { UserRole } from '../auth/entities/user.role.enum';
+import { FilterPoolDto } from './dto/lessons/filter-pool.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @ApiTags('lessons')
 @Controller('lessons')
@@ -40,8 +44,25 @@ export class LessonsController {
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOkResponse({ type: [Lesson] })
-  getLessons(@Body() filterLessonDto: FilterLessonDto): Promise<Lesson[]> {
-    return this.lessonsService.getLessons(filterLessonDto);
+  getLessons(
+    @Query() filterLessonDto: FilterLessonDto,
+    @User() user: UserEntity
+  ): Promise<Lesson[]> {
+    return this.lessonsService.getLessons(filterLessonDto, user.id);
+  }
+
+  @Get('pool')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOkResponse({ type: [Lesson] })
+  getPublicPool(
+    @Query() filterPoolDto: FilterPoolDto,
+    @User() user: UserEntity
+  ): Promise<Lesson[]> {
+    if (user.role === UserRole.STUDENT) {
+      throw new NotFoundException();
+    }
+
+    return this.lessonsService.getPublicPool(filterPoolDto);
   }
 
   @Get(':id')

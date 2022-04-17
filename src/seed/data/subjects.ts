@@ -25,4 +25,20 @@ export const subjects: CreateSubjectDto[] = [
     name: 'biology',
     color: '#4B3567',
   },
+  {
+    name: 'history',
+    color: '#1A535C',
+  },
+  {
+    name: 'latin',
+    color: '#4ECDC4',
+  },
+  {
+    name: 'sociology',
+    color: '#F7FFF7',
+  },
+  {
+    name: 'IT',
+    color: '#FF6B6B',
+  },
 ];

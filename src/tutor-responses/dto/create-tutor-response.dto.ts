@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsPositive,
   IsNotEmpty,
@@ -9,7 +10,6 @@ import {
 import { Type } from 'class-transformer';
 
 import { CreateTimeFrameDto } from '../../time-frames/dto/create-lesson-time-frame.dto';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTutorResponseDto {
   @IsNotEmpty()

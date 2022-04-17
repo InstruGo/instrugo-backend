@@ -4,17 +4,15 @@ import {
   IsIn,
   IsOptional,
   IsPositive,
-  IsBoolean,
   IsArray,
-  IsISO8601,
 } from 'class-validator';
 
 import { EducationLevel } from '../../entities/lesson.level.enum';
-import { LessonStatus } from '../../entities/lesson.status.enum';
 import { MeetingType } from '../../entities/lesson.meeting-type.enum';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsISO8601 } from 'class-validator';
 
-export class FilterLessonDto {
+export class FilterPoolDto {
   @IsOptional()
   @IsNotEmpty()
   @IsIn(Object.values(EducationLevel))
@@ -37,25 +35,13 @@ export class FilterLessonDto {
   @IsNotEmpty()
   @IsPositive()
   @ApiPropertyOptional()
-  minPrice?: number;
+  minBudget?: number;
 
   @IsOptional()
   @IsNotEmpty()
   @IsPositive()
   @ApiPropertyOptional()
-  maxPrice?: number;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsIn(Object.values(LessonStatus))
-  @ApiPropertyOptional({ enum: LessonStatus, enumName: 'LessonStatus' })
-  status?: LessonStatus;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsArray()
-  @ApiPropertyOptional({ isArray: true })
-  subjectIds?: number[];
+  maxBudget?: number;
 
   @IsOptional()
   @IsNotEmpty()
@@ -71,7 +57,7 @@ export class FilterLessonDto {
 
   @IsOptional()
   @IsNotEmpty()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  isLessonTutor?: boolean;
+  @IsArray()
+  @ApiPropertyOptional({ isArray: true })
+  subjectIds?: number[];
 }
