@@ -50,7 +50,7 @@ export class AuthController {
     return { msg: 'success' };
   }
 
-  @Get('/logout')
+  @Post('/logout')
   @HttpCode(200)
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
