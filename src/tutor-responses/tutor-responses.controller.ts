@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   ParseIntPipe,
   ClassSerializerInterceptor,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -17,9 +18,14 @@ import { CreateTutorResponseDto } from './dto/create-tutor-response.dto';
 import { UpdateTutorResponseDto } from './dto/update-tutor-response.dto';
 import { TutorResponse } from './entities/tutor-response.entity';
 import { FilterTutorResponseDto } from './dto/filter-tutor-response.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { User } from '../auth/user.decorator';
+import { User as UserEntity } from '../auth/entities/user.entity';
 
 @ApiTags('tutor responses')
 @Controller('tutor-responses')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class TutorResponsesController {
   constructor(private readonly tutorResponsesService: TutorResponsesService) {}
 
@@ -44,9 +50,11 @@ export class TutorResponsesController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: TutorResponse })
   createTutorResponse(
+    @User() user: UserEntity,
     @Body() createTutorResponseDto: CreateTutorResponseDto
   ): Promise<TutorResponse> {
     return this.tutorResponsesService.createTutorResponse(
+      user,
       createTutorResponseDto
     );
   }
