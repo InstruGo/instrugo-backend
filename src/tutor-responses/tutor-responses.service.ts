@@ -34,7 +34,7 @@ export class TutorResponsesService {
     tutor: User,
     createTutorResponseDto: CreateTutorResponseDto
   ): Promise<TutorResponse> {
-    if (tutor.role !== UserRole.TUTOR) {
+    if (tutor.role === UserRole.STUDENT) {
       throw new BadRequestException('Only tutors can make responses.');
     }
 
