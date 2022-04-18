@@ -23,11 +23,11 @@ export class CreateTutorResponseDto {
   @ApiProperty()
   price: number;
 
-  @IsNotEmpty()
-  @IsInt()
-  @IsPositive()
-  @ApiProperty()
-  tutorId: number;
+  // @IsNotEmpty()
+  // @IsInt()
+  // @IsPositive()
+  // @ApiProperty()
+  // tutorId: number;
 
   @IsArray()
   @ArrayNotEmpty()

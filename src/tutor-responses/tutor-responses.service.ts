@@ -15,6 +15,7 @@ import { TutorResponseRepository } from './tutor-responses.repository';
 import { UserRole } from 'src/auth/entities/user.role.enum';
 import { TimeFrameRepository } from '../time-frames/time-frames.repository';
 import { TimeFrame } from '../time-frames/entities/time-frame.entity';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class TutorResponsesService {
@@ -30,16 +31,10 @@ export class TutorResponsesService {
   ) {}
 
   async createTutorResponse(
+    tutor: User,
     createTutorResponseDto: CreateTutorResponseDto
   ): Promise<TutorResponse> {
-    const tutor = await this.userRepository.findOne(
-      createTutorResponseDto.tutorId
-    );
-    if (!tutor) {
-      throw new NotFoundException('This tutor does not exist.');
-    }
-
-    if (tutor.role !== UserRole.TUTOR) {
+    if (tutor.role === UserRole.STUDENT) {
       throw new BadRequestException('Only tutors can make responses.');
     }
 
