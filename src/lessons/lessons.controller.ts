@@ -61,7 +61,6 @@ export class LessonsController {
     if (user.role === UserRole.STUDENT) {
       throw new NotFoundException();
     }
-
     return this.lessonsService.getPublicPool(filterPoolDto);
   }
 

@@ -98,7 +98,7 @@ export class LessonRepository extends Repository<Lesson> {
       subjectIds,
     } = filterPoolDto;
 
-    const query = this.createQueryBuilder('pool');
+    const query = this.createQueryBuilder('lesson');
     query.where('lesson.status = :status', { status: LessonStatus.REQUESTED });
 
     if (level) {
