@@ -31,14 +31,9 @@ export class TutorResponsesService {
   ) {}
 
   async createTutorResponse(
-    user: User,
+    tutor: User,
     createTutorResponseDto: CreateTutorResponseDto
   ): Promise<TutorResponse> {
-    const tutor = await this.userRepository.findOne(user.id);
-    if (!tutor) {
-      throw new NotFoundException('This tutor does not exist.');
-    }
-
     if (tutor.role !== UserRole.TUTOR) {
       throw new BadRequestException('Only tutors can make responses.');
     }
