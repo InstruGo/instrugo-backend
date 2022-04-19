@@ -110,7 +110,7 @@ export class LessonRepository extends Repository<Lesson> {
     }
 
     if (type) {
-      query.andWhere('lesson.type = :grade', { type });
+      query.andWhere('lesson.type = :type', { type });
     }
 
     if (subjectIds) {

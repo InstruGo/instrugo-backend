@@ -30,7 +30,7 @@ export const filipLessons: CreateLessonDto[] = [
     description: 'English is not my favourite subject...',
     type: MeetingType.IRL,
     location: 'Travanjska 11, Zagreb',
-    budget: 50,
+    budget: 100,
     subjectId: 4,
     lessonTimeFrames: [
       {
@@ -50,7 +50,7 @@ export const filipLessons: CreateLessonDto[] = [
     description: 'Python is dead to me',
     type: MeetingType.IRL,
     location: 'Travanjska 11, Zagreb',
-    budget: 50,
+    budget: 35,
     subjectId: 10,
     lessonTimeFrames: [
       {
@@ -70,7 +70,7 @@ export const filipLessons: CreateLessonDto[] = [
     description: 'Sets go brrrr...',
     type: MeetingType.IRL,
     location: 'Travanjska 11, Zagreb',
-    budget: 50,
+    budget: 52,
     subjectId: 1,
     lessonTimeFrames: [
       {
@@ -90,7 +90,7 @@ export const filipLessons: CreateLessonDto[] = [
     description: 'Latin is a dead language',
     type: MeetingType.IRL,
     location: 'Travanjska 11, Zagreb',
-    budget: 50,
+    budget: 67,
     subjectId: 8,
     lessonTimeFrames: [
       {

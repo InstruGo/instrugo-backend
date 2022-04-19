@@ -34,6 +34,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { UserRole } from '../auth/entities/user.role.enum';
 import { FilterPoolDto } from './dto/lessons/filter-pool.dto';
 import { NotFoundException } from '@nestjs/common';
+import { Roles } from 'src/auth/roles.decorator';
 
 @ApiTags('lessons')
 @Controller('lessons')
@@ -54,6 +55,7 @@ export class LessonsController {
   @Get('pool')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOkResponse({ type: [Lesson] })
+  @Roles(UserRole.TUTOR, UserRole.ADMIN)
   getPublicPool(
     @Query() filterPoolDto: FilterPoolDto,
     @User() user: UserEntity

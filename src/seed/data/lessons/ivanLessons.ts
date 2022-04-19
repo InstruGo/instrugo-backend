@@ -30,7 +30,7 @@ export const ivanLessons: CreateLessonDto[] = [
     description: 'What is the universe?',
     type: MeetingType.IRL,
     location: 'Zagreb, Croatia',
-    budget: 50,
+    budget: 60,
     subjectId: 5,
     lessonTimeFrames: [
       {
@@ -50,7 +50,7 @@ export const ivanLessons: CreateLessonDto[] = [
     description: 'Programming is so hard with turtles :(',
     type: MeetingType.ONLINE,
     location: 'Discord',
-    budget: 50,
+    budget: 70,
     subjectId: 10,
     lessonTimeFrames: [
       {
@@ -70,7 +70,7 @@ export const ivanLessons: CreateLessonDto[] = [
     description: 'Eucaryotic cell is so complex',
     type: MeetingType.IRL,
     location: 'Zagreb, Croatia',
-    budget: 50,
+    budget: 55,
     subjectId: 6,
     lessonTimeFrames: [
       {
@@ -90,7 +90,7 @@ export const ivanLessons: CreateLessonDto[] = [
     description: 'Math again... :/',
     type: MeetingType.IRL,
     location: 'Zagreb, Croatia',
-    budget: 50,
+    budget: 45,
     subjectId: 1,
     lessonTimeFrames: [
       {

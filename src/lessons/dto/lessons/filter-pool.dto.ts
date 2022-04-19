@@ -11,6 +11,7 @@ import { EducationLevel } from '../../entities/lesson.level.enum';
 import { MeetingType } from '../../entities/lesson.meeting-type.enum';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsISO8601 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class FilterPoolDto {
   @IsOptional()
@@ -22,6 +23,7 @@ export class FilterPoolDto {
   @IsOptional()
   @IsNotEmpty()
   @IsInt()
+  @Type(() => Number)
   @ApiPropertyOptional()
   grade?: number;
 
@@ -34,12 +36,14 @@ export class FilterPoolDto {
   @IsOptional()
   @IsNotEmpty()
   @IsPositive()
+  @Type(() => Number)
   @ApiPropertyOptional()
   minBudget?: number;
 
   @IsOptional()
   @IsNotEmpty()
   @IsPositive()
+  @Type(() => Number)
   @ApiPropertyOptional()
   maxBudget?: number;
 
