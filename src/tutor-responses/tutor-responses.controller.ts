@@ -22,6 +22,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { User } from '../auth/user.decorator';
 import { User as UserEntity } from '../auth/entities/user.entity';
+import { Roles } from 'src/auth/roles.decorator';
+import { UserRole } from 'src/auth/entities/user.role.enum';
 
 @ApiTags('tutor responses')
 @Controller('tutor-responses')
@@ -44,11 +46,13 @@ export class TutorResponsesController {
   getTutorResponse(
     @Param('id', ParseIntPipe) id: number
   ): Promise<TutorResponse> {
-    return this.tutorResponsesService.getTutorResponse(+id);
+    return this.tutorResponsesService.getTutorResponse(id);
   }
+
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: TutorResponse })
+  @Roles(UserRole.TUTOR, UserRole.ADMIN)
   createTutorResponse(
     @User() user: UserEntity,
     @Body() createTutorResponseDto: CreateTutorResponseDto
@@ -67,7 +71,7 @@ export class TutorResponsesController {
     @Body() updateTutorResponseDto: UpdateTutorResponseDto
   ) {
     return this.tutorResponsesService.updateTutorResponse(
-      +id,
+      id,
       updateTutorResponseDto
     );
   }
@@ -76,6 +80,6 @@ export class TutorResponsesController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200 })
   deleteTutorResponse(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.tutorResponsesService.deleteTutorResponse(+id);
+    return this.tutorResponsesService.deleteTutorResponse(id);
   }
 }

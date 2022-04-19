@@ -6,24 +6,20 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { LessonRepository } from '../lessons/lesson.repository';
-import { UserRepository } from '../auth/user.repository';
 import { FilterTutorResponseDto } from './dto/filter-tutor-response.dto';
 import { CreateTutorResponseDto } from './dto/create-tutor-response.dto';
 import { UpdateTutorResponseDto } from './dto/update-tutor-response.dto';
 import { TutorResponse } from './entities/tutor-response.entity';
 import { TutorResponseRepository } from './tutor-responses.repository';
-import { UserRole } from 'src/auth/entities/user.role.enum';
 import { TimeFrameRepository } from '../time-frames/time-frames.repository';
 import { TimeFrame } from '../time-frames/entities/time-frame.entity';
-import { User } from 'src/auth/entities/user.entity';
+import { User } from '../auth/entities/user.entity';
 
 @Injectable()
 export class TutorResponsesService {
   constructor(
     @InjectRepository(LessonRepository)
     private lessonRepository: LessonRepository,
-    @InjectRepository(UserRepository)
-    private userRepository: UserRepository,
     @InjectRepository(TutorResponseRepository)
     private tutorResponseRepository: TutorResponseRepository,
     @InjectRepository(TimeFrameRepository)
@@ -34,10 +30,6 @@ export class TutorResponsesService {
     tutor: User,
     createTutorResponseDto: CreateTutorResponseDto
   ): Promise<TutorResponse> {
-    if (tutor.role === UserRole.STUDENT) {
-      throw new BadRequestException('Only tutors can make responses.');
-    }
-
     const lesson = await this.lessonRepository.findOne(
       createTutorResponseDto.lessonId
     );

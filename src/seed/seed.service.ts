@@ -124,13 +124,14 @@ export class SeedService implements OnApplicationBootstrap {
   }
 
   private async seedTutorResponses() {
-    const user = await this.userRepository.findOne({
+    const userKarlo = await this.userRepository.findOne({
       where: { email: 'karlo.cihlar@fer.hr' },
     });
+
     await Promise.all(
       tutorResponses.map(async (tutorResponse) => {
         await this.tutorResponsesService.createTutorResponse(
-          user,
+          userKarlo,
           tutorResponse
         );
       })
