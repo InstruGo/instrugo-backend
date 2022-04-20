@@ -73,18 +73,18 @@ export class TutorResponsesController {
     );
   }
 
-  @Patch(':id')
+  @Patch('/:lessonId/respond')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: TutorResponse })
   @Roles(UserRole.TUTOR, UserRole.ADMIN)
   updateTutorResponse(
     @User() user: UserEntity,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('lessonId', ParseIntPipe) lessonId: number,
     @Body() updateTutorResponseDto: UpdateTutorResponseDto
   ) {
     return this.tutorResponsesService.updateTutorResponse(
       user,
-      id,
+      lessonId,
       updateTutorResponseDto
     );
   }

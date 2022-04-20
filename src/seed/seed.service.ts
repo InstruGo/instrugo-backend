@@ -140,6 +140,10 @@ export class SeedService implements OnApplicationBootstrap {
   }
 
   private async resolveLessonRequests() {
-    await this.lessonsService.resolveLessonRequest(1, 1, 21);
+    const userFilip = await this.userRepository.findOne({
+      where: { email: 'filip.todoric@fer.hr' },
+    });
+
+    await this.lessonsService.resolveLessonRequest(userFilip, 1, 1, 21);
   }
 }

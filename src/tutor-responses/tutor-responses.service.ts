@@ -70,6 +70,12 @@ export class TutorResponsesService {
       throw new BadRequestException('You cannot respond to your own lessons!');
     }
 
+    if (!lesson.containsTimeFrame(createTutorResponseDto.tutorTimeFrame)) {
+      throw new BadRequestException(
+        'Sent time frame is not contained in this lesson.'
+      );
+    }
+
     const tutorResponseTimeFrame =
       await this.timeFrameRepository.createTimeFrame(
         createTutorResponseDto.tutorTimeFrame
@@ -85,10 +91,16 @@ export class TutorResponsesService {
 
   async updateTutorResponse(
     user: User,
-    id: number,
+    lessonId: number,
     updateTutorResponseDto: UpdateTutorResponseDto
   ): Promise<TutorResponse> {
-    const response = await this.tutorResponseRepository.findOne(id);
+    const response = await this.tutorResponseRepository.findOne({
+      where: {
+        tutor: { id: user.id },
+        lesson: { id: lessonId },
+      },
+      relations: ['user', 'lesson'],
+    });
 
     if (!response) {
       throw new NotFoundException('Specified response does not exist.');
@@ -99,6 +111,18 @@ export class TutorResponsesService {
     }
 
     const { tutorTimeFrame } = updateTutorResponseDto;
+
+    const lesson = await this.lessonRepository.findOne(lessonId);
+
+    if (!lesson) {
+      throw new NotFoundException();
+    }
+
+    if (!lesson.containsTimeFrame(tutorTimeFrame)) {
+      throw new BadRequestException(
+        'Sent time frame is not contained in the lesson.'
+      );
+    }
 
     let tutorResponseTimeFrame: TimeFrame = null;
     if (tutorTimeFrame) {

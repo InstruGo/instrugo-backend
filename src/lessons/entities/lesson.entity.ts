@@ -19,6 +19,7 @@ import { TimeFrame } from '../../time-frames/entities/time-frame.entity';
 import { TutorResponse } from '../../tutor-responses/entities/tutor-response.entity';
 import { ColumnNumericTransformer } from '../column-numeric.transformer';
 import { Rating } from '../../ratings/entities/rating.entity';
+import { CreateTimeFrameDto } from '../../time-frames/dto/create-lesson-time-frame.dto';
 
 @Entity()
 export class Lesson extends BaseEntity {
@@ -117,6 +118,16 @@ export class Lesson extends BaseEntity {
   hasTimeSlotBeforeDate(before: Date) {
     for (const timeFrame of this.lessonTimeFrames) {
       if (timeFrame.isBeforeDate(before)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  containsTimeFrame(timeFrame: TimeFrame | CreateTimeFrameDto) {
+    for (const lessonTimeFrame of this.lessonTimeFrames) {
+      if (lessonTimeFrame.contains(timeFrame)) {
         return true;
       }
     }
