@@ -24,7 +24,7 @@ export class CreateLessonDto {
   @IsNotEmpty()
   @IsIn(Object.values(EducationLevel))
   @ApiProperty({ enum: EducationLevel, enumName: 'EducationLevel' })
-  level: EducationLevel;
+  educationLevel: EducationLevel;
 
   @IsNotEmpty()
   @IsInt()

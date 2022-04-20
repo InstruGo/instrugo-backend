@@ -18,7 +18,7 @@ export class LessonRepository extends Repository<Lesson> {
     userId: number
   ): Promise<Lesson[]> {
     const {
-      level,
+      educationLevel,
       grade,
       type,
       minPrice,
@@ -32,8 +32,10 @@ export class LessonRepository extends Repository<Lesson> {
 
     const query = this.createQueryBuilder('lesson');
 
-    if (level) {
-      query.andWhere('lesson.level = :level', { level });
+    if (educationLevel) {
+      query.andWhere('lesson.educationLevel = :educationLevel', {
+        educationLevel,
+      });
     }
 
     if (grade) {
@@ -88,7 +90,7 @@ export class LessonRepository extends Repository<Lesson> {
 
   async getPublicPool(filterPoolDto: FilterPoolDto): Promise<Lesson[]> {
     const {
-      level,
+      educationLevel,
       grade,
       type,
       minBudget,
@@ -101,8 +103,10 @@ export class LessonRepository extends Repository<Lesson> {
     const query = this.createQueryBuilder('lesson');
     query.where('lesson.status = :status', { status: LessonStatus.REQUESTED });
 
-    if (level) {
-      query.andWhere('lesson.level = :level', { level });
+    if (educationLevel) {
+      query.andWhere('lesson.educationLevel = :educationLevel', {
+        educationLevel,
+      });
     }
 
     if (grade) {
@@ -154,7 +158,7 @@ export class LessonRepository extends Repository<Lesson> {
   ): Promise<Lesson> {
     const {
       subfield,
-      level,
+      educationLevel,
       grade,
       description,
       type,
@@ -165,7 +169,7 @@ export class LessonRepository extends Repository<Lesson> {
 
     const lesson = new Lesson();
     lesson.subfield = subfield;
-    lesson.level = level;
+    lesson.educationLevel = educationLevel;
     lesson.grade = grade;
     lesson.description = description;
     lesson.type = type;
@@ -190,7 +194,7 @@ export class LessonRepository extends Repository<Lesson> {
   ): Promise<Lesson> {
     const {
       subfield,
-      level,
+      educationLevel,
       grade,
       description,
       type,
@@ -200,7 +204,7 @@ export class LessonRepository extends Repository<Lesson> {
     } = updateLessonDto;
 
     if (subfield) lesson.subfield = subfield;
-    if (level) lesson.level = level;
+    if (educationLevel) lesson.educationLevel = educationLevel;
     if (grade) lesson.grade = grade;
     if (description) lesson.description = description;
     if (type) lesson.type = type;

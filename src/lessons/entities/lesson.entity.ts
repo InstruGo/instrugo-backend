@@ -29,7 +29,7 @@ export class Lesson extends BaseEntity {
   subfield: string;
 
   @Column()
-  level: EducationLevel;
+  educationLevel: EducationLevel;
 
   @Column()
   grade: number;

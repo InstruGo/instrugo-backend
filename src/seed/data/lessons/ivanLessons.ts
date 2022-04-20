@@ -5,11 +5,12 @@ import { MeetingType } from '../../../lessons/entities/lesson.meeting-type.enum'
 export const ivanLessons: CreateLessonDto[] = [
   {
     subfield: 'Fractions',
-    level: EducationLevel.ELEMENTARY,
+    educationLevel: EducationLevel.ELEMENTARY,
     grade: 5,
     description: 'I need a lot of help with fractions, pls halp',
     type: MeetingType.IRL,
     location: 'Zagreb, Croatia',
+    duration: 60,
     budget: 50,
     subjectId: 1,
     lessonTimeFrames: [
@@ -25,11 +26,12 @@ export const ivanLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Planets',
-    level: EducationLevel.ELEMENTARY,
+    educationLevel: EducationLevel.ELEMENTARY,
     grade: 5,
     description: 'What is the universe?',
     type: MeetingType.IRL,
     location: 'Zagreb, Croatia',
+    duration: 60,
     budget: 60,
     subjectId: 5,
     lessonTimeFrames: [
@@ -45,11 +47,12 @@ export const ivanLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Logo',
-    level: EducationLevel.ELEMENTARY,
+    educationLevel: EducationLevel.ELEMENTARY,
     grade: 5,
     description: 'Programming is so hard with turtles :(',
     type: MeetingType.ONLINE,
     location: 'Discord',
+    duration: 60,
     budget: 70,
     subjectId: 10,
     lessonTimeFrames: [
@@ -65,11 +68,12 @@ export const ivanLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Cells',
-    level: EducationLevel.ELEMENTARY,
+    educationLevel: EducationLevel.ELEMENTARY,
     grade: 5,
     description: 'Eucaryotic cell is so complex',
     type: MeetingType.IRL,
     location: 'Zagreb, Croatia',
+    duration: 60,
     budget: 55,
     subjectId: 6,
     lessonTimeFrames: [
@@ -85,11 +89,12 @@ export const ivanLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Rational numbers',
-    level: EducationLevel.ELEMENTARY,
+    educationLevel: EducationLevel.ELEMENTARY,
     grade: 5,
     description: 'Math again... :/',
     type: MeetingType.IRL,
     location: 'Zagreb, Croatia',
+    duration: 60,
     budget: 45,
     subjectId: 1,
     lessonTimeFrames: [

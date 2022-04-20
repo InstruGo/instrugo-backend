@@ -1,10 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { EducationLevel } from '../../lessons/entities/lesson.level.enum';
+import { IsNotEmpty, IsPositive, IsInt } from 'class-validator';
 import {
   IsString,
   IsPhoneNumber,
   IsOptional,
   IsArray,
   IsISO8601,
+  IsIn,
 } from 'class-validator';
 
 export class UpdateProfileDto {
@@ -32,6 +35,18 @@ export class UpdateProfileDto {
   @IsString()
   @ApiPropertyOptional()
   description?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsIn(Object.values(EducationLevel))
+  @ApiPropertyOptional({ enum: EducationLevel, enumName: 'EducationLevel' })
+  educationLevel?: EducationLevel;
+
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  @ApiPropertyOptional()
+  grade?: number;
 
   @IsOptional()
   @IsArray()

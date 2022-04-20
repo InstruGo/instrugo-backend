@@ -13,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 
 import { UserRole } from './user.role.enum';
 import { Subject } from '../../lessons/entities/subject.entity';
+import { EducationLevel } from '../../lessons/entities/lesson.level.enum';
 
 @Entity()
 export class User extends BaseEntity {
@@ -36,6 +37,12 @@ export class User extends BaseEntity {
 
   @Column()
   description: string;
+
+  @Column()
+  educationLevel: EducationLevel;
+
+  @Column()
+  grade: number;
 
   @Column()
   @Exclude()

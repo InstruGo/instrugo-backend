@@ -1,6 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsISO8601 } from 'class-validator';
 import {
+  IsISO8601,
+  IsInt,
+  IsPositive,
+  IsNotEmpty,
+  IsIn,
   IsString,
   MinLength,
   MaxLength,
@@ -9,6 +13,8 @@ import {
   IsOptional,
   IsBoolean,
 } from 'class-validator';
+
+import { EducationLevel } from '../../lessons/entities/lesson.level.enum';
 
 export class RegistrationCredentialsDto {
   @IsEmail()
@@ -37,6 +43,18 @@ export class RegistrationCredentialsDto {
   @IsString()
   @ApiPropertyOptional()
   description?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsIn(Object.values(EducationLevel))
+  @ApiPropertyOptional({ enum: EducationLevel, enumName: 'EducationLevel' })
+  educationLevel?: EducationLevel;
+
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  @ApiPropertyOptional()
+  grade?: number;
 
   @IsString()
   @MinLength(6)

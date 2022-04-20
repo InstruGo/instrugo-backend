@@ -19,7 +19,7 @@ export class FilterLessonDto {
   @IsNotEmpty()
   @IsIn(Object.values(EducationLevel))
   @ApiPropertyOptional({ enum: EducationLevel, enumName: 'EducationLevel' })
-  level?: EducationLevel;
+  educationLevel?: EducationLevel;
 
   @IsOptional()
   @IsNotEmpty()
