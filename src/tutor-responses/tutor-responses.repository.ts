@@ -11,14 +11,13 @@ import { UpdateTutorResponseDto } from './dto/update-tutor-response.dto';
 @EntityRepository(TutorResponse)
 export class TutorResponseRepository extends Repository<TutorResponse> {
   async getTutorResponses(
+    user: User,
     filterTutorResponseDto: FilterTutorResponseDto
   ): Promise<TutorResponse[]> {
-    const { tutorId, lessonId } = filterTutorResponseDto;
+    const { lessonId } = filterTutorResponseDto;
     const query = this.createQueryBuilder('tutor-response');
 
-    if (tutorId) {
-      query.andWhere('tutor-response.tutorId = :tutorId', { tutorId });
-    }
+    query.where('tutor-response.tutorId = :tutorId', { tutorId: user.id });
 
     if (lessonId) {
       query.andWhere('tutor-response.lessonId = :lessonId', { lessonId });

@@ -132,6 +132,7 @@ export class SeedService implements OnApplicationBootstrap {
       tutorResponses.map(async (tutorResponse) => {
         await this.tutorResponsesService.createTutorResponse(
           userKarlo,
+          1,
           tutorResponse
         );
       })
@@ -139,6 +140,6 @@ export class SeedService implements OnApplicationBootstrap {
   }
 
   private async resolveLessonRequests() {
-    await this.lessonsService.resolveLessonRequest(1, 1, 1);
+    await this.lessonsService.resolveLessonRequest(1, 1, 21);
   }
 }

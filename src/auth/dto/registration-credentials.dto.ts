@@ -14,7 +14,7 @@ import {
   IsBoolean,
 } from 'class-validator';
 
-import { EducationLevel } from '../../lessons/entities/lesson.level.enum';
+import { EducationLevel } from '../../lessons/entities/lesson.education-level.enum';
 
 export class RegistrationCredentialsDto {
   @IsEmail()

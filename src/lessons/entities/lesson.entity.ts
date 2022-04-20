@@ -10,7 +10,7 @@ import {
   OneToOne,
 } from 'typeorm';
 
-import { EducationLevel } from './lesson.level.enum';
+import { EducationLevel } from './lesson.education-level.enum';
 import { MeetingType } from './lesson.meeting-type.enum';
 import { LessonStatus } from './lesson.status.enum';
 import { User } from '../../auth/entities/user.entity';

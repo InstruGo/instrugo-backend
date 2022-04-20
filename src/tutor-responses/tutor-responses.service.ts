@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -26,13 +27,36 @@ export class TutorResponsesService {
     private timeFrameRepository: TimeFrameRepository
   ) {}
 
+  async getTutorResponses(
+    user: User,
+    filterTutorResponseDto: FilterTutorResponseDto
+  ): Promise<TutorResponse[]> {
+    return this.tutorResponseRepository.getTutorResponses(
+      user,
+      filterTutorResponseDto
+    );
+  }
+
+  async getTutorResponse(user: User, id: number): Promise<TutorResponse> {
+    const response = await this.tutorResponseRepository.findOne(id);
+
+    if (!response) {
+      throw new NotFoundException('Specified response does not exist.');
+    }
+
+    if (response.tutor.id !== user.id) {
+      throw new ForbiddenException();
+    }
+
+    return response;
+  }
+
   async createTutorResponse(
     tutor: User,
+    lessonId: number,
     createTutorResponseDto: CreateTutorResponseDto
   ): Promise<TutorResponse> {
-    const lesson = await this.lessonRepository.findOne(
-      createTutorResponseDto.lessonId
-    );
+    const lesson = await this.lessonRepository.findOne(lessonId);
 
     if (!lesson) {
       throw new NotFoundException('This lesson does not exist.');
@@ -59,23 +83,8 @@ export class TutorResponsesService {
     );
   }
 
-  async getTutorResponses(
-    filterTutorResponseDto: FilterTutorResponseDto
-  ): Promise<TutorResponse[]> {
-    return this.tutorResponseRepository.getTutorResponses(
-      filterTutorResponseDto
-    );
-  }
-
-  async getTutorResponse(id: number): Promise<TutorResponse> {
-    const response = await this.tutorResponseRepository.findOne(id);
-    if (!response) {
-      throw new NotFoundException('Specified response does not exist.');
-    }
-    return response;
-  }
-
   async updateTutorResponse(
+    user: User,
     id: number,
     updateTutorResponseDto: UpdateTutorResponseDto
   ): Promise<TutorResponse> {
@@ -83,6 +92,10 @@ export class TutorResponsesService {
 
     if (!response) {
       throw new NotFoundException('Specified response does not exist.');
+    }
+
+    if (response.tutor.id !== user.id) {
+      throw new ForbiddenException();
     }
 
     const { tutorTimeFrame } = updateTutorResponseDto;
@@ -105,11 +118,17 @@ export class TutorResponsesService {
     );
   }
 
-  async deleteTutorResponse(id: number): Promise<void> {
-    const result = await this.tutorResponseRepository.delete(id);
+  async deleteTutorResponse(user: User, id: number): Promise<void> {
+    const response = await this.tutorResponseRepository.findOne(id);
 
-    if (!result.affected) {
-      throw new NotFoundException(`Response with id ${id} does not exist.`);
+    if (!response) {
+      return;
     }
+
+    if (response.tutor.id !== user.id) {
+      throw new ForbiddenException();
+    }
+
+    await response.remove();
   }
 }

@@ -13,7 +13,7 @@ import * as bcrypt from 'bcrypt';
 
 import { UserRole } from './user.role.enum';
 import { Subject } from '../../lessons/entities/subject.entity';
-import { EducationLevel } from '../../lessons/entities/lesson.level.enum';
+import { EducationLevel } from '../../lessons/entities/lesson.education-level.enum';
 
 @Entity()
 export class User extends BaseEntity {
@@ -32,16 +32,16 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   phone: string;
 
-  @Column('timestamptz')
+  @Column('date', { nullable: true })
   birthDate: Date;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
-  @Column()
+  @Column({ nullable: true })
   educationLevel: EducationLevel;
 
-  @Column()
+  @Column({ nullable: true })
   grade: number;
 
   @Column()

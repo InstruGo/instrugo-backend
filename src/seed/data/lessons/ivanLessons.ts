@@ -1,14 +1,14 @@
 import { CreateLessonDto } from '../../../lessons/dto/lessons/create-lesson.dto';
-import { EducationLevel } from '../../../lessons/entities/lesson.level.enum';
+import { EducationLevel } from '../../../lessons/entities/lesson.education-level.enum';
 import { MeetingType } from '../../../lessons/entities/lesson.meeting-type.enum';
 
 export const ivanLessons: CreateLessonDto[] = [
   {
     subfield: 'Fractions',
-    educationLevel: EducationLevel.ELEMENTARY,
+    educationLevel: EducationLevel.ELEMENTARY_SCHOOL,
     grade: 5,
     description: 'I need a lot of help with fractions, pls halp',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Zagreb, Croatia',
     duration: 60,
     budget: 50,
@@ -26,10 +26,10 @@ export const ivanLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Planets',
-    educationLevel: EducationLevel.ELEMENTARY,
+    educationLevel: EducationLevel.ELEMENTARY_SCHOOL,
     grade: 5,
     description: 'What is the universe?',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Zagreb, Croatia',
     duration: 60,
     budget: 60,
@@ -47,7 +47,7 @@ export const ivanLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Logo',
-    educationLevel: EducationLevel.ELEMENTARY,
+    educationLevel: EducationLevel.ELEMENTARY_SCHOOL,
     grade: 5,
     description: 'Programming is so hard with turtles :(',
     type: MeetingType.ONLINE,
@@ -68,10 +68,10 @@ export const ivanLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Cells',
-    educationLevel: EducationLevel.ELEMENTARY,
+    educationLevel: EducationLevel.ELEMENTARY_SCHOOL,
     grade: 5,
     description: 'Eucaryotic cell is so complex',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Zagreb, Croatia',
     duration: 60,
     budget: 55,
@@ -89,10 +89,10 @@ export const ivanLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Rational numbers',
-    educationLevel: EducationLevel.ELEMENTARY,
+    educationLevel: EducationLevel.ELEMENTARY_SCHOOL,
     grade: 5,
     description: 'Math again... :/',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Zagreb, Croatia',
     duration: 60,
     budget: 45,

@@ -37,7 +37,7 @@ export class UserRepository extends Repository<User> {
     user.firstName = firstName;
     user.lastName = lastName;
     user.phone = phone;
-    user.birthDate = new Date(birthDate);
+    user.birthDate = birthDate ? new Date(birthDate) : null;
     user.description = description;
     user.educationLevel = educationLevel;
     user.grade = grade;

@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
@@ -10,10 +11,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { EducationLevel } from '../../entities/lesson.level.enum';
+import { EducationLevel } from '../../entities/lesson.education-level.enum';
 import { MeetingType } from '../../entities/lesson.meeting-type.enum';
 import { CreateTimeFrameDto } from '../../../time-frames/dto/create-lesson-time-frame.dto';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateLessonDto {
   @IsNotEmpty()

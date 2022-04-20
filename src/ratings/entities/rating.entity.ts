@@ -18,10 +18,10 @@ export class Rating extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   studentRating: number;
 
-  @Column()
+  @Column({ nullable: true })
   tutorFeedback: string;
 
   @CreateDateColumn()

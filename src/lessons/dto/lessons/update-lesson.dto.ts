@@ -1,3 +1,4 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsString,
@@ -10,10 +11,9 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { EducationLevel } from '../../entities/lesson.level.enum';
+import { EducationLevel } from '../../entities/lesson.education-level.enum';
 import { MeetingType } from '../../entities/lesson.meeting-type.enum';
 import { CreateTimeFrameDto } from '../../../time-frames/dto/create-lesson-time-frame.dto';
-import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateLessonDto {
   @IsOptional()

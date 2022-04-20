@@ -1,11 +1,11 @@
 import { CreateLessonDto } from '../../../lessons/dto/lessons/create-lesson.dto';
-import { EducationLevel } from '../../../lessons/entities/lesson.level.enum';
+import { EducationLevel } from '../../../lessons/entities/lesson.education-level.enum';
 import { MeetingType } from '../../../lessons/entities/lesson.meeting-type.enum';
 
 export const filipLessons: CreateLessonDto[] = [
   {
     subfield: 'Dynamics',
-    educationLevel: EducationLevel.HIGH,
+    educationLevel: EducationLevel.HIGH_SCHOOL,
     grade: 1,
     description: 'Teacher is really bad, pls teach me dynamics',
     type: MeetingType.ONLINE,
@@ -26,10 +26,10 @@ export const filipLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Past Tense',
-    educationLevel: EducationLevel.HIGH,
+    educationLevel: EducationLevel.HIGH_SCHOOL,
     grade: 1,
     description: 'English is not my favourite subject...',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Travanjska 11, Zagreb',
     duration: 60,
     budget: 100,
@@ -47,10 +47,10 @@ export const filipLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Python Lists',
-    educationLevel: EducationLevel.HIGH,
+    educationLevel: EducationLevel.HIGH_SCHOOL,
     grade: 1,
     description: 'Python is dead to me',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Travanjska 11, Zagreb',
     duration: 60,
     budget: 35,
@@ -68,10 +68,10 @@ export const filipLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Set Theory',
-    educationLevel: EducationLevel.HIGH,
+    educationLevel: EducationLevel.HIGH_SCHOOL,
     grade: 1,
     description: 'Sets go brrrr...',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Travanjska 11, Zagreb',
     duration: 60,
     budget: 52,
@@ -89,10 +89,10 @@ export const filipLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Lorem Ipsum',
-    educationLevel: EducationLevel.HIGH,
+    educationLevel: EducationLevel.HIGH_SCHOOL,
     grade: 1,
     description: 'Latin is a dead language',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Travanjska 11, Zagreb',
     duration: 60,
     budget: 67,
