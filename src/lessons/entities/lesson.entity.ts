@@ -7,6 +7,7 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
 } from 'typeorm';
 
 import { EducationLevel } from './lesson.level.enum';
@@ -17,6 +18,7 @@ import { Subject } from './subject.entity';
 import { TimeFrame } from '../../time-frames/entities/time-frame.entity';
 import { TutorResponse } from '../../tutor-responses/entities/tutor-response.entity';
 import { ColumnNumericTransformer } from '../column-numeric.transformer';
+import { Rating } from '../../ratings/entities/rating.entity';
 
 @Entity()
 export class Lesson extends BaseEntity {
@@ -73,6 +75,9 @@ export class Lesson extends BaseEntity {
 
   @UpdateDateColumn()
   modifiedOn: Date;
+
+  @OneToOne(() => Rating, (rating) => rating.lesson, { eager: true })
+  rating: Rating;
 
   @ManyToOne(() => User, { eager: true })
   student: User;
