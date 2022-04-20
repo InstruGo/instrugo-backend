@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsISO8601 } from 'class-validator';
 import {
   IsString,
   MinLength,
@@ -26,6 +27,16 @@ export class RegistrationCredentialsDto {
   @IsPhoneNumber()
   @ApiPropertyOptional()
   phone?: string;
+
+  @IsOptional()
+  @IsISO8601()
+  @ApiPropertyOptional()
+  birthDate?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  description?: string;
 
   @IsString()
   @MinLength(6)

@@ -57,6 +57,12 @@ export class UpdateLessonDto {
   @IsNotEmpty()
   @IsPositive()
   @ApiPropertyOptional()
+  duration?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsPositive()
+  @ApiPropertyOptional()
   budget?: number;
 
   @IsOptional()

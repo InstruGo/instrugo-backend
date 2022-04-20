@@ -16,6 +16,7 @@ import { User } from '../../auth/entities/user.entity';
 import { Subject } from './subject.entity';
 import { TimeFrame } from '../../time-frames/entities/time-frame.entity';
 import { TutorResponse } from '../../tutor-responses/entities/tutor-response.entity';
+import { ColumnNumericTransformer } from '../column-numeric.transformer';
 
 @Entity()
 export class Lesson extends BaseEntity {
@@ -40,7 +41,14 @@ export class Lesson extends BaseEntity {
   @Column()
   location: string;
 
-  @Column('numeric')
+  @Column()
+  duration: number;
+
+  @Column('numeric', {
+    precision: 7,
+    scale: 2,
+    transformer: new ColumnNumericTransformer(),
+  })
   budget: number;
 
   @Column()
@@ -52,7 +60,12 @@ export class Lesson extends BaseEntity {
   @Column('timestamptz', { nullable: true })
   finalEndTime: Date;
 
-  @Column('numeric', { nullable: true })
+  @Column('numeric', {
+    precision: 7,
+    scale: 2,
+    transformer: new ColumnNumericTransformer(),
+    nullable: true,
+  })
   finalPrice: number;
 
   @CreateDateColumn()

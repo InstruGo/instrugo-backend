@@ -46,15 +46,15 @@ export class TutorResponsesService {
       throw new BadRequestException('You cannot respond to your own lessons!');
     }
 
-    const tutorResponseTimeFrames =
-      await this.timeFrameRepository.createTimeFrames(
-        createTutorResponseDto.tutorTimeFrames
+    const tutorResponseTimeFrame =
+      await this.timeFrameRepository.createTimeFrame(
+        createTutorResponseDto.tutorTimeFrame
       );
 
     return this.tutorResponseRepository.createTutorResponse(
       tutor,
       lesson,
-      tutorResponseTimeFrames,
+      tutorResponseTimeFrame,
       createTutorResponseDto
     );
   }
@@ -85,21 +85,22 @@ export class TutorResponsesService {
       throw new NotFoundException('Specified response does not exist.');
     }
 
-    const { tutorTimeFrames } = updateTutorResponseDto;
+    const { tutorTimeFrame } = updateTutorResponseDto;
 
-    let tutorResponseTimeFramesArr: TimeFrame[] = [];
-    if (tutorTimeFrames) {
-      await this.timeFrameRepository.deleteTimeFrames(
-        response.tutorResponseTimeFrames
+    let tutorResponseTimeFrame: TimeFrame = null;
+    if (tutorTimeFrame) {
+      await this.timeFrameRepository.deleteTimeFrame(
+        response.tutorResponseTimeFrame
       );
 
-      tutorResponseTimeFramesArr =
-        await this.timeFrameRepository.createTimeFrames(tutorTimeFrames);
+      tutorResponseTimeFrame = await this.timeFrameRepository.createTimeFrame(
+        tutorTimeFrame
+      );
     }
 
     return this.tutorResponseRepository.updateTutorResponse(
       response,
-      tutorResponseTimeFramesArr,
+      tutorResponseTimeFrame,
       updateTutorResponseDto
     );
   }

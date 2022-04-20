@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   ClassSerializerInterceptor,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -35,7 +36,7 @@ export class TutorResponsesController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: TutorResponse })
   getTutorResponses(
-    @Body() filterTutorResponseDto: FilterTutorResponseDto
+    @Query() filterTutorResponseDto: FilterTutorResponseDto
   ): Promise<TutorResponse[]> {
     return this.tutorResponsesService.getTutorResponses(filterTutorResponseDto);
   }

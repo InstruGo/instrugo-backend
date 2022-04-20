@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsPositive,
-  IsNotEmpty,
-  IsInt,
-  IsArray,
-  ArrayNotEmpty,
-  ValidateNested,
-} from 'class-validator';
+import { IsPositive, IsNotEmpty, IsInt, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 import { CreateTimeFrameDto } from '../../time-frames/dto/create-lesson-time-frame.dto';
@@ -23,16 +16,8 @@ export class CreateTutorResponseDto {
   @ApiProperty()
   price: number;
 
-  // @IsNotEmpty()
-  // @IsInt()
-  // @IsPositive()
-  // @ApiProperty()
-  // tutorId: number;
-
-  @IsArray()
-  @ArrayNotEmpty()
-  @ValidateNested({ each: true })
+  @ValidateNested()
   @Type(() => CreateTimeFrameDto)
-  @ApiProperty({ type: CreateTimeFrameDto, isArray: true })
-  tutorTimeFrames: CreateTimeFrameDto[];
+  @ApiProperty({ type: CreateTimeFrameDto })
+  tutorTimeFrame: CreateTimeFrameDto;
 }

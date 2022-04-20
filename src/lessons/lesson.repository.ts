@@ -152,8 +152,16 @@ export class LessonRepository extends Repository<Lesson> {
     subject: Subject,
     lessonTimeFrames: TimeFrame[]
   ): Promise<Lesson> {
-    const { subfield, level, grade, description, type, location, budget } =
-      createLessonDto;
+    const {
+      subfield,
+      level,
+      grade,
+      description,
+      type,
+      location,
+      duration,
+      budget,
+    } = createLessonDto;
 
     const lesson = new Lesson();
     lesson.subfield = subfield;
@@ -162,6 +170,7 @@ export class LessonRepository extends Repository<Lesson> {
     lesson.description = description;
     lesson.type = type;
     lesson.location = location;
+    lesson.duration = duration;
     lesson.budget = budget;
     lesson.status = LessonStatus.REQUESTED;
 
@@ -179,8 +188,16 @@ export class LessonRepository extends Repository<Lesson> {
     subject: Subject,
     lessonTimeFrames: TimeFrame[]
   ): Promise<Lesson> {
-    const { subfield, level, grade, description, type, location, budget } =
-      updateLessonDto;
+    const {
+      subfield,
+      level,
+      grade,
+      description,
+      type,
+      location,
+      duration,
+      budget,
+    } = updateLessonDto;
 
     if (subfield) lesson.subfield = subfield;
     if (level) lesson.level = level;
@@ -188,6 +205,7 @@ export class LessonRepository extends Repository<Lesson> {
     if (description) lesson.description = description;
     if (type) lesson.type = type;
     if (location) lesson.location = location;
+    if (duration) lesson.duration = duration;
     if (budget) lesson.budget = budget;
 
     if (subject) lesson.subject = subject;

@@ -50,6 +50,11 @@ export class CreateLessonDto {
   @IsNotEmpty()
   @IsPositive()
   @ApiProperty()
+  duration: number;
+
+  @IsNotEmpty()
+  @IsPositive()
+  @ApiProperty()
   budget: number;
 
   @IsNotEmpty()

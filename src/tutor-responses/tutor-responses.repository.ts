@@ -31,14 +31,14 @@ export class TutorResponseRepository extends Repository<TutorResponse> {
   async createTutorResponse(
     tutor: User,
     lesson: Lesson,
-    tutorResponseTimeFrames: TimeFrame[],
+    tutorResponseTimeFrame: TimeFrame,
     createTutorResponseDto: CreateTutorResponseDto
   ): Promise<TutorResponse> {
     const response = new TutorResponse();
     response.price = createTutorResponseDto.price;
     response.tutor = tutor;
     response.lesson = lesson;
-    response.tutorResponseTimeFrames = tutorResponseTimeFrames;
+    response.tutorResponseTimeFrame = tutorResponseTimeFrame;
 
     await response.save();
     return response;
@@ -46,15 +46,15 @@ export class TutorResponseRepository extends Repository<TutorResponse> {
 
   async updateTutorResponse(
     response: TutorResponse,
-    tutorResponseTimeFrames: TimeFrame[],
+    tutorResponseTimeFrame: TimeFrame,
     updateTutorResponseDto: UpdateTutorResponseDto
   ): Promise<TutorResponse> {
     if (updateTutorResponseDto.price) {
       response.price = updateTutorResponseDto.price;
     }
 
-    if (tutorResponseTimeFrames)
-      response.tutorResponseTimeFrames = tutorResponseTimeFrames;
+    if (tutorResponseTimeFrame)
+      response.tutorResponseTimeFrame = tutorResponseTimeFrame;
 
     await response.save();
     return response;
