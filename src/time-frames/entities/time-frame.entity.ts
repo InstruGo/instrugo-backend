@@ -39,7 +39,8 @@ export class TimeFrame extends BaseEntity {
 
   contains(another: TimeFrame | CreateTimeFrameDto) {
     return (
-      another.startTime >= this.startTime && another.endTime <= this.endTime
+      new Date(another.startTime) >= this.startTime &&
+      new Date(another.endTime) <= this.endTime
     );
   }
 }

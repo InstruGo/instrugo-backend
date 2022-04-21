@@ -34,9 +34,9 @@ export class Rating extends BaseEntity {
   @JoinColumn()
   lesson: Lesson;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   student: User;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   tutor: User;
 }

@@ -167,15 +167,15 @@ export class SeedService implements OnApplicationBootstrap {
   }
 
   private async rateLessons() {
-    const userFilip = await this.userRepository.findOne({
-      where: { email: 'filip.todoric@fer.hr' },
-    });
+    // const userFilip = await this.userRepository.findOne({
+    //   where: { email: 'filip.todoric@fer.hr' },
+    // });
 
     await this.ratingsService.rateLesson(2, { studentRating: 5 });
 
-    const userLara = await this.userRepository.findOne({
-      where: { email: 'lara.granosa@fer.hr' },
-    });
+    // const userLara = await this.userRepository.findOne({
+    //   where: { email: 'lara.granosa@fer.hr' },
+    // });
 
     await this.ratingsService.leaveFeedback(2, {
       tutorFeedback: 'Filip was amazing!!!',
