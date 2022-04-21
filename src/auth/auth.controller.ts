@@ -10,6 +10,9 @@ import {
   ClassSerializerInterceptor,
   Patch,
   Res,
+  Param,
+  ParseIntPipe,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -55,6 +58,23 @@ export class AuthController {
   logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('jwt', { httpOnly: true });
     return { msg: 'success' };
+  }
+
+  @Get('/profile/:id')
+  @ApiResponse({ status: 200 })
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseGuards(JwtAuthGuard)
+  getProfileById(
+    @User() user: UserEntity,
+    @Param('id', ParseIntPipe) id: number
+  ) {
+    if (user.id === id) {
+      throw new BadRequestException(
+        'You cannot look up your own public profile.'
+      );
+    }
+
+    return this.authService.getProfileById(user, id);
   }
 
   @Get('/profile')

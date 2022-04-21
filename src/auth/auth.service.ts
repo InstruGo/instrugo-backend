@@ -59,9 +59,9 @@ export class AuthService {
     return { accessToken };
   }
 
-  async getProfile(id: number): Promise<Partial<User>> {
-    const user = await this.userRepository.findOne(id);
-    return user;
+  async getProfileById(user: User, id: number): Promise<Partial<User>> {
+    const profile = await this.userRepository.findOne(id);
+    return profile;
   }
 
   async updateProfile(

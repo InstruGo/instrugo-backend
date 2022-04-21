@@ -10,6 +10,7 @@ import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { TimeFrame } from '../time-frames/entities/time-frame.entity';
 import { TutorResponse } from '../tutor-responses/entities/tutor-response.entity';
 import { FilterPoolDto } from './dto/lessons/filter-pool.dto';
+import { Rating } from '../ratings/entities/rating.entity';
 
 @EntityRepository(Lesson)
 export class LessonRepository extends Repository<Lesson> {
@@ -219,16 +220,25 @@ export class LessonRepository extends Repository<Lesson> {
     return lesson;
   }
 
+  async completeLesson(lesson: Lesson): Promise<Lesson> {
+    lesson.status = LessonStatus.COMPLETED;
+
+    await lesson.save();
+    return lesson;
+  }
+
   async resolveLessonRequest(
     lesson: Lesson,
     chosenTutorResponse: TutorResponse,
-    chosenTimeFrame: TimeFrame
+    chosenTimeFrame: TimeFrame,
+    rating: Rating
   ): Promise<Lesson> {
     lesson.status = LessonStatus.PENDING;
     lesson.finalStartTime = chosenTimeFrame.startTime;
     lesson.finalEndTime = chosenTimeFrame.endTime;
     lesson.finalPrice = chosenTutorResponse.price;
     lesson.tutor = chosenTutorResponse.tutor;
+    lesson.rating = rating;
 
     await lesson.save();
     return lesson;

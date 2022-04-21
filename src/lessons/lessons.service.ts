@@ -18,6 +18,7 @@ import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repo
 import { TimeFrameRepository } from '../time-frames/time-frames.repository';
 import { TimeFrame } from '../time-frames/entities/time-frame.entity';
 import { FilterPoolDto } from './dto/lessons/filter-pool.dto';
+import { RatingRepository } from '../ratings/rating.repository';
 
 @Injectable()
 export class LessonsService {
@@ -29,7 +30,9 @@ export class LessonsService {
     @InjectRepository(TimeFrameRepository)
     private timeFrameRepository: TimeFrameRepository,
     @InjectRepository(TutorResponseRepository)
-    private tutorResponseRepository: TutorResponseRepository
+    private tutorResponseRepository: TutorResponseRepository,
+    @InjectRepository(RatingRepository)
+    private ratingRepository: RatingRepository
   ) {}
 
   getLessons(
@@ -150,8 +153,7 @@ export class LessonsService {
   async resolveLessonRequest(
     user: User,
     lessonId: number,
-    chosenTutorResponseId: number,
-    chosenTimeFrameId: number
+    tutorResponseId: number
   ): Promise<Lesson> {
     const lesson = await this.lessonRepository.findOne(lessonId);
 
@@ -170,18 +172,38 @@ export class LessonsService {
     }
 
     const chosenTutorResponse = await this.tutorResponseRepository.findOne(
-      chosenTutorResponseId
+      tutorResponseId
     );
 
-    const chosenTimeFrame = await this.timeFrameRepository.findOne(
-      chosenTimeFrameId
+    const chosenTimeFrame = chosenTutorResponse.tutorResponseTimeFrame;
+
+    const rating = await this.ratingRepository.createRating(
+      lesson,
+      lesson.student,
+      chosenTutorResponse.tutor
     );
 
     return this.lessonRepository.resolveLessonRequest(
       lesson,
       chosenTutorResponse,
-      chosenTimeFrame
+      chosenTimeFrame,
+      rating
     );
+  }
+
+  async completeLesson(user: User, id: number): Promise<Lesson> {
+    const lesson = await this.lessonRepository.findOne(id);
+
+    if (!lesson) {
+      throw new NotFoundException('Specified lesson does not exist.');
+    }
+
+    if (lesson.student.id !== user.id) {
+      throw new ForbiddenException();
+    }
+
+    await this.timeFrameRepository.deleteTimeFrames(lesson.lessonTimeFrames);
+    return this.lessonRepository.completeLesson(lesson);
   }
 
   async cancelPendingLesson(user: User, lessonId: number): Promise<Lesson> {

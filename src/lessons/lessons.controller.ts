@@ -111,9 +111,18 @@ export class LessonsController {
     return this.lessonsService.resolveLessonRequest(
       user,
       id,
-      resolveLessonRequestDto.tutorResponseId,
-      resolveLessonRequestDto.timeFrameId
+      resolveLessonRequestDto.tutorResponseId
     );
+  }
+
+  @Post('complete/:id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOkResponse({ type: Lesson })
+  completeLesson(
+    @User() user: UserEntity,
+    @Param('id', ParseIntPipe) id: number
+  ): Promise<Lesson> {
+    return this.lessonsService.completeLesson(user, id);
   }
 
   @Put('cancel/:id')
@@ -122,7 +131,7 @@ export class LessonsController {
   cancelPendingLesson(
     @User() user: UserEntity,
     @Param('id', ParseIntPipe) id: number
-  ) {
+  ): Promise<Lesson> {
     return this.lessonsService.cancelPendingLesson(user, id);
   }
 }

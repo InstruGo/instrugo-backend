@@ -6,9 +6,4 @@ export class ResolveLessonRequestDto {
   @IsPositive()
   @ApiProperty()
   tutorResponseId: number;
-
-  @IsInt()
-  @IsPositive()
-  @ApiProperty()
-  timeFrameId: number;
 }
