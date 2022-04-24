@@ -1,15 +1,16 @@
 import { CreateLessonDto } from '../../../lessons/dto/lessons/create-lesson.dto';
-import { EducationLevel } from '../../../lessons/entities/lesson.level.enum';
+import { EducationLevel } from '../../../lessons/entities/lesson.education-level.enum';
 import { MeetingType } from '../../../lessons/entities/lesson.meeting-type.enum';
 
 export const filipLessons: CreateLessonDto[] = [
   {
     subfield: 'Dynamics',
-    level: EducationLevel.HIGH,
+    educationLevel: EducationLevel.HIGH_SCHOOL,
     grade: 1,
     description: 'Teacher is really bad, pls teach me dynamics',
     type: MeetingType.ONLINE,
     location: 'Microsoft Teams',
+    duration: 60,
     budget: 60,
     subjectId: 2,
     lessonTimeFrames: [
@@ -25,11 +26,12 @@ export const filipLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Past Tense',
-    level: EducationLevel.HIGH,
+    educationLevel: EducationLevel.HIGH_SCHOOL,
     grade: 1,
     description: 'English is not my favourite subject...',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Travanjska 11, Zagreb',
+    duration: 60,
     budget: 100,
     subjectId: 4,
     lessonTimeFrames: [
@@ -45,11 +47,12 @@ export const filipLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Python Lists',
-    level: EducationLevel.HIGH,
+    educationLevel: EducationLevel.HIGH_SCHOOL,
     grade: 1,
     description: 'Python is dead to me',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Travanjska 11, Zagreb',
+    duration: 60,
     budget: 35,
     subjectId: 10,
     lessonTimeFrames: [
@@ -65,11 +68,12 @@ export const filipLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Set Theory',
-    level: EducationLevel.HIGH,
+    educationLevel: EducationLevel.HIGH_SCHOOL,
     grade: 1,
     description: 'Sets go brrrr...',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Travanjska 11, Zagreb',
+    duration: 60,
     budget: 52,
     subjectId: 1,
     lessonTimeFrames: [
@@ -85,11 +89,12 @@ export const filipLessons: CreateLessonDto[] = [
   },
   {
     subfield: 'Lorem Ipsum',
-    level: EducationLevel.HIGH,
+    educationLevel: EducationLevel.HIGH_SCHOOL,
     grade: 1,
     description: 'Latin is a dead language',
-    type: MeetingType.IRL,
+    type: MeetingType.IN_PERSON,
     location: 'Travanjska 11, Zagreb',
+    duration: 60,
     budget: 67,
     subjectId: 8,
     lessonTimeFrames: [

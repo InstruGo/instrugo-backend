@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   ClassSerializerInterceptor,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -34,44 +35,56 @@ export class TutorResponsesController {
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: TutorResponse })
+  @Roles(UserRole.TUTOR, UserRole.ADMIN)
   getTutorResponses(
-    @Body() filterTutorResponseDto: FilterTutorResponseDto
+    @User() user: UserEntity,
+    @Query() filterTutorResponseDto: FilterTutorResponseDto
   ): Promise<TutorResponse[]> {
-    return this.tutorResponsesService.getTutorResponses(filterTutorResponseDto);
+    return this.tutorResponsesService.getTutorResponses(
+      user,
+      filterTutorResponseDto
+    );
   }
 
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: TutorResponse })
+  @Roles(UserRole.TUTOR, UserRole.ADMIN)
   getTutorResponse(
+    @User() user: UserEntity,
     @Param('id', ParseIntPipe) id: number
   ): Promise<TutorResponse> {
-    return this.tutorResponsesService.getTutorResponse(id);
+    return this.tutorResponsesService.getTutorResponse(user, id);
   }
 
-  @Post()
+  @Post('/:lessonId/respond')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: TutorResponse })
   @Roles(UserRole.TUTOR, UserRole.ADMIN)
   createTutorResponse(
     @User() user: UserEntity,
+    @Param('lessonId', ParseIntPipe) lessonId: number,
     @Body() createTutorResponseDto: CreateTutorResponseDto
   ): Promise<TutorResponse> {
     return this.tutorResponsesService.createTutorResponse(
       user,
+      lessonId,
       createTutorResponseDto
     );
   }
 
-  @Patch(':id')
+  @Patch('/:lessonId/respond')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: TutorResponse })
+  @Roles(UserRole.TUTOR, UserRole.ADMIN)
   updateTutorResponse(
-    @Param('id', ParseIntPipe) id: number,
+    @User() user: UserEntity,
+    @Param('lessonId', ParseIntPipe) lessonId: number,
     @Body() updateTutorResponseDto: UpdateTutorResponseDto
   ) {
     return this.tutorResponsesService.updateTutorResponse(
-      id,
+      user,
+      lessonId,
       updateTutorResponseDto
     );
   }
@@ -79,7 +92,11 @@ export class TutorResponsesController {
   @Delete(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200 })
-  deleteTutorResponse(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.tutorResponsesService.deleteTutorResponse(id);
+  @Roles(UserRole.TUTOR, UserRole.ADMIN)
+  deleteTutorResponse(
+    @User() user: UserEntity,
+    @Param('id', ParseIntPipe) id: number
+  ): Promise<void> {
+    return this.tutorResponsesService.deleteTutorResponse(user, id);
   }
 }

@@ -8,6 +8,7 @@ import {
   Delete,
   ParseIntPipe,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -16,9 +17,14 @@ import { Subject } from '../entities/subject.entity';
 import { CreateSubjectDto } from '../dto/subjects/create-subject.dto';
 import { FilterSubjectDto } from '../dto/subjects/filter-subject.dto';
 import { UpdateSubjectDto } from '../dto/subjects/update-subject.dto';
+import { Roles } from 'src/auth/roles.decorator';
+import { UserRole } from 'src/auth/entities/user.role.enum';
+import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { RolesGuard } from '../../auth/roles.guard';
 
 @ApiTags('subjects')
 @Controller('subjects')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class SubjectsController {
   constructor(private readonly subjectsService: SubjectsService) {}
 
@@ -36,12 +42,14 @@ export class SubjectsController {
 
   @Post()
   @ApiResponse({ status: 201, type: Subject })
+  @Roles(UserRole.ADMIN)
   createSubject(@Body() createSubjectDto: CreateSubjectDto): Promise<Subject> {
     return this.subjectsService.createSubject(createSubjectDto);
   }
 
   @Patch(':id')
   @ApiResponse({ status: 200, type: Subject })
+  @Roles(UserRole.ADMIN)
   updateSubject(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateLessonDto: UpdateSubjectDto
@@ -52,6 +60,7 @@ export class SubjectsController {
   @Delete(':id')
   @ApiResponse({ status: 204 })
   @HttpCode(204)
+  @Roles(UserRole.ADMIN)
   deleteSubject(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.subjectsService.deleteSubject(id);
   }

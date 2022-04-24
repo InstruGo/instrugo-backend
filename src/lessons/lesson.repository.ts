@@ -10,6 +10,7 @@ import { FilterLessonDto } from './dto/lessons/filter-lesson.dto';
 import { TimeFrame } from '../time-frames/entities/time-frame.entity';
 import { TutorResponse } from '../tutor-responses/entities/tutor-response.entity';
 import { FilterPoolDto } from './dto/lessons/filter-pool.dto';
+import { Rating } from '../ratings/entities/rating.entity';
 
 @EntityRepository(Lesson)
 export class LessonRepository extends Repository<Lesson> {
@@ -18,7 +19,7 @@ export class LessonRepository extends Repository<Lesson> {
     userId: number
   ): Promise<Lesson[]> {
     const {
-      level,
+      educationLevel,
       grade,
       type,
       minPrice,
@@ -32,8 +33,10 @@ export class LessonRepository extends Repository<Lesson> {
 
     const query = this.createQueryBuilder('lesson');
 
-    if (level) {
-      query.andWhere('lesson.level = :level', { level });
+    if (educationLevel) {
+      query.andWhere('lesson.educationLevel = :educationLevel', {
+        educationLevel,
+      });
     }
 
     if (grade) {
@@ -88,7 +91,7 @@ export class LessonRepository extends Repository<Lesson> {
 
   async getPublicPool(filterPoolDto: FilterPoolDto): Promise<Lesson[]> {
     const {
-      level,
+      educationLevel,
       grade,
       type,
       minBudget,
@@ -101,8 +104,10 @@ export class LessonRepository extends Repository<Lesson> {
     const query = this.createQueryBuilder('lesson');
     query.where('lesson.status = :status', { status: LessonStatus.REQUESTED });
 
-    if (level) {
-      query.andWhere('lesson.level = :level', { level });
+    if (educationLevel) {
+      query.andWhere('lesson.educationLevel = :educationLevel', {
+        educationLevel,
+      });
     }
 
     if (grade) {
@@ -152,16 +157,25 @@ export class LessonRepository extends Repository<Lesson> {
     subject: Subject,
     lessonTimeFrames: TimeFrame[]
   ): Promise<Lesson> {
-    const { subfield, level, grade, description, type, location, budget } =
-      createLessonDto;
+    const {
+      subfield,
+      educationLevel,
+      grade,
+      description,
+      type,
+      location,
+      duration,
+      budget,
+    } = createLessonDto;
 
     const lesson = new Lesson();
     lesson.subfield = subfield;
-    lesson.level = level;
+    lesson.educationLevel = educationLevel;
     lesson.grade = grade;
     lesson.description = description;
     lesson.type = type;
     lesson.location = location;
+    lesson.duration = duration;
     lesson.budget = budget;
     lesson.status = LessonStatus.REQUESTED;
 
@@ -179,15 +193,24 @@ export class LessonRepository extends Repository<Lesson> {
     subject: Subject,
     lessonTimeFrames: TimeFrame[]
   ): Promise<Lesson> {
-    const { subfield, level, grade, description, type, location, budget } =
-      updateLessonDto;
+    const {
+      subfield,
+      educationLevel,
+      grade,
+      description,
+      type,
+      location,
+      duration,
+      budget,
+    } = updateLessonDto;
 
     if (subfield) lesson.subfield = subfield;
-    if (level) lesson.level = level;
+    if (educationLevel) lesson.educationLevel = educationLevel;
     if (grade) lesson.grade = grade;
     if (description) lesson.description = description;
     if (type) lesson.type = type;
     if (location) lesson.location = location;
+    if (duration) lesson.duration = duration;
     if (budget) lesson.budget = budget;
 
     if (subject) lesson.subject = subject;
@@ -197,16 +220,25 @@ export class LessonRepository extends Repository<Lesson> {
     return lesson;
   }
 
+  async completeLesson(lesson: Lesson): Promise<Lesson> {
+    lesson.status = LessonStatus.COMPLETED;
+
+    await lesson.save();
+    return lesson;
+  }
+
   async resolveLessonRequest(
     lesson: Lesson,
     chosenTutorResponse: TutorResponse,
-    chosenTimeFrame: TimeFrame
+    chosenTimeFrame: TimeFrame,
+    rating: Rating
   ): Promise<Lesson> {
     lesson.status = LessonStatus.PENDING;
     lesson.finalStartTime = chosenTimeFrame.startTime;
     lesson.finalEndTime = chosenTimeFrame.endTime;
     lesson.finalPrice = chosenTutorResponse.price;
     lesson.tutor = chosenTutorResponse.tutor;
+    lesson.rating = rating;
 
     await lesson.save();
     return lesson;

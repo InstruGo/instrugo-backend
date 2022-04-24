@@ -11,6 +11,7 @@ import { SubjectRepository } from './subjects/subject.repository';
 import { TimeFrameRepository } from 'src/time-frames/time-frames.repository';
 import { TimeFramesService } from 'src/time-frames/time-frames.service';
 import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repository';
+import { RatingRepository } from '../ratings/rating.repository';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repo
       SubjectRepository,
       TutorResponseRepository,
       TimeFrameRepository,
+      RatingRepository,
     ]),
   ],
   controllers: [LessonsController, SubjectsController],

@@ -11,6 +11,7 @@ import { admins, students, tutors } from './data/users';
 import { filipLessons, ivanLessons } from './data/lessons';
 import { tutorResponses } from './data/tutorResponses';
 import { TutorResponsesService } from '../tutor-responses/tutor-responses.service';
+import { RatingsService } from '../ratings/ratings.service';
 
 @Injectable()
 export class SeedService implements OnApplicationBootstrap {
@@ -23,7 +24,8 @@ export class SeedService implements OnApplicationBootstrap {
     @InjectRepository(SubjectRepository)
     private subjectRepository: SubjectRepository,
     private readonly lessonsService: LessonsService,
-    private readonly tutorResponsesService: TutorResponsesService
+    private readonly tutorResponsesService: TutorResponsesService,
+    private readonly ratingsService: RatingsService
   ) {}
 
   getDbHandle(): Connection {
@@ -44,6 +46,8 @@ export class SeedService implements OnApplicationBootstrap {
     await this.seedLessons();
     await this.seedTutorResponses();
     await this.resolveLessonRequests();
+    await this.completeLessons();
+    await this.rateLessons();
 
     this.logger.log('Database seeding completed.');
   }
@@ -128,17 +132,53 @@ export class SeedService implements OnApplicationBootstrap {
       where: { email: 'karlo.cihlar@fer.hr' },
     });
 
-    await Promise.all(
-      tutorResponses.map(async (tutorResponse) => {
-        await this.tutorResponsesService.createTutorResponse(
-          userKarlo,
-          tutorResponse
-        );
-      })
+    await this.tutorResponsesService.createTutorResponse(
+      userKarlo,
+      1,
+      tutorResponses[0]
+    );
+
+    const userLara = await this.userRepository.findOne({
+      where: { email: 'lara.granosa@fer.hr' },
+    });
+
+    await this.tutorResponsesService.createTutorResponse(
+      userLara,
+      2,
+      tutorResponses[1]
     );
   }
 
   private async resolveLessonRequests() {
-    await this.lessonsService.resolveLessonRequest(1, 1, 1);
+    const userFilip = await this.userRepository.findOne({
+      where: { email: 'filip.todoric@fer.hr' },
+    });
+
+    await this.lessonsService.resolveLessonRequest(userFilip, 1, 1);
+    await this.lessonsService.resolveLessonRequest(userFilip, 2, 2);
+  }
+
+  private async completeLessons() {
+    const userFilip = await this.userRepository.findOne({
+      where: { email: 'filip.todoric@fer.hr' },
+    });
+
+    await this.lessonsService.completeLesson(userFilip, 2);
+  }
+
+  private async rateLessons() {
+    // const userFilip = await this.userRepository.findOne({
+    //   where: { email: 'filip.todoric@fer.hr' },
+    // });
+
+    await this.ratingsService.rateLesson(2, { studentRating: 5 });
+
+    // const userLara = await this.userRepository.findOne({
+    //   where: { email: 'lara.granosa@fer.hr' },
+    // });
+
+    await this.ratingsService.leaveFeedback(2, {
+      tutorFeedback: 'Filip was amazing!!!',
+    });
   }
 }

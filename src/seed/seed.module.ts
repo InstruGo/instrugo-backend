@@ -9,6 +9,8 @@ import { TutorResponsesService } from '../tutor-responses/tutor-responses.servic
 import { LessonRepository } from '../lessons/lesson.repository';
 import { TimeFrameRepository } from '../time-frames/time-frames.repository';
 import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repository';
+import { RatingsService } from '../ratings/ratings.service';
+import { RatingRepository } from '../ratings/rating.repository';
 
 @Module({
   imports: [
@@ -18,9 +20,15 @@ import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repo
       LessonRepository,
       TimeFrameRepository,
       TutorResponseRepository,
+      RatingRepository,
     ]),
     LessonsModule,
   ],
-  providers: [SeedService, LessonsService, TutorResponsesService],
+  providers: [
+    SeedService,
+    LessonsService,
+    TutorResponsesService,
+    RatingsService,
+  ],
 })
 export class SeedModule {}

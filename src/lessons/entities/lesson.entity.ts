@@ -7,15 +7,19 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
 } from 'typeorm';
 
-import { EducationLevel } from './lesson.level.enum';
+import { EducationLevel } from './lesson.education-level.enum';
 import { MeetingType } from './lesson.meeting-type.enum';
 import { LessonStatus } from './lesson.status.enum';
 import { User } from '../../auth/entities/user.entity';
 import { Subject } from './subject.entity';
 import { TimeFrame } from '../../time-frames/entities/time-frame.entity';
 import { TutorResponse } from '../../tutor-responses/entities/tutor-response.entity';
+import { ColumnNumericTransformer } from '../column-numeric.transformer';
+import { Rating } from '../../ratings/entities/rating.entity';
+import { CreateTimeFrameDto } from '../../time-frames/dto/create-lesson-time-frame.dto';
 
 @Entity()
 export class Lesson extends BaseEntity {
@@ -26,7 +30,7 @@ export class Lesson extends BaseEntity {
   subfield: string;
 
   @Column()
-  level: EducationLevel;
+  educationLevel: EducationLevel;
 
   @Column()
   grade: number;
@@ -40,7 +44,14 @@ export class Lesson extends BaseEntity {
   @Column()
   location: string;
 
-  @Column('numeric')
+  @Column()
+  duration: number;
+
+  @Column('numeric', {
+    precision: 7,
+    scale: 2,
+    transformer: new ColumnNumericTransformer(),
+  })
   budget: number;
 
   @Column()
@@ -52,7 +63,12 @@ export class Lesson extends BaseEntity {
   @Column('timestamptz', { nullable: true })
   finalEndTime: Date;
 
-  @Column('numeric', { nullable: true })
+  @Column('numeric', {
+    precision: 7,
+    scale: 2,
+    transformer: new ColumnNumericTransformer(),
+    nullable: true,
+  })
   finalPrice: number;
 
   @CreateDateColumn()
@@ -60,6 +76,9 @@ export class Lesson extends BaseEntity {
 
   @UpdateDateColumn()
   modifiedOn: Date;
+
+  @OneToOne(() => Rating, (rating) => rating.lesson, { eager: true })
+  rating: Rating;
 
   @ManyToOne(() => User, { eager: true })
   student: User;
@@ -99,6 +118,16 @@ export class Lesson extends BaseEntity {
   hasTimeSlotBeforeDate(before: Date) {
     for (const timeFrame of this.lessonTimeFrames) {
       if (timeFrame.isBeforeDate(before)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  containsTimeFrame(timeFrame: TimeFrame | CreateTimeFrameDto) {
+    for (const lessonTimeFrame of this.lessonTimeFrames) {
+      if (lessonTimeFrame.contains(timeFrame)) {
         return true;
       }
     }

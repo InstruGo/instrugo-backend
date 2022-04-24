@@ -10,6 +10,7 @@ import {
   ClassSerializerInterceptor,
   UseInterceptors,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -28,7 +29,7 @@ export class RatingsController {
   @Get()
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Rating })
-  getRatings(@Body() filterRatingDto: FilterRatingDto): Promise<Rating[]> {
+  getRatings(@Query() filterRatingDto: FilterRatingDto): Promise<Rating[]> {
     return this.ratingsService.getRatings(filterRatingDto);
   }
 

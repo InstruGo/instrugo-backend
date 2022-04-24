@@ -1,7 +1,6 @@
 import {
   Injectable,
   BadRequestException,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -60,21 +59,15 @@ export class AuthService {
     return { accessToken };
   }
 
-  async getProfile(id: number): Promise<Partial<User>> {
-    const user = await this.userRepository.findOne(id);
-    return user;
+  async getProfileById(user: User, id: number): Promise<Partial<User>> {
+    const profile = await this.userRepository.findOne(id);
+    return profile;
   }
 
   async updateProfile(
-    id: number,
+    user: User,
     updateProfileDto: UpdateProfileDto
   ): Promise<void> {
-    const user = await this.userRepository.findOne(id);
-
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} does not exist.`);
-    }
-
     const subjects: Subject[] = [];
 
     updateProfileDto.subjectIds?.map(async (id) => {
@@ -85,13 +78,7 @@ export class AuthService {
     return this.userRepository.updateProfile(user, updateProfileDto, subjects);
   }
 
-  async becomeATutor(id: number): Promise<void> {
-    const user = await this.userRepository.findOne(id);
-
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} does not exist.`);
-    }
-
+  async becomeATutor(user: User): Promise<void> {
     if (user.role !== UserRole.STUDENT) {
       throw new BadRequestException('You are already a tutor.');
     }

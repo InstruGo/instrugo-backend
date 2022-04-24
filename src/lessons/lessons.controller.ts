@@ -33,7 +33,6 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { UserRole } from '../auth/entities/user.role.enum';
 import { FilterPoolDto } from './dto/lessons/filter-pool.dto';
-import { NotFoundException } from '@nestjs/common';
 import { Roles } from 'src/auth/roles.decorator';
 
 @ApiTags('lessons')
@@ -56,21 +55,18 @@ export class LessonsController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOkResponse({ type: [Lesson] })
   @Roles(UserRole.TUTOR, UserRole.ADMIN)
-  getPublicPool(
-    @Query() filterPoolDto: FilterPoolDto,
-    @User() user: UserEntity
-  ): Promise<Lesson[]> {
-    if (user.role === UserRole.STUDENT) {
-      throw new NotFoundException();
-    }
+  getPublicPool(@Query() filterPoolDto: FilterPoolDto): Promise<Lesson[]> {
     return this.lessonsService.getPublicPool(filterPoolDto);
   }
 
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOkResponse({ type: Lesson })
-  getLesson(@Param('id', ParseIntPipe) id: number): Promise<Lesson> {
-    return this.lessonsService.getLesson(id);
+  getLesson(
+    @User() user: UserEntity,
+    @Param('id', ParseIntPipe) id: number
+  ): Promise<Lesson> {
+    return this.lessonsService.getLesson(user, id);
   }
 
   @Post()
@@ -87,37 +83,55 @@ export class LessonsController {
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOkResponse({ type: Lesson })
   updateLesson(
+    @User() user: UserEntity,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateLessonDto: UpdateLessonDto
   ): Promise<Lesson> {
-    return this.lessonsService.updateLesson(id, updateLessonDto);
+    return this.lessonsService.updateLesson(user, id, updateLessonDto);
   }
 
   @Delete(':id')
   @ApiNoContentResponse()
   @HttpCode(204)
-  deleteLesson(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.lessonsService.deleteLesson(id);
+  deleteLesson(
+    @User() user: UserEntity,
+    @Param('id', ParseIntPipe) id: number
+  ): Promise<void> {
+    return this.lessonsService.deleteLesson(user, id);
   }
 
   @Post('resolve/:id')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOkResponse({ type: Lesson })
   resolveLessonRequest(
+    @User() user: UserEntity,
     @Param('id', ParseIntPipe) id: number,
     @Body() resolveLessonRequestDto: ResolveLessonRequestDto
   ): Promise<Lesson> {
     return this.lessonsService.resolveLessonRequest(
+      user,
       id,
-      resolveLessonRequestDto.tutorResponseId,
-      resolveLessonRequestDto.timeFrameId
+      resolveLessonRequestDto.tutorResponseId
     );
+  }
+
+  @Post('complete/:id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOkResponse({ type: Lesson })
+  completeLesson(
+    @User() user: UserEntity,
+    @Param('id', ParseIntPipe) id: number
+  ): Promise<Lesson> {
+    return this.lessonsService.completeLesson(user, id);
   }
 
   @Put('cancel/:id')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiOkResponse({ type: Lesson })
-  cancelPendingLesson(@Param('id', ParseIntPipe) id: number) {
-    return this.lessonsService.cancelPendingLesson(id);
+  cancelPendingLesson(
+    @User() user: UserEntity,
+    @Param('id', ParseIntPipe) id: number
+  ): Promise<Lesson> {
+    return this.lessonsService.cancelPendingLesson(user, id);
   }
 }

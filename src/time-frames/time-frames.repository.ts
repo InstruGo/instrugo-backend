@@ -63,4 +63,8 @@ export class TimeFrameRepository extends Repository<TimeFrame> {
       )
     );
   }
+
+  async deleteTimeFrame(lessonTimeFrame: TimeFrame): Promise<void> {
+    await lessonTimeFrame.remove();
+  }
 }

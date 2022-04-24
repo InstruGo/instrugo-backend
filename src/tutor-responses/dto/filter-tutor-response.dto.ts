@@ -8,11 +8,4 @@ export class FilterTutorResponseDto {
   @IsPositive()
   @ApiProperty()
   lessonId: number;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsInt()
-  @IsPositive()
-  @ApiProperty()
-  tutorId: number;
 }

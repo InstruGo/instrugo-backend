@@ -1,3 +1,4 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsInt,
@@ -9,17 +10,16 @@ import {
   IsISO8601,
 } from 'class-validator';
 
-import { EducationLevel } from '../../entities/lesson.level.enum';
+import { EducationLevel } from '../../entities/lesson.education-level.enum';
 import { LessonStatus } from '../../entities/lesson.status.enum';
 import { MeetingType } from '../../entities/lesson.meeting-type.enum';
-import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class FilterLessonDto {
   @IsOptional()
   @IsNotEmpty()
   @IsIn(Object.values(EducationLevel))
   @ApiPropertyOptional({ enum: EducationLevel, enumName: 'EducationLevel' })
-  level?: EducationLevel;
+  educationLevel?: EducationLevel;
 
   @IsOptional()
   @IsNotEmpty()

@@ -18,10 +18,10 @@ export class Rating extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   studentRating: number;
 
-  @Column()
+  @Column({ nullable: true })
   tutorFeedback: string;
 
   @CreateDateColumn()
@@ -34,9 +34,9 @@ export class Rating extends BaseEntity {
   @JoinColumn()
   lesson: Lesson;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   student: User;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   tutor: User;
 }

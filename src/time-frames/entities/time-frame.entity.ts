@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 
 import { Lesson } from '../../lessons/entities/lesson.entity';
+import { CreateTimeFrameDto } from '../dto/create-lesson-time-frame.dto';
 
 @Entity()
 export class TimeFrame extends BaseEntity {
@@ -34,5 +35,12 @@ export class TimeFrame extends BaseEntity {
 
   isBeforeDate(before: Date) {
     return this.endTime <= before;
+  }
+
+  contains(another: TimeFrame | CreateTimeFrameDto) {
+    return (
+      new Date(another.startTime) >= this.startTime &&
+      new Date(another.endTime) <= this.endTime
+    );
   }
 }

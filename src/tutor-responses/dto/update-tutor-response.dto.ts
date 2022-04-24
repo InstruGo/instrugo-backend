@@ -1,9 +1,4 @@
-import {
-  IsOptional,
-  IsArray,
-  ArrayNotEmpty,
-  ValidateNested,
-} from 'class-validator';
+import { IsOptional, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 import { CreateTimeFrameDto } from '../../time-frames/dto/create-lesson-time-frame.dto';
@@ -18,10 +13,8 @@ export class UpdateTutorResponseDto {
   price?: number;
 
   @IsOptional()
-  @IsArray()
-  @ArrayNotEmpty()
-  @ValidateNested({ each: true })
+  @ValidateNested()
   @Type(() => CreateTimeFrameDto)
-  @ApiPropertyOptional({ type: CreateTimeFrameDto, isArray: true })
-  tutorTimeFrames?: CreateTimeFrameDto[];
+  @ApiPropertyOptional({ type: CreateTimeFrameDto })
+  tutorTimeFrame?: CreateTimeFrameDto;
 }

@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -26,13 +27,49 @@ export class TutorResponsesService {
     private timeFrameRepository: TimeFrameRepository
   ) {}
 
+  async getTutorResponses(
+    user: User,
+    filterTutorResponseDto: FilterTutorResponseDto
+  ): Promise<TutorResponse[]> {
+    return this.tutorResponseRepository.getTutorResponses(
+      user,
+      filterTutorResponseDto
+    );
+  }
+
+  async getTutorResponse(user: User, id: number): Promise<TutorResponse> {
+    const query = await this.tutorResponseRepository.createQueryBuilder(
+      'tutor-response'
+    );
+
+    query.where('tutor-response.id = :id', { id });
+    query.leftJoinAndSelect('tutor-response.lesson', 'lesson');
+    query.leftJoinAndSelect('tutor-response.tutor', 'tutor');
+    query.leftJoinAndSelect(
+      'tutor-response.tutorResponseTimeFrame',
+      'time-frame'
+    );
+    query.leftJoinAndSelect('lesson.student', 'student');
+    query.leftJoinAndSelect('lesson.subject', 'subject');
+    const response = await query.getOne();
+
+    if (!response) {
+      throw new NotFoundException('Specified response does not exist.');
+    }
+
+    if (response.tutor.id !== user.id) {
+      throw new ForbiddenException();
+    }
+
+    return response;
+  }
+
   async createTutorResponse(
     tutor: User,
+    lessonId: number,
     createTutorResponseDto: CreateTutorResponseDto
   ): Promise<TutorResponse> {
-    const lesson = await this.lessonRepository.findOne(
-      createTutorResponseDto.lessonId
-    );
+    const lesson = await this.lessonRepository.findOne(lessonId);
 
     if (!lesson) {
       throw new NotFoundException('This lesson does not exist.');
@@ -46,69 +83,89 @@ export class TutorResponsesService {
       throw new BadRequestException('You cannot respond to your own lessons!');
     }
 
-    const tutorResponseTimeFrames =
-      await this.timeFrameRepository.createTimeFrames(
-        createTutorResponseDto.tutorTimeFrames
+    if (!lesson.containsTimeFrame(createTutorResponseDto.tutorTimeFrame)) {
+      throw new BadRequestException(
+        'Sent time frame is not contained in this lesson.'
+      );
+    }
+
+    const tutorResponseTimeFrame =
+      await this.timeFrameRepository.createTimeFrame(
+        createTutorResponseDto.tutorTimeFrame
       );
 
     return this.tutorResponseRepository.createTutorResponse(
       tutor,
       lesson,
-      tutorResponseTimeFrames,
+      tutorResponseTimeFrame,
       createTutorResponseDto
     );
   }
 
-  async getTutorResponses(
-    filterTutorResponseDto: FilterTutorResponseDto
-  ): Promise<TutorResponse[]> {
-    return this.tutorResponseRepository.getTutorResponses(
-      filterTutorResponseDto
-    );
-  }
-
-  async getTutorResponse(id: number): Promise<TutorResponse> {
-    const response = await this.tutorResponseRepository.findOne(id);
-    if (!response) {
-      throw new NotFoundException('Specified response does not exist.');
-    }
-    return response;
-  }
-
   async updateTutorResponse(
-    id: number,
+    user: User,
+    lessonId: number,
     updateTutorResponseDto: UpdateTutorResponseDto
   ): Promise<TutorResponse> {
-    const response = await this.tutorResponseRepository.findOne(id);
+    const response = await this.tutorResponseRepository.findOne({
+      where: {
+        tutor: { id: user.id },
+        lesson: { id: lessonId },
+      },
+      relations: ['user', 'lesson'],
+    });
 
     if (!response) {
       throw new NotFoundException('Specified response does not exist.');
     }
 
-    const { tutorTimeFrames } = updateTutorResponseDto;
+    if (response.tutor.id !== user.id) {
+      throw new ForbiddenException();
+    }
 
-    let tutorResponseTimeFramesArr: TimeFrame[] = [];
-    if (tutorTimeFrames) {
-      await this.timeFrameRepository.deleteTimeFrames(
-        response.tutorResponseTimeFrames
+    const { tutorTimeFrame } = updateTutorResponseDto;
+
+    const lesson = await this.lessonRepository.findOne(lessonId);
+
+    if (!lesson) {
+      throw new NotFoundException();
+    }
+
+    if (!lesson.containsTimeFrame(tutorTimeFrame)) {
+      throw new BadRequestException(
+        'Sent time frame is not contained in the lesson.'
+      );
+    }
+
+    let tutorResponseTimeFrame: TimeFrame = null;
+    if (tutorTimeFrame) {
+      await this.timeFrameRepository.deleteTimeFrame(
+        response.tutorResponseTimeFrame
       );
 
-      tutorResponseTimeFramesArr =
-        await this.timeFrameRepository.createTimeFrames(tutorTimeFrames);
+      tutorResponseTimeFrame = await this.timeFrameRepository.createTimeFrame(
+        tutorTimeFrame
+      );
     }
 
     return this.tutorResponseRepository.updateTutorResponse(
       response,
-      tutorResponseTimeFramesArr,
+      tutorResponseTimeFrame,
       updateTutorResponseDto
     );
   }
 
-  async deleteTutorResponse(id: number): Promise<void> {
-    const result = await this.tutorResponseRepository.delete(id);
+  async deleteTutorResponse(user: User, id: number): Promise<void> {
+    const response = await this.tutorResponseRepository.findOne(id);
 
-    if (!result.affected) {
-      throw new NotFoundException(`Response with id ${id} does not exist.`);
+    if (!response) {
+      return;
     }
+
+    if (response.tutor.id !== user.id) {
+      throw new ForbiddenException();
+    }
+
+    await response.remove();
   }
 }

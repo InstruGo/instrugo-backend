@@ -1,4 +1,5 @@
 import { RegistrationCredentialsDto } from '../../../auth/dto/registration-credentials.dto';
+import { EducationLevel } from '../../../lessons/entities/lesson.education-level.enum';
 
 export const students: RegistrationCredentialsDto[] = [
   {
@@ -6,6 +7,11 @@ export const students: RegistrationCredentialsDto[] = [
     firstName: 'Ivan',
     lastName: 'Skorupan',
     phone: '+385992667419',
+    birthDate: '1998-06-19',
+    description:
+      "I'm a silly student that doesn't really know what to do with life :)",
+    educationLevel: EducationLevel.ELEMENTARY_SCHOOL,
+    grade: 5,
     password: 'frle10',
     confirmPassword: 'frle10',
     isTutor: false,

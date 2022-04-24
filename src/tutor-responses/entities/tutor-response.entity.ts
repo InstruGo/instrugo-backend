@@ -3,21 +3,24 @@ import {
   PrimaryGeneratedColumn,
   Entity,
   ManyToOne,
-  ManyToMany,
   Column,
-  JoinTable,
 } from 'typeorm';
 
 import { User } from '../../auth/entities/user.entity';
 import { Lesson } from '../../lessons/entities/lesson.entity';
 import { TimeFrame } from '../../time-frames/entities/time-frame.entity';
+import { ColumnNumericTransformer } from '../../lessons/column-numeric.transformer';
 
 @Entity()
 export class TutorResponse extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('numeric')
+  @Column('numeric', {
+    precision: 7,
+    scale: 2,
+    transformer: new ColumnNumericTransformer(),
+  })
   price: number;
 
   @ManyToOne(() => Lesson, { onDelete: 'CASCADE' })
@@ -26,9 +29,8 @@ export class TutorResponse extends BaseEntity {
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   tutor: User;
 
-  @JoinTable()
-  @ManyToMany(() => TimeFrame, {
+  @ManyToOne(() => TimeFrame, {
     eager: true,
   })
-  tutorResponseTimeFrames: TimeFrame[];
+  tutorResponseTimeFrame: TimeFrame;
 }

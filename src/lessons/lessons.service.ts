@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -17,6 +18,7 @@ import { TutorResponseRepository } from '../tutor-responses/tutor-responses.repo
 import { TimeFrameRepository } from '../time-frames/time-frames.repository';
 import { TimeFrame } from '../time-frames/entities/time-frame.entity';
 import { FilterPoolDto } from './dto/lessons/filter-pool.dto';
+import { RatingRepository } from '../ratings/rating.repository';
 
 @Injectable()
 export class LessonsService {
@@ -28,7 +30,9 @@ export class LessonsService {
     @InjectRepository(TimeFrameRepository)
     private timeFrameRepository: TimeFrameRepository,
     @InjectRepository(TutorResponseRepository)
-    private tutorResponseRepository: TutorResponseRepository
+    private tutorResponseRepository: TutorResponseRepository,
+    @InjectRepository(RatingRepository)
+    private ratingRepository: RatingRepository
   ) {}
 
   getLessons(
@@ -42,11 +46,19 @@ export class LessonsService {
     return this.lessonRepository.getPublicPool(filterPoolDto);
   }
 
-  async getLesson(id: number): Promise<Lesson> {
+  async getLesson(user: User, id: number): Promise<Lesson> {
     const lesson = await this.lessonRepository.findOne(id);
 
     if (!lesson) {
       throw new NotFoundException('Specified lesson does not exist.');
+    }
+
+    if (lesson.status === LessonStatus.REQUESTED) {
+      return lesson;
+    }
+
+    if (lesson.student.id !== user.id && lesson.tutor?.id !== user.id) {
+      throw new ForbiddenException();
     }
 
     return lesson;
@@ -78,6 +90,7 @@ export class LessonsService {
   }
 
   async updateLesson(
+    user: User,
     id: number,
     updateLessonDto: UpdateLessonDto
   ): Promise<Lesson> {
@@ -85,6 +98,10 @@ export class LessonsService {
 
     if (!lesson) {
       throw new NotFoundException('Specified lesson does not exist.');
+    }
+
+    if (lesson.student.id !== user.id) {
+      throw new ForbiddenException();
     }
 
     if (
@@ -119,23 +136,37 @@ export class LessonsService {
     );
   }
 
-  async deleteLesson(id: number): Promise<void> {
-    const result = await this.lessonRepository.delete(id);
+  async deleteLesson(user: User, id: number): Promise<void> {
+    const lesson = await this.lessonRepository.findOne(id);
 
-    if (!result.affected) {
-      throw new NotFoundException(`Lesson with ID ${id} not found.`);
+    if (!lesson) {
+      throw new NotFoundException();
     }
+
+    if (lesson.student.id !== user.id) {
+      throw new ForbiddenException();
+    }
+
+    if (lesson.status !== LessonStatus.REQUESTED) {
+      throw new BadRequestException('Only lesson requests can be deleted.');
+    }
+
+    await lesson.remove();
   }
 
   async resolveLessonRequest(
+    user: User,
     lessonId: number,
-    chosenTutorResponseId: number,
-    chosenTimeFrameId: number
+    tutorResponseId: number
   ): Promise<Lesson> {
     const lesson = await this.lessonRepository.findOne(lessonId);
 
     if (!lesson) {
       throw new NotFoundException('Specified lesson does not exist.');
+    }
+
+    if (lesson.student.id !== user.id) {
+      throw new ForbiddenException();
     }
 
     if (lesson.status !== LessonStatus.REQUESTED) {
@@ -145,25 +176,49 @@ export class LessonsService {
     }
 
     const chosenTutorResponse = await this.tutorResponseRepository.findOne(
-      chosenTutorResponseId
+      tutorResponseId
     );
 
-    const chosenTimeFrame = await this.timeFrameRepository.findOne(
-      chosenTimeFrameId
+    const chosenTimeFrame = chosenTutorResponse.tutorResponseTimeFrame;
+
+    const rating = await this.ratingRepository.createRating(
+      lesson,
+      lesson.student,
+      chosenTutorResponse.tutor
     );
 
     return this.lessonRepository.resolveLessonRequest(
       lesson,
       chosenTutorResponse,
-      chosenTimeFrame
+      chosenTimeFrame,
+      rating
     );
   }
 
-  async cancelPendingLesson(lessonId: number): Promise<Lesson> {
+  async completeLesson(user: User, id: number): Promise<Lesson> {
+    const lesson = await this.lessonRepository.findOne(id);
+
+    if (!lesson) {
+      throw new NotFoundException('Specified lesson does not exist.');
+    }
+
+    if (lesson.student.id !== user.id) {
+      throw new ForbiddenException();
+    }
+
+    await this.timeFrameRepository.deleteTimeFrames(lesson.lessonTimeFrames);
+    return this.lessonRepository.completeLesson(lesson);
+  }
+
+  async cancelPendingLesson(user: User, lessonId: number): Promise<Lesson> {
     const lesson = await this.lessonRepository.findOne(lessonId);
 
     if (!lesson) {
       throw new NotFoundException('Specified lesson does not exist.');
+    }
+
+    if (lesson.student.id !== user.id) {
+      throw new ForbiddenException();
     }
 
     if (lesson.status !== LessonStatus.PENDING) {

@@ -19,14 +19,29 @@ export class UserRepository extends Repository<User> {
     registrationCredentialsDto: RegistrationCredentialsDto,
     isAdmin?: boolean
   ): Promise<void> {
-    const { email, firstName, lastName, phone, password, isTutor } =
-      registrationCredentialsDto;
+    const {
+      email,
+      firstName,
+      lastName,
+      phone,
+      birthDate,
+      description,
+      educationLevel,
+      grade,
+      password,
+      isTutor,
+    } = registrationCredentialsDto;
 
     const user = new User();
     user.email = email;
     user.firstName = firstName;
     user.lastName = lastName;
     user.phone = phone;
+    user.birthDate = birthDate ? new Date(birthDate) : null;
+    user.description = description;
+    user.educationLevel = educationLevel;
+    user.grade = grade;
+
     user.salt = await bcrypt.genSalt();
     user.password = await this.hashPassword(password, user.salt);
 
@@ -79,11 +94,23 @@ export class UserRepository extends Repository<User> {
     updateProfileDto: UpdateProfileDto,
     subjects: Subject[]
   ): Promise<void> {
-    const { firstName, lastName, phone } = updateProfileDto;
+    const {
+      firstName,
+      lastName,
+      phone,
+      birthDate,
+      description,
+      educationLevel,
+      grade,
+    } = updateProfileDto;
 
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (phone) user.phone = phone;
+    if (birthDate) user.birthDate = new Date(birthDate);
+    if (description) user.description = description;
+    if (educationLevel) user.educationLevel = educationLevel;
+    if (grade) user.grade = grade;
     if (subjects) user.subjects = subjects;
 
     await user.save();
