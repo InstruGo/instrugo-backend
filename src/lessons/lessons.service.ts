@@ -53,6 +53,10 @@ export class LessonsService {
       throw new NotFoundException('Specified lesson does not exist.');
     }
 
+    if (lesson.status === LessonStatus.REQUESTED) {
+      return lesson;
+    }
+
     if (lesson.student.id !== user.id && lesson.tutor?.id !== user.id) {
       throw new ForbiddenException();
     }
