@@ -38,7 +38,9 @@ export class TutorResponsesService {
   }
 
   async getTutorResponse(user: User, id: number): Promise<TutorResponse> {
-    const response = await this.tutorResponseRepository.findOne(id);
+    const response = await this.tutorResponseRepository.findOne(id, {
+      relations: ['lesson'],
+    });
 
     if (!response) {
       throw new NotFoundException('Specified response does not exist.');
