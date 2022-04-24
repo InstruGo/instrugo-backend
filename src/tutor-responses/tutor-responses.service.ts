@@ -38,9 +38,20 @@ export class TutorResponsesService {
   }
 
   async getTutorResponse(user: User, id: number): Promise<TutorResponse> {
-    const response = await this.tutorResponseRepository.findOne(id, {
-      relations: ['lesson'],
-    });
+    const query = await this.tutorResponseRepository.createQueryBuilder(
+      'tutor-response'
+    );
+
+    query.where('tutor-response.id = :id', { id });
+    query.leftJoinAndSelect('tutor-response.lesson', 'lesson');
+    query.leftJoinAndSelect('tutor-response.tutor', 'tutor');
+    query.leftJoinAndSelect(
+      'tutor-response.tutorResponseTimeFrame',
+      'time-frame'
+    );
+    query.leftJoinAndSelect('lesson.student', 'student');
+    query.leftJoinAndSelect('lesson.subject', 'subject');
+    const response = await query.getOne();
 
     if (!response) {
       throw new NotFoundException('Specified response does not exist.');
