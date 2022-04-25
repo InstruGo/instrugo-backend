@@ -181,11 +181,7 @@ export class LessonsService {
 
     const chosenTimeFrame = chosenTutorResponse.tutorResponseTimeFrame;
 
-    const rating = await this.ratingRepository.createRating(
-      lesson,
-      lesson.student,
-      chosenTutorResponse.tutor
-    );
+    const rating = await this.ratingRepository.createRating();
 
     return this.lessonRepository.resolveLessonRequest(
       lesson,

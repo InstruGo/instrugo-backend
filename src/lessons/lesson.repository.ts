@@ -246,7 +246,6 @@ export class LessonRepository extends Repository<Lesson> {
 
   async cancelPendingLesson(lesson: Lesson): Promise<Lesson> {
     lesson.status = LessonStatus.CANCELED;
-
     lesson.save();
     return lesson;
   }

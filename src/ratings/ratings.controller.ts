@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Param,
   Delete,
@@ -11,18 +10,23 @@ import {
   UseInterceptors,
   HttpCode,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { RatingsService } from './ratings.service';
-import { CreateRatingDto } from './dto/create-rating.dto';
 import { FilterRatingDto } from './dto/filter-rating.dto';
 import { Rating } from './entities/rating.entity';
 import { RateLessonDto } from './dto/rate-lesson.dto';
 import { LeaveFeedbackDto } from './dto/leave-feedback.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { UserRole } from 'src/auth/entities/user.role.enum';
 
 @ApiTags('ratings')
 @Controller('ratings')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class RatingsController {
   constructor(private readonly ratingsService: RatingsService) {}
 
@@ -40,31 +44,25 @@ export class RatingsController {
     return this.ratingsService.getRating(id);
   }
 
-  @Post()
-  @UseInterceptors(ClassSerializerInterceptor)
-  @ApiResponse({ status: 201, type: Rating })
-  createRating(@Body() createRatingDto: CreateRatingDto): Promise<Rating> {
-    return this.ratingsService.createRating(createRatingDto);
-  }
-
-  @Patch('rate/:id')
+  @Patch('rate/:lessonId')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Rating })
   rateLesson(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('lessonId', ParseIntPipe) lessonId: number,
     @Body() rateLessonDto: RateLessonDto
   ): Promise<Rating> {
-    return this.ratingsService.rateLesson(id, rateLessonDto);
+    return this.ratingsService.rateLesson(lessonId, rateLessonDto);
   }
 
-  @Patch('feedback/:id')
+  @Patch('feedback/:lessonId')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Rating })
+  @Roles(UserRole.TUTOR, UserRole.ADMIN)
   leaveFeedback(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('lessonId', ParseIntPipe) lessonId: number,
     @Body() leaveFeedbackDto: LeaveFeedbackDto
   ): Promise<Rating> {
-    return this.ratingsService.leaveFeedback(id, leaveFeedbackDto);
+    return this.ratingsService.leaveFeedback(lessonId, leaveFeedbackDto);
   }
 
   @Delete(':id')

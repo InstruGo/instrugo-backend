@@ -3,7 +3,6 @@ import { NotFoundException } from '@nestjs/common';
 
 import { FilterRatingDto } from './dto/filter-rating.dto';
 import { Rating } from './entities/rating.entity';
-import { User } from '../auth/entities/user.entity';
 import { Lesson } from '../lessons/entities/lesson.entity';
 import { RateLessonDto } from './dto/rate-lesson.dto';
 import { LeaveFeedbackDto } from './dto/leave-feedback.dto';
@@ -36,28 +35,21 @@ export class RatingRepository extends Repository<Rating> {
     return ratings;
   }
 
-  async createRating(
-    lesson: Lesson,
-    student: User,
-    tutor: User
-  ): Promise<Rating> {
+  async createRating(): Promise<Rating> {
     const newRating = new Rating();
-    newRating.lesson = lesson;
-    newRating.student = student;
-    newRating.tutor = tutor;
-
     await newRating.save();
     return newRating;
   }
 
   async rateLesson(
-    rating: Rating,
+    lesson: Lesson,
     rateLessonDto: RateLessonDto
   ): Promise<Rating> {
     const { studentRating } = rateLessonDto;
 
+    const rating = lesson.rating;
     const oldValue = rating.studentRating;
-    const tutor = rating.tutor;
+    const tutor = lesson.tutor;
 
     if (!oldValue) {
       tutor.addRatingAndUpdateRatingsCount(studentRating);
@@ -74,18 +66,19 @@ export class RatingRepository extends Repository<Rating> {
   }
 
   async leaveFeedback(
-    rating: Rating,
+    lesson: Lesson,
     leaveFeedbackDto: LeaveFeedbackDto
   ): Promise<Rating> {
+    const rating = lesson.rating;
     rating.tutorFeedback = leaveFeedbackDto.tutorFeedback;
 
-    rating.save();
+    await rating.save();
     return rating;
   }
 
   async deleteRating(rating: Rating): Promise<void> {
     const studentRating = rating.studentRating;
-    const tutor = rating.tutor;
+    const tutor = rating.lesson.tutor;
 
     const result = await this.delete(rating.id);
 
