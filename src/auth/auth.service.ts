@@ -15,6 +15,8 @@ import { User } from './entities/user.entity';
 import { Subject } from '../lessons/entities/subject.entity';
 import { UserRole } from './entities/user.role.enum';
 import { UpdateProfileDto } from './dto/profile-update.dto';
+import { StudentPublicProfileDto } from './dto/student-public-profile.dto';
+import { TutorPublicProfileDto } from './dto/tutor-public-profile.dto';
 
 @Injectable()
 export class AuthService {
@@ -59,9 +61,17 @@ export class AuthService {
     return { accessToken };
   }
 
-  async getProfileById(user: User, id: number): Promise<Partial<User>> {
-    const profile = await this.userRepository.findOne(id);
-    return profile;
+  async getPublicProfileById(id: number) {
+    const profile = await this.userRepository.findOne({ id });
+
+    let reducedProfile = null;
+    if (profile.role === UserRole.STUDENT) {
+      reducedProfile = StudentPublicProfileDto.fromUserEntity(profile);
+    } else {
+      reducedProfile = TutorPublicProfileDto.fromUserEntity(profile);
+    }
+
+    return reducedProfile;
   }
 
   async updateProfile(

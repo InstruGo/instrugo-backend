@@ -38,6 +38,20 @@ export class FilterPoolDto {
   @IsPositive()
   @Type(() => Number)
   @ApiPropertyOptional()
+  minDuration?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsPositive()
+  @Type(() => Number)
+  @ApiPropertyOptional()
+  maxDuration?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsPositive()
+  @Type(() => Number)
+  @ApiPropertyOptional()
   minBudget?: number;
 
   @IsOptional()

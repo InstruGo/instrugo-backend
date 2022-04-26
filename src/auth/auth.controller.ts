@@ -12,7 +12,6 @@ import {
   Res,
   Param,
   ParseIntPipe,
-  BadRequestException,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -41,7 +40,7 @@ export class AuthController {
   @Post('/login')
   @HttpCode(200)
   @ApiResponse({ status: 200 })
-  async loginJwtCookie(
+  async login(
     @Body(ValidationPipe) loginCredentialsDto: LoginCredentialsDto,
     @Res({ passthrough: true }) res: Response
   ) {
@@ -64,24 +63,15 @@ export class AuthController {
   @ApiResponse({ status: 200 })
   @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(JwtAuthGuard)
-  getProfileById(
-    @User() user: UserEntity,
-    @Param('id', ParseIntPipe) id: number
-  ) {
-    if (user.id === id) {
-      throw new BadRequestException(
-        'You cannot look up your own public profile.'
-      );
-    }
-
-    return this.authService.getProfileById(user, id);
+  getPublicProfileById(@Param('id', ParseIntPipe) id: number) {
+    return this.authService.getPublicProfileById(id);
   }
 
   @Get('/profile')
   @ApiResponse({ status: 200 })
   @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(JwtAuthGuard)
-  getProfile(@User() user: UserEntity): UserEntity {
+  getPersonalProfile(@User() user: UserEntity): UserEntity {
     return user;
   }
 
@@ -89,7 +79,7 @@ export class AuthController {
   @ApiResponse({ status: 200 })
   @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(JwtAuthGuard)
-  updateProfile(
+  updatePersonalProfile(
     @User() user: UserEntity,
     @Body() updateProfileDto: UpdateProfileDto
   ): Promise<void> {
