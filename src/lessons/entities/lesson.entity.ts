@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
+  JoinColumn,
 } from 'typeorm';
 
 import { EducationLevel } from './lesson.education-level.enum';
@@ -78,6 +79,7 @@ export class Lesson extends BaseEntity {
   modifiedOn: Date;
 
   @OneToOne(() => Rating, (rating) => rating.lesson, { eager: true })
+  @JoinColumn()
   rating: Rating;
 
   @ManyToOne(() => User, { eager: true })

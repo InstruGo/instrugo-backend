@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CreateRatingDto } from './dto/create-rating.dto';
 import { FilterRatingDto } from './dto/filter-rating.dto';
 import { RatingRepository } from './rating.repository';
 import { Rating } from './entities/rating.entity';
@@ -13,6 +12,7 @@ import { UserRepository } from '../auth/user.repository';
 import { LessonRepository } from '../lessons/lesson.repository';
 import { RateLessonDto } from './dto/rate-lesson.dto';
 import { LeaveFeedbackDto } from './dto/leave-feedback.dto';
+import { LessonStatus } from 'src/lessons/entities/lesson.status.enum';
 
 @Injectable()
 export class RatingsService {
@@ -38,61 +38,50 @@ export class RatingsService {
     return rating;
   }
 
-  async createRating(createRatingDto: CreateRatingDto): Promise<Rating> {
-    const { lessonId, studentId, tutorId } = createRatingDto;
+  async createRating(): Promise<Rating> {
+    return this.ratingRepository.createRating();
+  }
 
-    if (studentId === tutorId) {
-      throw new BadRequestException(
-        'Student and tutor cannot be the same user.'
-      );
-    }
-
+  async rateLesson(
+    lessonId: number,
+    rateLessonDto: RateLessonDto
+  ): Promise<Rating> {
     const lesson = await this.lessonRepository.findOne(lessonId);
 
     if (!lesson) {
-      throw new NotFoundException(`Tutor with ID ${tutorId} not found.`);
+      throw new NotFoundException(`Lesson with ID ${lessonId} not found.`);
     }
 
-    const student = await this.userRepository.findOne(studentId);
-
-    if (!student) {
-      throw new NotFoundException(`Student with ID ${studentId} not found.`);
+    if (lesson.status !== LessonStatus.COMPLETED) {
+      throw new BadRequestException('Can only rate completed lessons.');
     }
 
-    const tutor = await this.userRepository.findOne(tutorId);
-
-    if (!tutor) {
-      throw new NotFoundException(`Tutor with ID ${tutorId} not found.`);
-    }
-
-    return this.ratingRepository.createRating(lesson, student, tutor);
-  }
-
-  async rateLesson(id: number, rateLessonDto: RateLessonDto): Promise<Rating> {
-    const rating = await this.ratingRepository.findOne(id);
-
-    if (!rating) {
-      throw new NotFoundException(`Rating with ID ${id} not found.`);
-    }
-
-    return this.ratingRepository.rateLesson(rating, rateLessonDto);
+    return this.ratingRepository.rateLesson(lesson, rateLessonDto);
   }
 
   async leaveFeedback(
-    id: number,
+    lessonId: number,
     leaveFeedbackDto: LeaveFeedbackDto
   ): Promise<Rating> {
-    const rating = await this.ratingRepository.findOne(id);
+    const lesson = await this.lessonRepository.findOne(lessonId);
 
-    if (!rating) {
-      throw new NotFoundException(`Rating with ID ${id} not found.`);
+    if (!lesson) {
+      throw new NotFoundException(`Lesson with ID ${lessonId} not found.`);
     }
 
-    return this.ratingRepository.leaveFeedback(rating, leaveFeedbackDto);
+    if (lesson.status !== LessonStatus.COMPLETED) {
+      throw new BadRequestException(
+        'Can only leave feedback on completed lessons.'
+      );
+    }
+
+    return this.ratingRepository.leaveFeedback(lesson, leaveFeedbackDto);
   }
 
   async deleteRating(id: number): Promise<void> {
-    const rating = await this.ratingRepository.findOne(id);
+    const rating = await this.ratingRepository.findOne(id, {
+      relations: ['lesson'],
+    });
 
     if (!rating) {
       throw new NotFoundException(`Rating with ID ${id} not found.`);

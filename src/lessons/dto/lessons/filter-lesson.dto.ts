@@ -13,6 +13,7 @@ import {
 import { EducationLevel } from '../../entities/lesson.education-level.enum';
 import { LessonStatus } from '../../entities/lesson.status.enum';
 import { MeetingType } from '../../entities/lesson.meeting-type.enum';
+import { Type } from 'class-transformer';
 
 export class FilterLessonDto {
   @IsOptional()
@@ -24,6 +25,7 @@ export class FilterLessonDto {
   @IsOptional()
   @IsNotEmpty()
   @IsInt()
+  @Type(() => Number)
   @ApiPropertyOptional()
   grade?: number;
 
@@ -36,26 +38,36 @@ export class FilterLessonDto {
   @IsOptional()
   @IsNotEmpty()
   @IsPositive()
+  @Type(() => Number)
   @ApiPropertyOptional()
-  minPrice?: number;
+  minDuration?: number;
 
   @IsOptional()
   @IsNotEmpty()
   @IsPositive()
+  @Type(() => Number)
   @ApiPropertyOptional()
-  maxPrice?: number;
+  maxDuration?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsPositive()
+  @Type(() => Number)
+  @ApiPropertyOptional()
+  minBudget?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsPositive()
+  @Type(() => Number)
+  @ApiPropertyOptional()
+  maxBudget?: number;
 
   @IsOptional()
   @IsNotEmpty()
   @IsIn(Object.values(LessonStatus))
   @ApiPropertyOptional({ enum: LessonStatus, enumName: 'LessonStatus' })
   status?: LessonStatus;
-
-  @IsOptional()
-  @IsNotEmpty()
-  @IsArray()
-  @ApiPropertyOptional({ isArray: true })
-  subjectIds?: number[];
 
   @IsOptional()
   @IsNotEmpty()
@@ -68,6 +80,12 @@ export class FilterLessonDto {
   @IsISO8601()
   @ApiPropertyOptional()
   before?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsArray()
+  @ApiPropertyOptional({ isArray: true })
+  subjectIds?: number[];
 
   @IsOptional()
   @IsNotEmpty()

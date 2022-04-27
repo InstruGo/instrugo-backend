@@ -22,8 +22,10 @@ export class LessonRepository extends Repository<Lesson> {
       educationLevel,
       grade,
       type,
-      minPrice,
-      maxPrice,
+      minDuration,
+      maxDuration,
+      minBudget,
+      maxBudget,
       status,
       subjectIds,
       after,
@@ -61,12 +63,20 @@ export class LessonRepository extends Repository<Lesson> {
       query.andWhere('lesson.status = :status', { status });
     }
 
-    if (minPrice) {
-      query.andWhere('lesson.budget >= :minPrice', { minPrice });
+    if (minDuration) {
+      query.andWhere('lesson.duration >= :minDuration', { minDuration });
     }
 
-    if (maxPrice) {
-      query.andWhere('lesson.budget <= :maxPrice', { maxPrice });
+    if (maxDuration) {
+      query.andWhere('lesson.duration <= :maxDuration', { maxDuration });
+    }
+
+    if (minBudget) {
+      query.andWhere('lesson.budget >= :minBudget', { minBudget });
+    }
+
+    if (maxBudget) {
+      query.andWhere('lesson.budget <= :maxBudget', { maxBudget });
     }
 
     query.leftJoinAndSelect('lesson.subject', 'subject');
@@ -94,6 +104,8 @@ export class LessonRepository extends Repository<Lesson> {
       educationLevel,
       grade,
       type,
+      minDuration,
+      maxDuration,
       minBudget,
       maxBudget,
       after,
@@ -120,6 +132,14 @@ export class LessonRepository extends Repository<Lesson> {
 
     if (subjectIds) {
       query.andWhere('lesson.subjectId IN (:...subjectIds)', { subjectIds });
+    }
+
+    if (minDuration) {
+      query.andWhere('lesson.duration >= :minDuration', { minDuration });
+    }
+
+    if (maxDuration) {
+      query.andWhere('lesson.duration <= :maxDuration', { maxDuration });
     }
 
     if (minBudget) {
@@ -246,7 +266,6 @@ export class LessonRepository extends Repository<Lesson> {
 
   async cancelPendingLesson(lesson: Lesson): Promise<Lesson> {
     lesson.status = LessonStatus.CANCELED;
-
     lesson.save();
     return lesson;
   }

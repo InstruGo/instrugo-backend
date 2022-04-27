@@ -3,14 +3,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Entity,
-  ManyToOne,
   OneToOne,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { User } from '../../auth/entities/user.entity';
 import { Lesson } from '../../lessons/entities/lesson.entity';
 
 @Entity()
@@ -31,12 +28,5 @@ export class Rating extends BaseEntity {
   modifiedOn: Date;
 
   @OneToOne(() => Lesson, { onDelete: 'CASCADE' })
-  @JoinColumn()
   lesson: Lesson;
-
-  @ManyToOne(() => User, { eager: true })
-  student: User;
-
-  @ManyToOne(() => User, { eager: true })
-  tutor: User;
 }
