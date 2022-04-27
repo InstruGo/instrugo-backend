@@ -10,7 +10,13 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://instrugo.frle.net',
+      'https://instrugo-frontend-tutors4life.vercel.app',
+      'https://instrugo-frontend-git-main-tutors4life.vercel.app',
+    ],
     credentials: true,
   });
 
