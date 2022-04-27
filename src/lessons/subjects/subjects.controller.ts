@@ -9,6 +9,8 @@ import {
   ParseIntPipe,
   HttpCode,
   UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
@@ -29,18 +31,21 @@ export class SubjectsController {
   constructor(private readonly subjectsService: SubjectsService) {}
 
   @Get()
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Subject })
   getSubjects(@Body() filterSubjectDto: FilterSubjectDto): Promise<Subject[]> {
     return this.subjectsService.getSubjects(filterSubjectDto);
   }
 
   @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Subject })
   getSubject(@Param('id', ParseIntPipe) id: number): Promise<Subject> {
     return this.subjectsService.getSubject(id);
   }
 
   @Post()
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: Subject })
   @Roles(UserRole.ADMIN)
   createSubject(@Body() createSubjectDto: CreateSubjectDto): Promise<Subject> {
@@ -48,6 +53,7 @@ export class SubjectsController {
   }
 
   @Patch(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Subject })
   @Roles(UserRole.ADMIN)
   updateSubject(
