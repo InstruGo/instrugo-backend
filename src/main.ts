@@ -10,11 +10,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'https://instrugo.frle.net',
-    ],
+    origin: '*',
     credentials: true,
   });
 
