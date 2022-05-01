@@ -13,7 +13,7 @@ import {
 import { EducationLevel } from '../../entities/lesson.education-level.enum';
 import { LessonStatus } from '../../entities/lesson.status.enum';
 import { MeetingType } from '../../entities/lesson.meeting-type.enum';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 export class FilterLessonDto {
   @IsOptional()
@@ -90,6 +90,11 @@ export class FilterLessonDto {
   @IsOptional()
   @IsNotEmpty()
   @IsBoolean()
+  @Transform(({ value }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
   @ApiPropertyOptional()
   isLessonTutor?: boolean;
 }

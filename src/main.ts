@@ -11,7 +11,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      'instrugo.frle.net',
+      'https://instrugo.frle.net',
       'http://localhost:3000',
       'http://localhost:3001',
     ],
