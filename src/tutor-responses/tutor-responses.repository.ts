@@ -22,6 +22,12 @@ export class TutorResponseRepository extends Repository<TutorResponse> {
     if (lessonId) {
       query.andWhere('tutor-response.lessonId = :lessonId', { lessonId });
     }
+    query.leftJoinAndSelect('tutor-response.lesson', 'lesson');
+    query.leftJoinAndSelect('lesson.subject', 'subject');
+    query.leftJoinAndSelect(
+      'tutor-response.tutorResponseTimeFrame',
+      'time-frame'
+    );
 
     const responses = await query.getMany();
     return responses;
