@@ -3,42 +3,42 @@ import { CreateSubjectDto } from '../../lessons/dto/subjects/create-subject.dto'
 export const subjects: CreateSubjectDto[] = [
   {
     name: 'math',
-    color: '#533A71',
+    color: '#1572a1',
   },
   {
     name: 'physics',
-    color: '#6184D8',
+    color: '#ccddff',
   },
   {
     name: 'chemistry',
-    color: '#50C5B7',
+    color: '#957dad',
   },
   {
     name: 'english',
-    color: '#9CEC5B',
+    color: '#c23b22',
   },
   {
     name: 'geography',
-    color: '#F0F465',
+    color: '#f28c28',
   },
   {
     name: 'biology',
-    color: '#4B3567',
+    color: '#2F4C39',
   },
   {
     name: 'history',
-    color: '#1A535C',
+    color: '#836953',
   },
   {
     name: 'latin',
-    color: '#4ECDC4',
+    color: '#f5deb3',
   },
   {
     name: 'sociology',
-    color: '#F7FFF7',
+    color: '#ffd700',
   },
   {
     name: 'IT',
-    color: '#FF6B6B',
+    color: '#afd5aa',
   },
 ];
