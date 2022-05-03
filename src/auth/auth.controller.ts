@@ -14,6 +14,7 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 
 import { AuthService } from './auth.service';
@@ -23,11 +24,15 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { User } from './user.decorator';
 import { User as UserEntity } from './entities/user.entity';
 import { UpdateProfileDto } from './dto/profile-update.dto';
+import { JwtPayload } from './jwt-payload.interface';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private jwtService: JwtService
+  ) {}
 
   @Post('/register')
   @ApiResponse({ status: 201 })
@@ -89,7 +94,20 @@ export class AuthController {
   @Post('/become-a-tutor')
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
-  becomeATutor(@User() user: UserEntity): Promise<UserEntity> {
-    return this.authService.becomeATutor(user);
+  async becomeATutor(
+    @User() user: UserEntity,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<UserEntity> {
+    const updatedUser = await this.authService.becomeATutor(user);
+
+    const payload: JwtPayload = {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      role: updatedUser.role,
+    };
+    const accessToken = this.jwtService.sign(payload);
+
+    res.cookie('jwt', { accessToken }, { httpOnly: true });
+    return user;
   }
 }
