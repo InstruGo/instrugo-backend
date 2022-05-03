@@ -116,12 +116,13 @@ export class UserRepository extends Repository<User> {
     await user.save();
   }
 
-  async becomeATutor(user: User): Promise<void> {
+  async becomeATutor(user: User): Promise<User> {
     user.averageRating = 0;
     user.ratingsCount = 0;
     user.role = UserRole.TUTOR;
 
     await user.save();
+    return user;
   }
 
   private hashPassword(password: string, salt: string) {

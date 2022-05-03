@@ -88,7 +88,7 @@ export class AuthService {
     return this.userRepository.updateProfile(user, updateProfileDto, subjects);
   }
 
-  async becomeATutor(user: User): Promise<void> {
+  async becomeATutor(user: User): Promise<User> {
     if (user.role !== UserRole.STUDENT) {
       throw new BadRequestException('You are already a tutor.');
     }

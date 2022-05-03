@@ -89,7 +89,7 @@ export class AuthController {
   @Post('/become-a-tutor')
   @ApiResponse({ status: 201 })
   @UseGuards(JwtAuthGuard)
-  becomeATutor(@User() user: UserEntity): Promise<void> {
+  becomeATutor(@User() user: UserEntity): Promise<UserEntity> {
     return this.authService.becomeATutor(user);
   }
 }
