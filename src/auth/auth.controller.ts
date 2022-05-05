@@ -87,7 +87,7 @@ export class AuthController {
   updatePersonalProfile(
     @User() user: UserEntity,
     @Body() updateProfileDto: UpdateProfileDto
-  ): Promise<void> {
+  ): Promise<UserEntity> {
     return this.authService.updateProfile(user, updateProfileDto);
   }
 

@@ -93,7 +93,7 @@ export class UserRepository extends Repository<User> {
     user: User,
     updateProfileDto: UpdateProfileDto,
     subjects: Subject[]
-  ): Promise<void> {
+  ): Promise<User> {
     const {
       firstName,
       lastName,
@@ -114,6 +114,7 @@ export class UserRepository extends Repository<User> {
     if (subjects) user.subjects = subjects;
 
     await user.save();
+    return user;
   }
 
   async becomeATutor(user: User): Promise<User> {

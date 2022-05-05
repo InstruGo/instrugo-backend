@@ -77,7 +77,7 @@ export class AuthService {
   async updateProfile(
     user: User,
     updateProfileDto: UpdateProfileDto
-  ): Promise<void> {
+  ): Promise<User> {
     const subjects: Subject[] = [];
 
     updateProfileDto.subjectIds?.map(async (id) => {
