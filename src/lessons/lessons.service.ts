@@ -19,6 +19,7 @@ import { TimeFrameRepository } from '../time-frames/time-frames.repository';
 import { TimeFrame } from '../time-frames/entities/time-frame.entity';
 import { FilterPoolDto } from './dto/lessons/filter-pool.dto';
 import { RatingRepository } from '../ratings/rating.repository';
+import { UserRole } from 'src/auth/entities/user.role.enum';
 
 @Injectable()
 export class LessonsService {
@@ -53,7 +54,10 @@ export class LessonsService {
       throw new NotFoundException('Specified lesson does not exist.');
     }
 
-    if (lesson.status === LessonStatus.REQUESTED) {
+    if (
+      lesson.status === LessonStatus.REQUESTED &&
+      user.role !== UserRole.STUDENT
+    ) {
       return lesson;
     }
 
