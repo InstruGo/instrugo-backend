@@ -118,7 +118,7 @@ export class UserRepository extends Repository<User> {
   async updateProfile(
     user: User,
     updateProfileDto: UpdateProfileDto,
-    subjects: Subject[]
+    subjects?: Subject[]
   ): Promise<User> {
     const {
       firstName,

@@ -139,14 +139,20 @@ export class AuthService {
   ): Promise<User> {
     const subjects: Subject[] = [];
 
-    await Promise.all(
-      updateProfileDto.subjectIds?.map(async (id) => {
-        const subject = await this.subjectRepository.findOne(id);
-        if (subject) subjects.push(subject);
-      })
-    );
+    if (updateProfileDto.subjectIds) {
+      await Promise.all(
+        updateProfileDto.subjectIds?.map(async (id) => {
+          const subject = await this.subjectRepository.findOne(id);
+          if (subject) subjects.push(subject);
+        })
+      );
+    }
 
-    return this.userRepository.updateProfile(user, updateProfileDto, subjects);
+    return this.userRepository.updateProfile(
+      user,
+      updateProfileDto,
+      updateProfileDto.subjectIds ? subjects : undefined
+    );
   }
 
   async becomeATutor(user: User): Promise<User> {
