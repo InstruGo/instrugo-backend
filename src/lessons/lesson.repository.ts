@@ -81,6 +81,7 @@ export class LessonRepository extends Repository<Lesson> {
 
     query.leftJoinAndSelect('lesson.subject', 'subject');
     query.leftJoinAndSelect('lesson.lessonTimeFrames', 'timeFrame');
+    query.leftJoinAndSelect('lesson.rating', 'rating');
 
     let lessons = await query.getMany();
 
