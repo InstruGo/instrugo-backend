@@ -44,11 +44,11 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   grade: number;
 
-  @Column()
+  @Column({ nullable: true })
   @Exclude()
   password: string;
 
-  @Column()
+  @Column({ nullable: true })
   @Exclude()
   salt: string;
 

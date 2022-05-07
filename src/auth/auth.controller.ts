@@ -25,6 +25,7 @@ import { User } from './user.decorator';
 import { User as UserEntity } from './entities/user.entity';
 import { UpdateProfileDto } from './dto/profile-update.dto';
 import { JwtPayload } from './jwt-payload.interface';
+import { GoogleTokenVerificationDto } from './dto/google-token-verification.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -34,10 +35,26 @@ export class AuthController {
     private jwtService: JwtService
   ) {}
 
+  @Post('/login/google')
+  @HttpCode(200)
+  @ApiResponse({ status: 200 })
+  async loginWithGoogle(
+    @Body(ValidationPipe)
+    googleTokenVerificationDto: GoogleTokenVerificationDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    const token = await this.authService.loginWithGoogle(
+      googleTokenVerificationDto.token
+    );
+
+    res.cookie('jwt', token, { httpOnly: true });
+    return { msg: 'success' };
+  }
+
   @Post('/register')
   @ApiResponse({ status: 201 })
   register(
-    @Body(ValidationPipe) registrationCredentialsDto: RegistrationCredentialsDto
+    @Body() registrationCredentialsDto: RegistrationCredentialsDto
   ): Promise<void> {
     return this.authService.register(registrationCredentialsDto);
   }
@@ -46,7 +63,7 @@ export class AuthController {
   @HttpCode(200)
   @ApiResponse({ status: 200 })
   async login(
-    @Body(ValidationPipe) loginCredentialsDto: LoginCredentialsDto,
+    @Body() loginCredentialsDto: LoginCredentialsDto,
     @Res({ passthrough: true }) res: Response
   ) {
     const token = await this.authService.login(loginCredentialsDto);
