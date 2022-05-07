@@ -43,10 +43,15 @@ export class AuthService {
 
     const subjects: Subject[] = [];
 
-    subjectIds?.map(async (id) => {
-      const subject = await this.subjectRepository.findOne(id);
-      if (subject) subjects.push(subject);
-    });
+    await Promise.all(
+      subjectIds?.map(async (id) => {
+        const subject = await this.subjectRepository.findOne(id);
+
+        if (subject) {
+          subjects.push(subject);
+        }
+      })
+    );
 
     return this.userRepository.register(registrationCredentialsDto, subjects);
   }
@@ -87,10 +92,12 @@ export class AuthService {
   ): Promise<User> {
     const subjects: Subject[] = [];
 
-    updateProfileDto.subjectIds?.map(async (id) => {
-      const subject = await this.subjectRepository.findOne(id);
-      if (subject) subjects.push(subject);
-    });
+    await Promise.all(
+      updateProfileDto.subjectIds?.map(async (id) => {
+        const subject = await this.subjectRepository.findOne(id);
+        if (subject) subjects.push(subject);
+      })
+    );
 
     return this.userRepository.updateProfile(user, updateProfileDto, subjects);
   }
