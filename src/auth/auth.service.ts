@@ -4,7 +4,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { google, Auth } from 'googleapis';
 
 import { JwtPayload } from './jwt-payload.interface';
 import { UserRepository } from './user.repository';
@@ -20,12 +22,57 @@ import { TutorPublicProfileDto } from './dto/tutor-public-profile.dto';
 
 @Injectable()
 export class AuthService {
+  oauthClient: Auth.OAuth2Client;
+
   constructor(
     @InjectRepository(UserRepository) private userRepository: UserRepository,
     @InjectRepository(SubjectRepository)
     private subjectRepository: SubjectRepository,
-    private jwtService: JwtService
-  ) {}
+    private jwtService: JwtService,
+    private readonly configService: ConfigService
+  ) {
+    const clientID = this.configService.get('GOOGLE_AUTH_CLIENT_ID');
+    const clientSecret = this.configService.get('GOOGLE_AUTH_CLIENT_SECRET');
+
+    this.oauthClient = new google.auth.OAuth2(clientID, clientSecret);
+  }
+
+  async loginWithGoogle(token: string) {
+    const tokenInfo = await this.oauthClient.getTokenInfo(token);
+    const email = tokenInfo.email;
+
+    let user = await this.userRepository.findOne({ email });
+
+    if (!user) {
+      const userData = await this.getUserData(token);
+      user = await this.userRepository.registerWithGoogle(userData);
+    }
+
+    return this.handleRegisteredUser(user);
+  }
+
+  private async handleRegisteredUser(user: User) {
+    const { id, email, role } = user;
+
+    const payload: JwtPayload = { id, email, role };
+    const accessToken = this.jwtService.sign(payload);
+
+    return { accessToken };
+  }
+
+  private async getUserData(token: string) {
+    const userInfoClient = google.oauth2('v2').userinfo;
+
+    this.oauthClient.setCredentials({
+      access_token: token,
+    });
+
+    const userInfoResponse = await userInfoClient.get({
+      auth: this.oauthClient,
+    });
+
+    return userInfoResponse.data;
+  }
 
   async register(
     registrationCredentialsDto: RegistrationCredentialsDto

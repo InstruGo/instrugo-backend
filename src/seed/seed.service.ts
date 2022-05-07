@@ -123,12 +123,14 @@ export class SeedService implements OnApplicationBootstrap {
 
     const lessonToResolve1 = await this.lessonsService.createLesson(
       userFilip,
-      filipLessonsToResolve[0]
+      filipLessonsToResolve[0].lesson,
+      filipLessonsToResolve[0].subjectName
     );
 
     const lessonToResolve2 = await this.lessonsService.createLesson(
       userFilip,
-      filipLessonsToResolve[1]
+      filipLessonsToResolve[1].lesson,
+      filipLessonsToResolve[1].subjectName
     );
 
     const tutorRes1 = await this.seedTutorResponse(
@@ -161,16 +163,16 @@ export class SeedService implements OnApplicationBootstrap {
 
   private async seedFilipLessons(user: User) {
     await Promise.all(
-      filipLessons.map(async (lesson) => {
-        await this.lessonsService.createLesson(user, lesson);
+      filipLessons.map(async ({ lesson, subjectName }) => {
+        await this.lessonsService.createLesson(user, lesson, subjectName);
       })
     );
   }
 
   private async seedIvanLessons(user: User) {
     await Promise.all(
-      ivanLessons.map(async (lesson) => {
-        await this.lessonsService.createLesson(user, lesson);
+      ivanLessons.map(async ({ lesson, subjectName }) => {
+        await this.lessonsService.createLesson(user, lesson, subjectName);
       })
     );
   }

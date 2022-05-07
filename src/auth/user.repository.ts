@@ -2,8 +2,9 @@ import {
   InternalServerErrorException,
   ConflictException,
 } from '@nestjs/common';
-import { Repository, EntityRepository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Repository, EntityRepository } from 'typeorm';
+import { oauth2_v2 } from 'googleapis';
 
 import { User } from './entities/user.entity';
 import { Subject } from 'src/lessons/entities/subject.entity';
@@ -15,6 +16,26 @@ import { UpdateProfileDto } from './dto/profile-update.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
+  async registerWithGoogle(userData: oauth2_v2.Schema$Userinfo): Promise<User> {
+    const user = new User();
+    user.email = userData.email;
+    user.firstName = userData.given_name;
+    user.lastName = userData.family_name;
+    user.role = UserRole.STUDENT;
+
+    try {
+      await user.save();
+      return user;
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('E-mail already exists');
+      } else {
+        console.log(error);
+        throw new InternalServerErrorException();
+      }
+    }
+  }
+
   async register(
     registrationCredentialsDto: RegistrationCredentialsDto,
     subjects?: Subject[],
@@ -65,7 +86,7 @@ export class UserRepository extends Repository<User> {
       await user.save();
     } catch (error) {
       if (error.code === '23505') {
-        throw new ConflictException('Username already exists');
+        throw new ConflictException('E-mail already exists');
       } else {
         console.log(error);
         throw new InternalServerErrorException();
