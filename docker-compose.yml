@@ -5,7 +5,7 @@ services:
   #   container_name: instrugo-backend
   #   build: .
   #   ports:
-  #     - '3000:3000'
+  #     - '8000:8000'
   #   depends_on:
   #     - instrugo-database
   #   links:
@@ -13,7 +13,7 @@ services:
 
   instrugo-database:
     container_name: instrugo-database
-    image: postgres:14.1-alpine
+    image: postgres:14.2-alpine
     ports:
       - '5432:5432'
     environment:
