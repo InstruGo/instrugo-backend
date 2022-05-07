@@ -72,7 +72,7 @@ export class SeedService implements OnApplicationBootstrap {
   private async seedAdmins() {
     await Promise.all(
       admins.map(async (admin) => {
-        await this.userRepository.register(admin, true);
+        await this.userRepository.register(admin, undefined, true);
       })
     );
   }
@@ -80,7 +80,7 @@ export class SeedService implements OnApplicationBootstrap {
   private async seedStudents() {
     await Promise.all(
       students.map(async (student) => {
-        await this.userRepository.register(student, false);
+        await this.userRepository.register(student, undefined, false);
       })
     );
   }
@@ -88,7 +88,7 @@ export class SeedService implements OnApplicationBootstrap {
   private async seedTutors() {
     await Promise.all(
       tutors.map(async (tutor) => {
-        await this.userRepository.register(tutor, false);
+        await this.userRepository.register(tutor, undefined, false);
       })
     );
   }
