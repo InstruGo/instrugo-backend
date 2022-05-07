@@ -12,6 +12,7 @@ import {
   IsPhoneNumber,
   IsOptional,
   IsBoolean,
+  IsArray,
 } from 'class-validator';
 
 import { EducationLevel } from '../../lessons/entities/lesson.education-level.enum';
@@ -67,6 +68,11 @@ export class RegistrationCredentialsDto {
   @MaxLength(20)
   @ApiProperty()
   confirmPassword: string;
+
+  @IsOptional()
+  @IsArray()
+  @ApiPropertyOptional({ isArray: true })
+  subjectIds?: number[];
 
   @IsBoolean()
   @ApiProperty()

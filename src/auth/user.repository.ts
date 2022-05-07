@@ -17,6 +17,7 @@ import { UpdateProfileDto } from './dto/profile-update.dto';
 export class UserRepository extends Repository<User> {
   async register(
     registrationCredentialsDto: RegistrationCredentialsDto,
+    subjects?: Subject[],
     isAdmin?: boolean
   ): Promise<void> {
     const {
@@ -54,6 +55,10 @@ export class UserRepository extends Repository<User> {
     if (user.role === UserRole.TUTOR || user.role === UserRole.ADMIN) {
       user.averageRating = 0;
       user.ratingsCount = 0;
+
+      if (subjects && subjects.length !== 0) {
+        user.subjects = subjects;
+      }
     }
 
     try {

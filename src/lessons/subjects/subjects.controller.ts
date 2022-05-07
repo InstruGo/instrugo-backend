@@ -26,7 +26,6 @@ import { RolesGuard } from '../../auth/roles.guard';
 
 @ApiTags('subjects')
 @Controller('subjects')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class SubjectsController {
   constructor(private readonly subjectsService: SubjectsService) {}
 
@@ -39,6 +38,7 @@ export class SubjectsController {
 
   @Get(':id')
   @UseInterceptors(ClassSerializerInterceptor)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiResponse({ status: 200, type: Subject })
   getSubject(@Param('id', ParseIntPipe) id: number): Promise<Subject> {
     return this.subjectsService.getSubject(id);
@@ -47,6 +47,7 @@ export class SubjectsController {
   @Post()
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 201, type: Subject })
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   createSubject(@Body() createSubjectDto: CreateSubjectDto): Promise<Subject> {
     return this.subjectsService.createSubject(createSubjectDto);
@@ -55,6 +56,7 @@ export class SubjectsController {
   @Patch(':id')
   @UseInterceptors(ClassSerializerInterceptor)
   @ApiResponse({ status: 200, type: Subject })
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   updateSubject(
     @Param('id', ParseIntPipe) id: number,
@@ -66,6 +68,7 @@ export class SubjectsController {
   @Delete(':id')
   @ApiResponse({ status: 204 })
   @HttpCode(204)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   deleteSubject(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.subjectsService.deleteSubject(id);

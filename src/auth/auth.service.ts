@@ -30,7 +30,7 @@ export class AuthService {
   async register(
     registrationCredentialsDto: RegistrationCredentialsDto
   ): Promise<void> {
-    const { password, confirmPassword, phone, isTutor } =
+    const { password, confirmPassword, phone, subjectIds, isTutor } =
       registrationCredentialsDto;
 
     if (password !== confirmPassword) {
@@ -41,7 +41,14 @@ export class AuthService {
       throw new BadRequestException('Phone is required for tutors.');
     }
 
-    return this.userRepository.register(registrationCredentialsDto);
+    const subjects: Subject[] = [];
+
+    subjectIds?.map(async (id) => {
+      const subject = await this.subjectRepository.findOne(id);
+      if (subject) subjects.push(subject);
+    });
+
+    return this.userRepository.register(registrationCredentialsDto, subjects);
   }
 
   async login(
