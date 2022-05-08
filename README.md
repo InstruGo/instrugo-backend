@@ -6,6 +6,10 @@ Backend for InstruGo, an application for connecting students and tutors.
 
 This repository contains just the backend of InstruGo. To run the frontend go see README.md in the frontend repository.
 
+## Prerequisites
+
+You will need Node.js >= 16, yarn and Docker with docker compose installed on your machine.
+
 ## Install dependencies
 
 ```bash
