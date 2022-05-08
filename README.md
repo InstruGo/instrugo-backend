@@ -22,7 +22,7 @@ $ docker compose up -d
 
 ## Run the backend
 
-Running the app for the first time will also seed the database with initial data. You can find this data in `src/seed` module. Subsequent runs will not run the seeding service unless you delete all subjects and users from db.
+Running the app for the first time will also seed the database with initial data. You can find this data in `src/seed` module. Subsequent runs will not run the seeding service unless you delete all subjects and users from db (not recommended, if you want to reset the db look at the last section "Starting from scratch").
 
 ```bash
 # development mode
@@ -32,10 +32,11 @@ $ yarn start
 $ yarn start:dev
 
 # production mode
+$ yarn build
 $ yarn start:prod
 ```
 
-If you don't want to seed the db for some reason, you can set the SEED_DB environment variable in `.env` to 0 manually before running the app.
+If you don't want to seed the db for some reason, you can set the `SEED_DB` environment variable in `.env` to 0 manually before running the app.
 
 ## Starting from scratch
 
@@ -45,4 +46,5 @@ If you contaminated the db or just want to start from scratch with initial seede
 $ docker container stop instrugo-database
 $ docker container rm instrugo-database
 $ docker compose up -d
+$ yarn start
 ```
