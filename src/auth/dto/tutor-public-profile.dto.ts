@@ -16,7 +16,9 @@ export class TutorPublicProfileDto {
     profile.id = user.id;
     profile.firstName = user.firstName;
     profile.lastName = user.lastName;
-    profile.birthDate = user.birthDate?.toISOString();
+    profile.birthDate = user.birthDate
+      ? new Date(user.birthDate).toISOString()
+      : null;
     profile.description = user.description;
     profile.avatarUrl = user.avatarUrl;
     profile.averageRating = user.averageRating;
